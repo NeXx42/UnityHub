@@ -2,13 +2,25 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.ImageCard" Width="330" Height="270">
-  <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}">
+  <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}" ClipToBounds="True">
     <Grid>
-      <Grid>
+      <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch">
+        <Image x:Name="img" Stretch="UniformToFill" />
       </Grid>
 
+      <!-- Gradient overlay -->
+      <Border VerticalAlignment="Bottom" Height="200">
+        <Border.Background>
+          <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+            <GradientStop Offset="0" Color="Transparent"/>
+            <GradientStop Offset="0.9" Color="{DynamicResource Colour_BackgroundColour}"/>
+            <GradientStop Offset="1" Color="{DynamicResource Colour_BackgroundColour}"/>
+          </LinearGradientBrush>
+        </Border.Background>
+      </Border>
+
       <!-- Content -->
-      <StackPanel VerticalAlignment="Bottom">
+      <StackPanel VerticalAlignment="Bottom" Height="200">
         <Label x:Name="lbl_Name"/>
         <Label x:Name="lbl_UnityVersion"/>
         <Label x:Name="lbl_Location"/>
@@ -21,7 +33,6 @@
           <Label x:Name="lbl_Branch"/>
         </Grid>
       </StackPanel>
-
     </Grid>
   </Border>
 </UserControl>

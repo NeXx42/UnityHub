@@ -1,11 +1,10 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Markup.Xaml;
+using Avalonia.Media.Imaging;
 using Models.Data;
+using UI.Helpers;
 
 namespace UI.Pages.HomePage;
 
@@ -20,13 +19,16 @@ public partial class ImageCard : UserControl
         PointerPressed += HandleOnSelect;
     }
 
-    public void Draw(ProjectCard info, int pos, Func<int, Task> onClick)
+    public async Task Draw(ProjectCard info, int pos, Func<int, Task> onClick)
     {
         this.pos = pos;
         this.onSelect = onClick;
 
         lbl_Name.Content = info.name;
         lbl_Location.Content = info.directory;
+
+        Bitmap? brush = await IconFetcher.GetImage(info.iconUrl);
+        img.Source = brush;
     }
 
     private void HandleOnSelect(object? sender, PointerEventArgs args)

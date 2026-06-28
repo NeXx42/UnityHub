@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Logic;
 using Models.Data;
+using UI.Helpers;
 
 namespace UI.Pages.HomePage;
 
@@ -20,5 +21,7 @@ public partial class MoreInfo : UserControl
     {
         info = await ProjectLogic.GetProjectInfo(id);
         DataContext = info;
+
+        img.Source = await IconFetcher.GetImage(info.iconUrl);
     }
 }

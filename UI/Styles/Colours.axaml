@@ -1,18 +1,38 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <SolidColorBrush x:Key="BackgroundColour" Color="#0f151a" />
-  <SolidColorBrush x:Key="BackgroundColourDark" Color="#0c1015" />
-  <SolidColorBrush x:Key="BackgroundColourLight" Color="#12171c" />
-  <SolidColorBrush x:Key="BackgroundBorder" Color="#23282e" />
+  <Color x:Key="Colour_BackgroundColour">#0f151a</Color>
+  <SolidColorBrush x:Key="BackgroundColour" Color="{DynamicResource Colour_BackgroundColour}" />
 
-  <SolidColorBrush x:Key="ElementBackground" Color="#171c21" />
+  <Color x:Key="Colour_BackgroundColourDark">#0c1015</Color>
+  <SolidColorBrush x:Key="BackgroundColourDark" Color="{DynamicResource Colour_BackgroundColourDark}" />
 
-  <SolidColorBrush x:Key="AccentColour" Color="#5735b8" />
-  <SolidColorBrush x:Key="AccentColourDark" Color="#2a2842" />
-  <SolidColorBrush x:Key="AccentColourLight" Color="#6554d1" />
+  <Color x:Key="Colour_BackgroundColourLight">#12171c</Color>
+  <SolidColorBrush x:Key="BackgroundColourLight" Color="{DynamicResource Colour_BackgroundColourLight}" />
 
-  <SolidColorBrush x:Key="TextColour" Color="#fff" />
-  <SolidColorBrush x:Key="TextColourMuted" Color="#a0a5ac" />
+  <Color x:Key="Colour_BackgroundBorder">#12171c</Color>
+  <SolidColorBrush x:Key="BackgroundBorder" Color="{DynamicResource Colour_BackgroundBorder}" />
+
+  <Color x:Key="Colour_ElementBackground">#171c21</Color>
+  <SolidColorBrush x:Key="ElementBackground" Color="{DynamicResource Colour_ElementBackground}" />
+
+
+
+  <Color x:Key="Colour_AccentColour">#5735b8</Color>
+  <SolidColorBrush x:Key="AccentColour" Color="{DynamicResource Colour_AccentColour}" />
+
+  <Color x:Key="Colour_AccentColourDark">#2a2842</Color>
+  <SolidColorBrush x:Key="AccentColourDark" Color="{DynamicResource Colour_AccentColourDark}"/>
+
+  <Color x:Key="Colour_AccentColourLight">#6554d1</Color>
+  <SolidColorBrush x:Key="AccentColourLight" Color="{DynamicResource Colour_AccentColourLight}" />
+
+
+
+  <Color x:Key="Colour_TextColour">#fff</Color>
+  <SolidColorBrush x:Key="TextColour" Color="{DynamicResource Colour_TextColour}" />
+
+  <Color x:Key="Colour_TextColourMuted">#a0a5ac</Color>
+  <SolidColorBrush x:Key="TextColourMuted" Color="{DynamicResource Colour_TextColourMuted}" />
 
 </ResourceDictionary>

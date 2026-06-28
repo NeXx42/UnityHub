@@ -5,44 +5,52 @@ namespace Data.DataRepos;
 
 public class MockDataRepo : IDataRepository
 {
+    public Dictionary<int, (ProjectCard, ProjectInfo)>? lookup;
+
     public Task Setup()
     {
+        lookup = new Dictionary<int, (ProjectCard, ProjectInfo)>()
+        {
+            { 0, CreateCard(0, "test1", "~/Documents/Test1", "/home/matth/Downloads/003db2ba-1df6-4b75-9271-0e6491b89551.png") },
+            { 1, CreateCard(1, "test1", "~/Documents/Test1", "/home/matth/Downloads/b33ee549-66fd-4fc8-ae0e-17ef59f3fd09.png") },
+            { 2, CreateCard(2, "test1", "~/Documents/Test1", "") },
+            { 3, CreateCard(3, "test1", "~/Documents/Test1", "") },
+            { 4, CreateCard(4, "test1", "~/Documents/Test1", "") },
+        };
+
+
         return Task.CompletedTask;
+
+        (ProjectCard, ProjectInfo) CreateCard(int id, string name, string dir, string icon)
+        {
+            return (
+                new ProjectCard()
+                {
+                    id = id,
+                    name = name,
+                    directory = dir,
+                    iconUrl = icon,
+                },
+                new ProjectInfo()
+                {
+                    id = id,
+                    name = name,
+                    directory = dir,
+                    iconUrl = icon,
+                }
+            );
+        }
     }
 
     public async Task<ProjectCard[]> GetProjectCards()
     {
         await Task.Delay(1000);
-
-        return [
-            new ProjectCard(){
-                id = 0,
-                name = "Test 1",
-                directory = "~/Documents/Test1"
-            },
-            new ProjectCard(){
-                id = 1,
-                name = "Test 1",
-                directory = "~/Documents/Test1"
-            },
-            new ProjectCard(){
-                id = 2,
-                name = "Test 1",
-                directory = "~/Documents/Test1"
-            }
-        ];
+        return lookup!.Values.Select(v => v.Item1).ToArray();
     }
 
     public async Task<ProjectInfo> GetProjectInfo(int id)
     {
         await Task.Delay(1000);
-
-        return new ProjectInfo()
-        {
-            id = id,
-            directory = "/home/test/test/test/test/test/test/test/test/project",
-            name = "PROJECT_NAME??!",
-
-        };
+        return lookup![id].Item2;
     }
 }

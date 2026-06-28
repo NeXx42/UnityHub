@@ -8,6 +8,7 @@
 
       <StackPanel>
         <!-- ICON -->
+        <Image x:Name="img"/>
 
         <!-- Title bar -->
         <Grid>
@@ -25,7 +26,7 @@
           <Button Content="Open in Visual Studio" />
           <Button Content="Reveal in Explorer" />
 
-          <StackPanel>
+          <StackPanel Orientation="Horizontal">
             <Button Content="Git" />
             <Button Content="Shell" />
             <Button Content="Copy" />
