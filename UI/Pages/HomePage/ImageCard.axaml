@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.ImageCard" Width="330" Height="270">
+  <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}">
+    <Grid>
+      <Grid>
+      </Grid>
+
+      <!-- Content -->
+      <StackPanel VerticalAlignment="Bottom">
+        <Label x:Name="lbl_Name"/>
+        <Label x:Name="lbl_UnityVersion"/>
+        <Label x:Name="lbl_Location"/>
+
+        <StackPanel Orientation="Horizontal" x:Name="cont_Tags">
+        </StackPanel>
+
+        <Grid >
+          <Label x:Name="lbl_LastAccessed"/>
+          <Label x:Name="lbl_Branch"/>
+        </Grid>
+      </StackPanel>
+
+    </Grid>
+  </Border>
+</UserControl>

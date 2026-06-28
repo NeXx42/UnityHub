@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.Sidebar">
+  <Grid RowDefinitions="auto * auto" Width="200" Background="{DynamicResource BackgroundColourDark}">
+    <!-- icon -->
+    <Grid>
+      <Label>ICON</Label>
+    </Grid>
+
+    <!-- icon -->
+    <StackPanel Grid.Row="1">
+      <Label>All</Label>
+      <Label>Favs</Label>
+      <Label>Recent</Label>
+      <Label>Collections</Label>
+      <Label>Tags</Label>
+    </StackPanel>
+
+    <!-- icon -->
+    <Grid Grid.Row="2">
+      <Label>Size</Label>
+      <Label>Settings</Label>
+    </Grid>
+  </Grid>
+</UserControl>

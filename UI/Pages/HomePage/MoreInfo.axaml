@@ -1,0 +1,107 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.MoreInfo"
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectInfo" Width="250">
+  <Border BorderThickness="1 0 0 0" BorderBrush="{DynamicResource BackgroundBorder}">
+    <StackPanel>
+
+      <StackPanel>
+        <!-- ICON -->
+
+        <!-- Title bar -->
+        <Grid>
+          <Label Content="{Binding name}"/>
+        </Grid>
+
+        <!-- Version Bar -->
+        <Grid>
+          <Label x:Name="lbl_Version" />
+        </Grid>
+
+        <!-- Controls -->
+        <StackPanel>
+          <Button Content="Open Project" />
+          <Button Content="Open in Visual Studio" />
+          <Button Content="Reveal in Explorer" />
+
+          <StackPanel>
+            <Button Content="Git" />
+            <Button Content="Shell" />
+            <Button Content="Copy" />
+            <Button Content="Delete" />
+          </StackPanel>
+        </StackPanel>
+
+      </StackPanel>
+
+      <!-- Meta -->
+      <StackPanel Orientation="Vertical">
+        <StackPanel.Styles>
+          <Style Selector="Label">
+            <Setter Property="Foreground" Value="{DynamicResource TextColourMuted}"/>
+          </Style>
+          <Style Selector="StackPanel > StackPanel">
+            <Setter Property="Orientation" Value="Horizontal"/>
+          </Style>
+        </StackPanel.Styles>
+
+        <StackPanel>
+          <Label Width="100" Content="Path" />
+          <Label Content="{Binding directory}" />
+        </StackPanel>
+        <StackPanel>
+          <Label Width="100" Content="Last Opened" />
+          <Label Content="" />
+        </StackPanel>
+        <StackPanel>
+          <Label Width="100" Content="Created" />
+          <Label Content="" />
+        </StackPanel>
+        <StackPanel>
+          <Label Width="100" Content="Last Modified" />
+          <Label Content="" />
+        </StackPanel>
+        <StackPanel>
+          <Label Width="100" Content="Unity Version" />
+          <Label Content="" />
+        </StackPanel>
+        <StackPanel>
+          <Label Width="100" Content="Render Pipeline" />
+          <Label Content="" />
+        </StackPanel>
+        <StackPanel>
+          <Label Width="100" Content="Project Size" />
+          <Label Content="" />
+        </StackPanel>
+        <StackPanel>
+          <Label Width="100" Content="Packages" />
+          <Label Content="" />
+        </StackPanel>
+        <StackPanel>
+          <Label Width="100" Content="Git Branch" />
+          <Label Content="" />
+        </StackPanel>
+        <StackPanel>
+          <Label Width="100" Content="Git Status" />
+          <Label Content="" />
+        </StackPanel>
+
+      </StackPanel>
+
+      <!-- Tags -->
+      <WrapPanel>
+      </WrapPanel>
+
+      <!-- Collections -->
+      <WrapPanel>
+      </WrapPanel>
+
+      <StackPanel>
+        <Label>Notes</Label>
+        <TextBlock />
+      </StackPanel>
+
+    </StackPanel>
+  </Border>
+</UserControl>
