@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Avalonia;
 using Data.DataRepos;
+using Data_Sqlite;
 using Logic;
 
 namespace UI;
@@ -19,7 +20,7 @@ class Program
 
         async Task Setup()
         {
-            await DependencyManager.RegisterDataRepo<MockDataRepo>();
+            await DependencyManager.RegisterDataRepo<SqliteDataRepo>();
         }
     }
 

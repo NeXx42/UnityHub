@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Logic\Logic.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
-    <ProjectReference Include="..\Data\Data.csproj" />
+    <ProjectReference Include="..\Data_Mock\Data_Mock.csproj" />
+    <ProjectReference Include="..\Data_Sqlite\Data_Sqlite.csproj" />
   </ItemGroup>
 </Project>

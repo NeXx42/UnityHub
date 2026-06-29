@@ -1,5 +1,6 @@
 <Solution>
-  <Project Path="Data/Data.csproj" />
+  <Project Path="Data_Mock/Data_Mock.csproj" />
+  <Project Path="Data_Sqlite/Data_Sqlite.csproj" />
   <Project Path="Logic/Logic.csproj" />
   <Project Path="Models/Models.csproj" />
   <Project Path="UI/UI.csproj" />
