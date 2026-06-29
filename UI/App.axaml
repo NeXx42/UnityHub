@@ -4,6 +4,7 @@
 
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="/Styles/ButtonStyle.axaml"/>
     </Application.Styles>
 
     <Application.Resources>

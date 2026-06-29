@@ -22,9 +22,9 @@
 
         <!-- Controls -->
         <StackPanel>
-          <Button Content="Open Project" />
-          <Button Content="Open in Visual Studio" />
-          <Button Content="Reveal in Explorer" />
+          <Button x:Name="btn_OpenProject" Content="Open Project" Classes="Primary"/>
+          <Button x:Name="btn_OpenIDE" Content="Open in Visual Studio" />
+          <Button x:Name="btn_OpenExplorer" Content="Reveal in Explorer" />
 
           <StackPanel Orientation="Horizontal">
             <Button Content="Git" />

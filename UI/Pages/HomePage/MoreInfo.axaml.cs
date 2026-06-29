@@ -15,6 +15,7 @@ public partial class MoreInfo : UserControl
     public MoreInfo()
     {
         InitializeComponent();
+        btn_OpenProject.Click += (_, __) => _ = ProjectLogic.Launch(info!.id);
     }
 
     public async Task Show(int id)

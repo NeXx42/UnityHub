@@ -11,11 +11,11 @@ public class MockDataRepo : IDataRepository
     {
         lookup = new Dictionary<int, (ProjectCard, ProjectInfo)>()
         {
-            { 0, CreateCard(0, "test1", "~/Documents/Test1", "/home/matth/Downloads/003db2ba-1df6-4b75-9271-0e6491b89551.png") },
-            { 1, CreateCard(1, "test1", "~/Documents/Test1", "/home/matth/Downloads/b33ee549-66fd-4fc8-ae0e-17ef59f3fd09.png") },
-            { 2, CreateCard(2, "test1", "~/Documents/Test1", "") },
-            { 3, CreateCard(3, "test1", "~/Documents/Test1", "") },
-            { 4, CreateCard(4, "test1", "~/Documents/Test1", "") },
+            { 0, CreateCard(0, "test1", "/home/matth/Documents/Unity/SimpleMRPG", "/home/matth/Downloads/003db2ba-1df6-4b75-9271-0e6491b89551.png") },
+            { 1, CreateCard(1, "test1", "/home/matth/Documents/Unity/SimpleMRPG", "/home/matth/Downloads/b33ee549-66fd-4fc8-ae0e-17ef59f3fd09.png") },
+            { 2, CreateCard(2, "test1", "/home/matth/Documents/Unity/SimpleMRPG", "") },
+            { 3, CreateCard(3, "test1", "/home/matth/Documents/Unity/SimpleMRPG", "") },
+            { 4, CreateCard(4, "test1", "/home/matth/Documents/Unity/SimpleMRPG", "") },
         };
 
 
