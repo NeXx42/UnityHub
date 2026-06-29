@@ -53,4 +53,14 @@ public class MockDataRepo : IDataRepository
         await Task.Delay(1000);
         return lookup![id].Item2;
     }
+
+    public Task CreateCard(string name, string directory)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task CreateCards(IEnumerable<(string name, string directory)> cards)
+    {
+        throw new NotImplementedException();
+    }
 }

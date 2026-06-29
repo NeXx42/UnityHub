@@ -6,6 +6,12 @@ namespace Logic;
 
 public static class ProjectLogic
 {
+    private record struct ProjectCache
+    {
+        public ProjectCard? card;
+        public ProjectInfo? info;
+    }
+
     private static IDataRepository data => DependencyManager.dataRepo!;
     private static Dictionary<int, ProjectCache> cache = new Dictionary<int, ProjectCache>();
 
@@ -53,9 +59,35 @@ public static class ProjectLogic
         process.Start();
     }
 
-    private record struct ProjectCache
+    public static ProjectCard[] TryToUpload(string[] folders)
     {
-        public ProjectCard? card;
-        public ProjectInfo? info;
+        List<ProjectCard> potentialCards = new List<ProjectCard>();
+
+        foreach (string folder in folders)
+        {
+            if (!ValidateFolder(folder))
+                continue;
+
+            ProjectCard card = new ProjectCard()
+            {
+                id = -1,
+                directory = folder,
+                name = Path.GetFileName(folder),
+            };
+
+            potentialCards.Add(card);
+        }
+
+        return potentialCards.ToArray();
+
+        bool ValidateFolder(string folderName)
+        {
+            return true;
+        }
+    }
+
+    public static async Task UploadCardsPrimitive(ProjectCard[] cards)
+    {
+        await data.CreateCards(cards.Select(c => (c.name, c.directory)));
     }
 }

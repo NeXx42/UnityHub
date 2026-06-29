@@ -6,7 +6,7 @@ using Avalonia.Controls;
 
 namespace UI.Helpers;
 
-public class ReusableList<T> where T : UserControl
+public class ReusableList<T> where T : Control
 {
     private Panel parent;
     private List<T> cachedEntries;
@@ -25,11 +25,11 @@ public class ReusableList<T> where T : UserControl
         Draw(res, draw);
     }
 
-    public void Draw<DATA>(ICollection<DATA> inp, DrawCallback<DATA> draw)
+    public void Draw<DATA>(IEnumerable<DATA> inp, DrawCallback<DATA> draw)
     {
-        for (int i = 0; i < Math.Max(inp.Count, cachedEntries.Count); i++)
+        for (int i = 0; i < Math.Max(inp.Count(), cachedEntries.Count); i++)
         {
-            if (i >= inp.Count)
+            if (i >= inp.Count())
             {
                 cachedEntries[i].IsVisible = false;
                 continue;

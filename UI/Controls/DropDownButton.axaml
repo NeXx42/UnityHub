@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.DropDownButton"
+  xmlns:local="clr-namespace:UI.Controls" x:DataType="local:DropDownButton">
+  <Panel x:Name="RootPanel">
+
+    <StackPanel Orientation="Horizontal" Spacing="1">
+      <Button x:Name="btn" Content="{Binding ButtonLabel}" Background="{DynamicResource AccentColour}" CornerRadius="8 0 0 8" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+      <ToggleButton IsChecked="{Binding IsOpen, Mode=TwoWay}" Background="{DynamicResource AccentColour}" CornerRadius="0 8 8 0" VerticalAlignment="Stretch">
+        <Path Data="M 0 0 L 6 6 L 12 0" Stroke="White" StrokeThickness="2" StrokeLineCap="Round" HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </ToggleButton>
+    </StackPanel>
+
+    <Popup IsOpen="{Binding IsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=RootPanel}" MinWidth="{Binding ElementName=RootPanel, Path=Bounds.Width}" IsLightDismissEnabled="True">
+      <Border Background="Red">
+        <StackPanel x:Name="container"/>
+      </Border>
+    </Popup>
+  </Panel>
+</UserControl>
