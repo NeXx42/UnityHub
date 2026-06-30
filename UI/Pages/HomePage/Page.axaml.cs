@@ -7,6 +7,7 @@ using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Logic;
 using Models.Data;
+using Models.Helpers;
 using UI.Helpers;
 using UI.Modals;
 using UI.Pages.HomePage;
@@ -89,7 +90,7 @@ public partial class Page : UserControl
 
         async Task AttemptUploadOfDirectories(string[] toUpload)
         {
-            ProjectCard[] cards = ProjectLogic.TryToUpload(toUpload);
+            ProjectInfo[] cards = await ProjectLogic.TryToUpload(toUpload);
 
             // show popup to confirm each card (this code would be in there)
             await ProjectLogic.UploadCardsPrimitive(cards);

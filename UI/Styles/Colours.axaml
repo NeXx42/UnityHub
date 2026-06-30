@@ -16,6 +16,12 @@
   <Color x:Key="Colour_ElementBackground">#171c21</Color>
   <SolidColorBrush x:Key="ElementBackground" Color="{DynamicResource Colour_ElementBackground}" />
 
+  <Color x:Key="Colour_ButtonBorder">#282D33</Color>
+  <SolidColorBrush x:Key="ButtonBorder" Color="{DynamicResource Colour_ButtonBorder}" />
+
+  <Color x:Key="Colour_ButtonBackground">#1C2127</Color>
+  <SolidColorBrush x:Key="ButtonBackground" Color="{DynamicResource Colour_ButtonBackground}" />
+
 
 
   <Color x:Key="Colour_AccentColour">#5735b8</Color>

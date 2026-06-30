@@ -54,12 +54,12 @@ public class MockDataRepo : IDataRepository
         return lookup![id].Item2;
     }
 
-    public Task CreateCard(string name, string directory)
+    public Task CreateCard(ProjectInfo info)
     {
         throw new NotImplementedException();
     }
 
-    public Task CreateCards(IEnumerable<(string name, string directory)> cards)
+    public Task CreateCards(IEnumerable<ProjectInfo> cards)
     {
         throw new NotImplementedException();
     }

@@ -24,7 +24,11 @@ public class SqliteDataRepo : IDataRepository
         {
             id = dbData.id,
             name = dbData.name ?? "",
-            directory = dbData.directory
+            directory = dbData.directory,
+
+            version = dbData.version,
+            packages = dbData.packageCount,
+            renderPipeline = (RenderPipelineTypes?)dbData.pipelineType
         };
     }
 
@@ -52,26 +56,30 @@ public class SqliteDataRepo : IDataRepository
     }
 
 
-    public async Task CreateCard(string name, string directory)
+    public async Task CreateCard(ProjectInfo info)
     {
         await Database_Manager.InsertItem(new dbo_Project
         {
-            name = name,
-            directory = directory
+            name = info.name,
+            directory = info.directory
         });
     }
 
-    public async Task CreateCards(IEnumerable<(string name, string directory)> cards)
+    public async Task CreateCards(IEnumerable<ProjectInfo> cards)
     {
         dbo_Project[] dbObjs = cards.Select(MapToDatabaseObject).ToArray();
         await Database_Manager.InsertItem(dbObjs);
 
-        dbo_Project MapToDatabaseObject((string, string) info)
+        dbo_Project MapToDatabaseObject(ProjectInfo info)
         {
             return new dbo_Project
             {
-                name = info.Item1,
-                directory = info.Item2,
+                name = info.name,
+                directory = info.directory,
+
+                version = info.version,
+                packageCount = info.packages,
+                pipelineType = (int?)info.renderPipeline
             };
         }
     }

@@ -8,6 +8,6 @@ public interface IDataRepository
     public Task<ProjectCard[]> GetProjectCards();
     public Task<ProjectInfo> GetProjectInfo(int id);
 
-    public Task CreateCard(string name, string directory);
-    public Task CreateCards(IEnumerable<(string name, string directory)> cards);
+    public Task CreateCard(ProjectInfo info);
+    public Task CreateCards(IEnumerable<ProjectInfo> cards);
 }

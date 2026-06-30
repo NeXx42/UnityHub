@@ -2,50 +2,60 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.MoreInfo"
-  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectInfo" Width="250">
-  <Border BorderThickness="1 0 0 0" BorderBrush="{DynamicResource BackgroundBorder}">
-    <StackPanel>
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectInfo" Width="340">
+  <Border BorderThickness="1 0 0 0" BorderBrush="{DynamicResource ButtonBorder}" Padding="15">
+    <StackPanel Spacing="15">
 
-      <StackPanel>
+      <StackPanel Spacing="10">
         <!-- ICON -->
-        <Image x:Name="img"/>
+        <Border Width="310" Height="200" Background="Red" CornerRadius="18" ClipToBounds="True">
+          <Image x:Name="img"/>
+        </Border>
 
         <!-- Title bar -->
         <Grid>
           <Label Content="{Binding name}"/>
         </Grid>
 
-        <!-- Version Bar -->
-        <Grid>
-          <Label x:Name="lbl_Version" />
-        </Grid>
-
         <!-- Controls -->
-        <StackPanel>
+        <StackPanel Spacing="5">
+          <StackPanel.Styles>
+            <Style Selector="Button">
+              <Setter Property="HorizontalAlignment" Value="Stretch"/>
+              <Setter Property="HorizontalContentAlignment" Value="Center"/>
+              <Setter Property="Padding" Value="0 10"/>
+            </Style>
+          </StackPanel.Styles>
+
           <Button x:Name="btn_OpenProject" Content="Open Project" Classes="Primary"/>
           <Button x:Name="btn_OpenIDE" Content="Open in Visual Studio" />
           <Button x:Name="btn_OpenExplorer" Content="Reveal in Explorer" />
 
-          <StackPanel Orientation="Horizontal">
+          <Grid ColumnDefinitions="* * * *">
             <Button Content="Git" />
-            <Button Content="Shell" />
-            <Button Content="Copy" />
-            <Button Content="Delete" />
-          </StackPanel>
+            <Button Margin="5 0 0 0" Grid.Column="1" Content="Shell" />
+            <Button Margin="5 0 0 0" Grid.Column="2" Content="Copy" />
+            <Button Margin="5 0 0 0" Grid.Column="3" Content="Delete" />
+          </Grid>
         </StackPanel>
 
       </StackPanel>
 
+      <Border Background="{DynamicResource ButtonBorder}" Height="1" HorizontalAlignment="Stretch"/>
+
       <!-- Meta -->
       <StackPanel Orientation="Vertical">
         <StackPanel.Styles>
-          <Style Selector="Label">
+          <Style Selector="StackPanel > StackPanel > Label">
             <Setter Property="Foreground" Value="{DynamicResource TextColourMuted}"/>
+            <Setter Property="FontSize" Value="12"/>
           </Style>
           <Style Selector="StackPanel > StackPanel">
             <Setter Property="Orientation" Value="Horizontal"/>
           </Style>
         </StackPanel.Styles>
+
+        <Label Content="Details" Foreground="White" Margin="0 0 0 10"/>
 
         <StackPanel>
           <Label Width="100" Content="Path" />
@@ -65,11 +75,11 @@
         </StackPanel>
         <StackPanel>
           <Label Width="100" Content="Unity Version" />
-          <Label Content="" />
+          <Label Content="{Binding version}" />
         </StackPanel>
         <StackPanel>
           <Label Width="100" Content="Render Pipeline" />
-          <Label Content="" />
+          <Label Content="{Binding renderPipelineName}" />
         </StackPanel>
         <StackPanel>
           <Label Width="100" Content="Project Size" />
@@ -77,7 +87,7 @@
         </StackPanel>
         <StackPanel>
           <Label Width="100" Content="Packages" />
-          <Label Content="" />
+          <Label Content="{Binding packages}" />
         </StackPanel>
         <StackPanel>
           <Label Width="100" Content="Git Branch" />
@@ -91,12 +101,18 @@
       </StackPanel>
 
       <!-- Tags -->
-      <WrapPanel>
-      </WrapPanel>
+      <StackPanel>
+        <Label>Tags</Label>
+        <WrapPanel>
+        </WrapPanel>
+      </StackPanel>
 
       <!-- Collections -->
-      <WrapPanel>
-      </WrapPanel>
+      <StackPanel>
+        <Label>Collection</Label>
+        <WrapPanel>
+        </WrapPanel>
+      </StackPanel>
 
       <StackPanel>
         <Label>Notes</Label>

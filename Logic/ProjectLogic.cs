@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Models.Data;
 using Models.Interfaces;
 
@@ -39,10 +40,9 @@ public static class ProjectLogic
         return info;
     }
 
-    public static async Task Launch(int id)
+    public static async Task Launch(int id) => await Launch(await GetProjectInfo(id));
+    public static async Task Launch(ProjectInfo info)
     {
-        ProjectInfo info = await GetProjectInfo(id);
-
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
             FileName = "/home/matth/Unity/Hub/Editor/6000.6.0a3/Editor/Unity"
@@ -59,22 +59,44 @@ public static class ProjectLogic
         process.Start();
     }
 
-    public static ProjectCard[] TryToUpload(string[] folders)
+    public static async Task BrowseTo(int id) => await BrowseTo(await GetProjectInfo(id));
+    public static async Task BrowseTo(ProjectInfo info)
     {
-        List<ProjectCard> potentialCards = new List<ProjectCard>();
+        ProcessStartInfo startInfo = new ProcessStartInfo()
+        {
+            FileName = "xdg-open",
+            UseShellExecute = false,
+        };
+
+        startInfo.ArgumentList.Add(info.directory);
+
+        Process process = new Process()
+        {
+            StartInfo = startInfo
+        };
+
+        process.Start();
+    }
+
+    public static async Task<ProjectInfo[]> TryToUpload(string[] folders)
+    {
+        List<ProjectInfo> potentialCards = new List<ProjectInfo>();
 
         foreach (string folder in folders)
         {
             if (!ValidateFolder(folder))
                 continue;
 
-            ProjectCard card = new ProjectCard()
+            DirectoryInfo dirInfo = new DirectoryInfo(folder);
+
+            ProjectInfo card = new ProjectInfo()
             {
                 id = -1,
                 directory = folder,
-                name = Path.GetFileName(folder),
+                name = dirInfo.Name
             };
 
+            await DeriveProjectInfo(card);
             potentialCards.Add(card);
         }
 
@@ -82,12 +104,57 @@ public static class ProjectLogic
 
         bool ValidateFolder(string folderName)
         {
-            return true;
+            if (!folderName.EndsWith("/"))
+                folderName = folderName + "/";
+
+            var subDirs = Directory.GetDirectories(folderName)
+                .Where(d => d.EndsWith("Assets") || d.EndsWith("ProjectSettings") || d.EndsWith("Packages"));
+
+            return subDirs.Count() == 3;
         }
     }
 
-    public static async Task UploadCardsPrimitive(ProjectCard[] cards)
+    public static async Task UploadCardsPrimitive(ProjectInfo[] cards)
     {
-        await data.CreateCards(cards.Select(c => (c.name, c.directory)));
+        await data.CreateCards(cards);
+    }
+
+    public static async Task DeriveProjectInfo(ProjectInfo info)
+    {
+        string versionFile = Path.Combine(info.directory, "ProjectSettings", "ProjectVersion.txt");
+
+        if (File.Exists(versionFile))
+        {
+            using (StreamReader reader = new StreamReader(versionFile))
+            {
+                string? line = await reader.ReadLineAsync();
+
+                if (!string.IsNullOrEmpty(line))
+                {
+                    string[] parts = line.Split(":");
+                    info.version = parts[1].Replace(" ", "");
+                }
+            }
+        }
+
+        string manifestFile = Path.Combine(info.directory, "Packages", "manifest.json");
+
+        if (File.Exists(manifestFile))
+        {
+            using (StreamReader reader = new StreamReader(manifestFile))
+            {
+                string manifestJson = await reader.ReadToEndAsync();
+                JsonElement element = JsonDocument.Parse(manifestJson).RootElement.GetProperty("dependencies");
+
+                info.packages = element.GetPropertyCount();
+
+                if (element.TryGetProperty("com.unity.render-pipelines.universal", out _))
+                    info.renderPipeline = RenderPipelineTypes.Universal_Render_Pipeline;
+                else if (element.TryGetProperty("com.unity.render-pipelines.high-definition", out _))
+                    info.renderPipeline = RenderPipelineTypes.High_Definition_Render_Pipeline;
+                else
+                    info.renderPipeline = RenderPipelineTypes.Built_In_Render_Pipeline;
+            }
+        }
     }
 }
