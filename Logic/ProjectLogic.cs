@@ -16,9 +16,45 @@ public static class ProjectLogic
     private static IDataRepository data => DependencyManager.dataRepo!;
     private static Dictionary<int, ProjectCache> cache = new Dictionary<int, ProjectCache>();
 
-    public static async Task<ProjectCard[]> GetProjects()
+    public static async Task<ProjectCard[]> Search(int page, int take)
     {
-        return await data.GetProjectCards();
+        (int[] results, _) = await data.Search(page, take);
+
+        List<int> missingCardIds = new List<int>();
+        List<ProjectCard> cards = new List<ProjectCard>();
+
+        ProjectCache infoCache;
+
+        foreach (int card in results)
+        {
+            if (cache.TryGetValue(card, out infoCache) && infoCache.card != null)
+            {
+                cards.Add(infoCache.card);
+                continue;
+            }
+
+            missingCardIds.Add(card);
+        }
+
+        if (missingCardIds.Count > 0)
+        {
+            ProjectCard[] missingCards = await data.GetCardInfo(missingCardIds);
+
+            foreach (ProjectCard card in missingCards)
+            {
+                if (!cache.TryGetValue(card.id, out infoCache))
+                    infoCache = new ProjectCache();
+
+                cache[card.id] = infoCache with
+                {
+                    card = card
+                };
+
+                cards.Add(card);
+            }
+        }
+
+        return cards.ToArray();
     }
 
     public static async Task<ProjectInfo> GetProjectInfo(int id)

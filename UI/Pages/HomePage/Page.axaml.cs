@@ -44,7 +44,7 @@ public partial class Page : UserControl
 
     private async Task DrawCards()
     {
-        cardInfo = await ProjectLogic.GetProjects();
+        cardInfo = await ProjectLogic.Search(0, 16);
         cards.Draw(cardInfo, (c, i, dat) => _ = c.Draw(dat, i, SelectCard));
     }
 

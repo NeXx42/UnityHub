@@ -1,12 +1,16 @@
 <UserControl xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.ImageCard" Width="350" Height="270"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.ImageCard" Width="320" Height="220"
   xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectCard">
   <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="20" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" ClipToBounds="True">
     <Grid>
       <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch">
-        <Image x:Name="img" VerticalAlignment="Top" HorizontalAlignment="Stretch" StretchDirection="DownOnly"/>
+        <Image x:Name="img" VerticalAlignment="Top" HorizontalAlignment="Stretch" StretchDirection="DownOnly">
+          <Image.Effect>
+            <BlurEffect Radius="2"/>
+          </Image.Effect>
+        </Image>
       </Grid>
 
       <!-- Gradient overlay -->
@@ -14,8 +18,7 @@
         <Border.Background>
           <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
             <GradientStop Offset="0" Color="#0012171c"/>
-            <GradientStop Offset="0.5" Color="#12171c"/>
-            <GradientStop Offset="1" Color="#12171c"/>
+            <GradientStop Offset=".8" Color="#12171c"/>
           </LinearGradientBrush>
         </Border.Background>
       </Border>

@@ -63,4 +63,14 @@ public class MockDataRepo : IDataRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<(int[], int)> Search(int page, int take)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ProjectCard[]> GetCardInfo(IEnumerable<int> ids)
+    {
+        throw new NotImplementedException();
+    }
 }
