@@ -1,29 +1,49 @@
 <UserControl xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.ImageCard" Width="330" Height="270">
-  <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}" ClipToBounds="True">
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.ImageCard" Width="350" Height="270"
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectCard">
+  <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="20" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" ClipToBounds="True">
     <Grid>
       <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch">
-        <Image x:Name="img" Stretch="UniformToFill" />
+        <Image x:Name="img" VerticalAlignment="Top" HorizontalAlignment="Stretch" StretchDirection="DownOnly"/>
       </Grid>
 
       <!-- Gradient overlay -->
-      <Border VerticalAlignment="Bottom" Height="200">
+      <Border VerticalAlignment="Bottom" Height="170" Margin="0 0 0 20">
         <Border.Background>
           <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-            <GradientStop Offset="0" Color="Transparent"/>
-            <GradientStop Offset="0.9" Color="{DynamicResource Colour_BackgroundColour}"/>
-            <GradientStop Offset="1" Color="{DynamicResource Colour_BackgroundColour}"/>
+            <GradientStop Offset="0" Color="#0012171c"/>
+            <GradientStop Offset="0.5" Color="#12171c"/>
+            <GradientStop Offset="1" Color="#12171c"/>
           </LinearGradientBrush>
         </Border.Background>
       </Border>
 
       <!-- Content -->
-      <StackPanel VerticalAlignment="Bottom" Height="200">
-        <Label x:Name="lbl_Name"/>
-        <Label x:Name="lbl_UnityVersion"/>
-        <Label x:Name="lbl_Location"/>
+      <StackPanel VerticalAlignment="Bottom" Height="100" Margin="5">
+        <Label Content="{Binding name}"/>
+
+        <StackPanel Orientation="Horizontal" x:Name="cont_Version">
+          <StackPanel.Styles>
+            <Style Selector="Label">
+              <Setter Property="Foreground" Value="{DynamicResource TextColourMuted}" />
+            </Style>
+            <Style Selector="StackPanel.Missing > Label">
+              <Setter Property="Foreground" Value="Red" />
+            </Style>
+            <Style Selector="StackPanel.Missing > Viewbox > Path">
+              <Setter Property="Fill" Value="Red" />
+            </Style>
+          </StackPanel.Styles>
+
+          <Viewbox Height="12" Width="12">
+            <Path Data="m 12.8497 1 v 3.9324 l 3.4868 2.0108 c 0.0279 0.0167 0.0501 0.0446 0.0668 0.0724 c 0.0223 0.0278 0.0279 0.0613 0.0279 0.0947 c 0 0.0334 -0.0056 0.0668 -0.0279 0.1003 c -0.0167 0.0278 -0.039 0.0501 -0.0668 0.0724 l -4.1441 2.384 c -0.0557 0.039 -0.1281 0.0557 -0.195 0.0557 c -0.0668 0 -0.1337 -0.0167 -0.195 -0.0557 l -4.1441 -2.384 c -0.0279 -0.0167 -0.0501 -0.0446 -0.0668 -0.0724 c -0.0167 -0.0279 -0.0279 -0.0613 -0.0279 -0.0947 c 0 -0.0334 0.0111 -0.0668 0.0279 -0.1003 c 0.0167 -0.0279 0.039 -0.0501 0.0668 -0.0724 l 3.4868 -2.0052 v -3.938 l -8.8953 5.13 v 10.2544 l 3.4144 -1.9662 v -4.0215 c 0 -0.0334 0.0056 -0.0668 0.0223 -0.0947 c 0.0167 -0.0279 0.0446 -0.0501 0.0724 -0.0724 c 0.0278 -0.0167 0.0613 -0.0223 0.1003 -0.0223 c 0.0334 0 0.0668 0.0056 0.0947 0.0223 l 4.1441 2.3895 c 0.0613 0.0334 0.1114 0.0836 0.1448 0.1448 c 0.0334 0.0557 0.0501 0.1225 0.0501 0.1949 v 4.7735 c 0 0.0334 -0.0056 0.0668 -0.0278 0.1003 c -0.0167 0.0279 -0.039 0.0557 -0.0668 0.0724 c -0.0334 0.0167 -0.0668 0.0223 -0.1003 0.0223 c -0.0334 0 -0.0668 -0.0056 -0.0947 -0.0223 l -3.4868 -2.0108 l -3.4144 1.9662 l 8.8953 5.13 l 8.8953 -5.13 l -3.4144 -1.9662 l -3.4868 2.0108 c -0.0278 0.0167 -0.0613 0.0223 -0.0947 0.0223 c -0.0334 0 -0.0668 -0.0111 -0.0947 -0.0279 c -0.0334 -0.0167 -0.0557 -0.039 -0.0724 -0.0668 c -0.0167 -0.0334 -0.0279 -0.0668 -0.0279 -0.1003 v -4.7735 c 0 -0.0724 0.0167 -0.1393 0.0501 -0.1949 c 0.039 -0.0613 0.0836 -0.1114 0.1448 -0.1448 l 4.1441 -2.3895 c 0.0278 -0.0167 0.0613 -0.0223 0.0947 -0.0223 c 0.0334 0 0.0668 0.0056 0.1003 0.0223 c 0.0278 0.0223 0.0501 0.0446 0.0668 0.0724 c 0.0223 0.0279 0.0279 0.0613 0.0279 0.1003 v 4.016 l 3.4144 1.9662 v -10.2544 l -8.8953 -5.13 z" Fill="white" />
+          </Viewbox>
+          <Label x:Name="lbl_Version" Content="{Binding version}" FontSize="12"/>
+        </StackPanel>
+
+        <Label Content="{Binding directory}" FontSize="10" Foreground="{DynamicResource TextColourMuted}"/>
 
         <StackPanel Orientation="Horizontal" x:Name="cont_Tags">
         </StackPanel>

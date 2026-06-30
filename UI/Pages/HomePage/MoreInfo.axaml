@@ -3,12 +3,12 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.MoreInfo"
   xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectInfo" Width="340">
-  <Border BorderThickness="1 0 0 0" BorderBrush="{DynamicResource ButtonBorder}" Padding="15">
+  <Border BorderThickness="1 0 0 0" BorderBrush="{DynamicResource ButtonBorder}" Padding="5 0 0 0">
     <StackPanel Spacing="15">
 
       <StackPanel Spacing="10">
         <!-- ICON -->
-        <Border Width="310" Height="200" Background="Red" CornerRadius="18" ClipToBounds="True">
+        <Border HorizontalAlignment="Stretch" Height="200" Background="Red" CornerRadius="18" ClipToBounds="True">
           <Image x:Name="img"/>
         </Border>
 

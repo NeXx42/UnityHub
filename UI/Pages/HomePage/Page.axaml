@@ -4,16 +4,27 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.Page"
   xmlns:local="clr-namespace:UI.Pages.HomePage"
   xmlns:controls="clr-namespace:UI.Controls">
-  <Grid ColumnDefinitions="* Auto">
-    <Grid RowDefinitions="200 *">
-      <Grid>
-        <controls:DropDownButton x:Name="btn_NewProject" ButtonLabel="New Project"/>
-      </Grid>
+  <Grid ColumnDefinitions="* 10 Auto" Margin="15">
+    <Grid RowDefinitions="Auto *">
+      <StackPanel Orientation="Vertical">
+        <Grid Height="45">
+          <TextBox HorizontalAlignment="Left"/>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
+            <Button VerticalAlignment="Stretch" Content="Refresh"/>
+            <Button VerticalAlignment="Stretch" Content="Sort: Last Opened"/>
+            <controls:DropDownButton VerticalAlignment="Stretch" x:Name="btn_NewProject" ButtonLabel="New Project"/>
+          </StackPanel>
+        </Grid>
+
+        <StackPanel>
+          <Label Content="100 Projects"></Label>
+        </StackPanel>
+      </StackPanel>
 
 
-      <WrapPanel Grid.Row="1" x:Name="grid_Content" />
+      <WrapPanel Grid.Row="1" x:Name="grid_Content" ItemSpacing="10" LineSpacing="10" />
     </Grid>
 
-    <local:MoreInfo Grid.Column="1" x:Name="control_MoreInfo"/>
+    <local:MoreInfo Grid.Column="2" x:Name="control_MoreInfo"/>
   </Grid>
 </UserControl>

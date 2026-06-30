@@ -40,25 +40,6 @@ public static class ProjectLogic
         return info;
     }
 
-    public static async Task Launch(int id) => await Launch(await GetProjectInfo(id));
-    public static async Task Launch(ProjectInfo info)
-    {
-        ProcessStartInfo startInfo = new ProcessStartInfo()
-        {
-            FileName = "/home/matth/Unity/Hub/Editor/6000.6.0a3/Editor/Unity"
-        };
-
-        startInfo.ArgumentList.Add("-projectPath");
-        startInfo.ArgumentList.Add(info.directory);
-
-        Process process = new Process()
-        {
-            StartInfo = startInfo
-        };
-
-        process.Start();
-    }
-
     public static async Task BrowseTo(int id) => await BrowseTo(await GetProjectInfo(id));
     public static async Task BrowseTo(ProjectInfo info)
     {

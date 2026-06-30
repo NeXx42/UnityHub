@@ -11,6 +11,7 @@ public class dbo_Project : IDatabase_Table
 
     public string? name { get; set; }
     public required string directory { get; set; }
+    public string? iconPath { get; set; }
 
     public string? version { get; set; }
     public int? packageCount { get; set; }
@@ -21,6 +22,7 @@ public class dbo_Project : IDatabase_Table
 
         new Database_Column { columnName = nameof(name), columnType = Database_ColumnType.TEXT, allowNull = true },
         new Database_Column { columnName = nameof(directory), columnType = Database_ColumnType.TEXT, allowNull = false },
+        new Database_Column { columnName = nameof(iconPath), columnType = Database_ColumnType.TEXT, allowNull = true },
 
         new Database_Column { columnName = nameof(version), columnType = Database_ColumnType.TEXT, allowNull = true },
         new Database_Column { columnName = nameof(packageCount), columnType = Database_ColumnType.INTEGER, allowNull = true },

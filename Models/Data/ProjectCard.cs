@@ -4,7 +4,8 @@ public class ProjectCard
 {
     public required int id;
 
-    public required string name;
-    public required string directory;
-    public string? iconUrl;
+    public required string name { get; set; }
+    public required string directory { get; set; }
+    public string? iconUrl { get; set; }
+    public string? version { get; set; }
 }

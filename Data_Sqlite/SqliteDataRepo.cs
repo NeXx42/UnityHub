@@ -25,6 +25,7 @@ public class SqliteDataRepo : IDataRepository
             id = dbData.id,
             name = dbData.name ?? "",
             directory = dbData.directory,
+            iconUrl = dbData.iconPath,
 
             version = dbData.version,
             packages = dbData.packageCount,
@@ -38,7 +39,9 @@ public class SqliteDataRepo : IDataRepository
         {
             id = dbData.id,
             name = dbData.name ?? "",
-            directory = dbData.directory
+            directory = dbData.directory,
+            version = dbData.version,
+            iconUrl = dbData.iconPath,
         };
     }
 
