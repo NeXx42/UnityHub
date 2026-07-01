@@ -23,6 +23,9 @@ public partial class MainWindow : Window
         instance = this;
         activeModals = new Stack<ModalContainer>();
 
+
+        el_Sidebar.Init(page_HomePage);
+
         try
         {
             _ = page_HomePage.Draw();

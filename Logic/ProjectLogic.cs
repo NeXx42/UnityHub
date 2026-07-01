@@ -16,9 +16,9 @@ public static class ProjectLogic
     private static IDataRepository data => DependencyManager.dataRepo!;
     private static Dictionary<int, ProjectCache> cache = new Dictionary<int, ProjectCache>();
 
-    public static async Task<ProjectCard[]> Search(int page, int take)
+    public static async Task<ProjectCard[]> Search(ProjectSearch search)
     {
-        (int[] results, _) = await data.Search(page, take);
+        (int[] results, _) = await data.Search(search);
 
         List<int> missingCardIds = new List<int>();
         List<ProjectCard> cards = new List<ProjectCard>();

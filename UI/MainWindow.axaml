@@ -6,7 +6,7 @@
     xmlns:homePage="clr-namespace:UI.Pages.HomePage" Background="{DynamicResource BackgroundColour}">
     <Grid>
         <Grid ColumnDefinitions="auto *">
-            <controls:Sidebar/>
+            <controls:Sidebar x:Name="el_Sidebar"/>
             <homePage:Page x:Name="page_HomePage" Grid.Column="1"/>
         </Grid>
 

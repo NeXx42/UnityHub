@@ -1,7 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.Sidebar">
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.Sidebar"
+  xmlns:local="clr-namespace:UI.Controls">
   <Grid RowDefinitions="auto * auto" Width="200" Background="{DynamicResource BackgroundColourDark}">
     <!-- icon -->
     <Grid>
@@ -9,12 +10,12 @@
     </Grid>
 
     <!-- icon -->
-    <StackPanel Grid.Row="1">
-      <Label>All</Label>
-      <Label>Favs</Label>
-      <Label>Recent</Label>
-      <Label>Collections</Label>
-      <Label>Tags</Label>
+    <StackPanel Grid.Row="1" x:Name="cont_Entries">
+      <local:SidebarEntry x:Name="entry_All" Label="All Projects"/>
+      <local:SidebarEntry x:Name="entry_Favs" Label="Favourites"/>
+      <local:SidebarEntry x:Name="entry_Recent" Label="Recent"/>
+      <local:SidebarEntry x:Name="entry_Cols" Label="Collections"/>
+      <local:SidebarEntry x:Name="entry_Tags" Label="Tags"/>
     </StackPanel>
 
     <!-- icon -->

@@ -56,10 +56,10 @@ public class SqliteDataRepo : IDataRepository
     }
 
 
-    public async Task<(int[], int)> Search(int page, int take)
+    public async Task<(int[], int)> Search(ProjectSearch search)
     {
         StringBuilder sql = new StringBuilder($"SELECT p.{nameof(dbo_Project.id)} as id, count(*) OVER() as total_count FROM {dbo_Project.tableName} p");
-        sql.Append($" LIMIT {take} OFFSET {page * take}");
+        sql.Append($" LIMIT {search.take} OFFSET {search.skip}");
 
         int? totalCount = null;
         int[] res = await database!.GetItemsGeneric(sql.ToString(), DeserializeDatabaseRequest, CancellationToken.None);

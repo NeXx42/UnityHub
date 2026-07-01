@@ -64,7 +64,7 @@ public class MockDataRepo : IDataRepository
         throw new NotImplementedException();
     }
 
-    public Task<(int[], int)> Search(int page, int take)
+    public Task<(int[], int)> Search(ProjectSearch search)
     {
         throw new NotImplementedException();
     }

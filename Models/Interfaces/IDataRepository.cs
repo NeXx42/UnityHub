@@ -6,7 +6,7 @@ public interface IDataRepository
 {
     public Task Setup();
 
-    public Task<(int[], int)> Search(int page, int take);
+    public Task<(int[], int)> Search(ProjectSearch search);
 
     public Task<ProjectCard[]> GetCardInfo(IEnumerable<int> ids);
     public Task<ProjectInfo> GetProjectInfo(int id);

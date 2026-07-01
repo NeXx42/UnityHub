@@ -39,12 +39,17 @@ public partial class Page : UserControl
 
     public async Task Draw()
     {
-        await DrawCards();
+        await SearchCards(new ProjectSearch()
+        {
+            take = 16,
+        });
     }
 
-    private async Task DrawCards()
+    public async Task SearchCards(ProjectSearch search)
     {
-        cardInfo = await ProjectLogic.Search(0, 16);
+        search.take = 16;
+
+        cardInfo = await ProjectLogic.Search(search);
         cards.Draw(cardInfo, (c, i, dat) => _ = c.Draw(dat, i, SelectCard));
     }
 
