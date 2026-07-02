@@ -27,7 +27,6 @@ public partial class SidebarCollectionEntry : UserControl
     public SidebarCollectionEntry()
     {
         InitializeComponent();
-        DataContext = this;
     }
 
     public async Task Init(Func<int, Task> onSelect, Func<Task<CollectionData[]>> dataFetch)

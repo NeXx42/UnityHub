@@ -1,17 +1,13 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
-using Avalonia.Markup.Xaml;
 using Logic;
 using Models.Data;
 using Models.Helpers;
 using Models.Interfaces;
 using UI.Helpers;
 using UI.Modals;
-using UI.Pages.HomePage;
 
 namespace UI.Pages.HomePage;
 
@@ -36,14 +32,6 @@ public partial class Page : UserControl
 
         btn_NewProject.RegisterOptions(((NewProjectOptions[])System.Enum.GetValues(typeof(NewProjectOptions))).Select(s => s.GetDisplayName()), SelectNewProjectOption);
         btn_NewProject.RegisterClick(CreateNewProject);
-    }
-
-    public async Task Draw()
-    {
-        await SearchCards(new ProjectSearch()
-        {
-            take = 16,
-        });
     }
 
     public async Task SearchCards(ProjectSearch search)

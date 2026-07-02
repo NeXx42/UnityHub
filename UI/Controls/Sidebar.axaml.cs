@@ -28,6 +28,8 @@ public partial class Sidebar : UserControl
         entry_Recent.Init(() => UpdateSelection(2));
         await entry_Cols.Init((cId) => UpdateSelection(3, cId), DependencyManager.GetService<ITaggingLogic>()!.GetCollections);
         await entry_Tags.Init((cId) => UpdateSelection(4, cId), DependencyManager.GetService<ITaggingLogic>()!.GetTags);
+
+        await UpdateSelection(0);
     }
 
     private async Task UpdateSelection(int id, int? subArg = null)
@@ -53,14 +55,11 @@ public partial class Sidebar : UserControl
 
         for (int i = 0; i < cont_Entries.Children.Count; i++)
         {
+            var entry = cont_Entries.Children[i];
             if (i == id)
-            {
-                cont_Entries.Children[i].Classes.RemoveRange(0, cont_Entries.Children[i].Classes.Count);
-            }
+                entry.Classes.Add("Selected");
             else
-            {
-                cont_Entries.Children[i].Classes.Add("Selected");
-            }
+                entry.Classes.Remove("Selected");
         }
 
         await homepage!.SearchCards(search);

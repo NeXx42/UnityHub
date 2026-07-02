@@ -24,11 +24,10 @@ public partial class MainWindow : Window
         activeModals = new Stack<ModalContainer>();
 
 
-        el_Sidebar.Init(page_HomePage);
 
         try
         {
-            _ = page_HomePage.Draw();
+            _ = el_Sidebar.Init(page_HomePage);
         }
         catch (Exception e)
         {
