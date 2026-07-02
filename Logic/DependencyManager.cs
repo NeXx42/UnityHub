@@ -1,26 +1,29 @@
+using System.Collections.Concurrent;
 using Models.Interfaces;
 
 namespace Logic;
 
 public static class DependencyManager
 {
-    public static IDataRepository? dataRepo { private set; get; }
+    private static readonly ConcurrentDictionary<Type, object> activeServices = new();
 
-    public static async Task RegisterDataRepo<T>() where T : IDataRepository
+    public static void RegisterService<TServiceType, TServiceImplementation>()
+        where TServiceType : class
+        where TServiceImplementation : class, TServiceType
     {
-        dataRepo = Activator.CreateInstance<T>();
-        await SetupDependency(dataRepo.Setup);
+        _ = RegisterService<TServiceType, TServiceImplementation>(() => Task.FromResult(Activator.CreateInstance<TServiceImplementation>()));
     }
 
-    private static async Task SetupDependency(Func<Task> Setup)
+    public static async Task RegisterService<TServiceType, TServiceImplementation>(Func<Task<TServiceImplementation>> factory)
+        where TServiceType : class
+        where TServiceImplementation : class, TServiceType
     {
-        try
-        {
-            await Setup();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Failed to setup dependency\n{e.Message}");
-        }
+        TServiceImplementation service = await factory();
+        activeServices[typeof(TServiceType)] = service;
+    }
+
+    public static T? GetService<T>() where T : class
+    {
+        return activeServices.TryGetValue(typeof(T), out var service) ? (T)service : default;
     }
 }

@@ -1,17 +1,18 @@
 using System.Diagnostics;
 using Models.Data;
+using Models.Interfaces;
 
 namespace Logic;
 
-public static class EditorLogic
+public class EditorLogic : IEditorLogic
 {
     public static string[] editorLocations = [
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Unity", "Hub", "Editor")
     ];
 
-    public static bool IsVersionInstalled(string? version) => !string.IsNullOrEmpty(GetEditorInstall(version));
+    public bool IsVersionInstalled(string? version) => !string.IsNullOrEmpty(GetEditorInstall(version));
 
-    public static string? GetEditorInstall(string? version)
+    public string? GetEditorInstall(string? version)
     {
         if (string.IsNullOrEmpty(version))
             return null;
@@ -29,8 +30,8 @@ public static class EditorLogic
         return null;
     }
 
-    public static async Task LaunchProject(int id) => await LaunchProject(await ProjectLogic.GetProjectInfo(id));
-    public static async Task LaunchProject(ProjectInfo info)
+    public async Task LaunchProject(int id) => await LaunchProject(await DependencyManager.GetService<IProjectLogic>()!.GetProjectInfo(id));
+    public async Task LaunchProject(ProjectInfo info)
     {
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {

@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Logic;
 using Models.Data;
+using Models.Interfaces;
 
 namespace UI.Controls;
 
@@ -24,8 +26,8 @@ public partial class Sidebar : UserControl
         entry_All.Init(() => UpdateSelection(0));
         entry_Favs.Init(() => UpdateSelection(1));
         entry_Recent.Init(() => UpdateSelection(2));
-        entry_Cols.Init(() => UpdateSelection(3));
-        entry_Tags.Init(() => UpdateSelection(4));
+        entry_Cols.Init(() => UpdateSelection(3), DependencyManager.GetService<ITaggingLogic>().GetCollections);
+        entry_Tags.Init(() => UpdateSelection(4), DependencyManager.GetService<ITaggingLogic>().GetTags);
     }
 
     private async Task UpdateSelection(int id)

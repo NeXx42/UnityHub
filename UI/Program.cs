@@ -4,6 +4,7 @@ using Avalonia;
 using Data.DataRepos;
 using Data_Sqlite;
 using Logic;
+using Models.Interfaces;
 
 namespace UI;
 
@@ -20,7 +21,17 @@ class Program
 
         async Task Setup()
         {
-            await DependencyManager.RegisterDataRepo<SqliteDataRepo>();
+            await DependencyManager.RegisterService<IDataRepository, SqliteDataRepo>(async () =>
+            {
+                SqliteDataRepo repo = new SqliteDataRepo();
+                await repo.Setup();
+
+                return repo;
+            });
+
+            DependencyManager.RegisterService<IEditorLogic, EditorLogic>();
+            DependencyManager.RegisterService<IProjectLogic, ProjectLogic>();
+            DependencyManager.RegisterService<ITaggingLogic, TaggingLogic>();
         }
     }
 

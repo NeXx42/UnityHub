@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Logic;
 using Models.Data;
+using Models.Interfaces;
 using UI.Helpers;
 
 namespace UI.Pages.HomePage;
@@ -30,7 +31,7 @@ public partial class ImageCard : UserControl
 
         cont_Version.Classes.RemoveRange(0, cont_Version.Classes.Count);
 
-        if (!EditorLogic.IsVersionInstalled(info.version))
+        if (!DependencyManager.GetService<IEditorLogic>()!.IsVersionInstalled(info.version))
             cont_Version.Classes.Add("Missing");
 
         await IconFetcher.GetImage(info.iconUrl, UpdateIcon);

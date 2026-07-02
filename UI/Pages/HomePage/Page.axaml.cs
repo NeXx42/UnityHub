@@ -8,6 +8,7 @@ using Avalonia.Markup.Xaml;
 using Logic;
 using Models.Data;
 using Models.Helpers;
+using Models.Interfaces;
 using UI.Helpers;
 using UI.Modals;
 using UI.Pages.HomePage;
@@ -49,7 +50,7 @@ public partial class Page : UserControl
     {
         search.take = 16;
 
-        cardInfo = await ProjectLogic.Search(search);
+        cardInfo = await DependencyManager.GetService<IProjectLogic>()!.Search(search);
         cards.Draw(cardInfo, (c, i, dat) => _ = c.Draw(dat, i, SelectCard));
     }
 
@@ -95,10 +96,10 @@ public partial class Page : UserControl
 
         async Task AttemptUploadOfDirectories(string[] toUpload)
         {
-            ProjectInfo[] cards = await ProjectLogic.TryToUpload(toUpload);
+            ProjectInfo[] cards = await DependencyManager.GetService<IProjectLogic>()!.TryToUpload(toUpload);
 
             // show popup to confirm each card (this code would be in there)
-            await ProjectLogic.UploadCardsPrimitive(cards);
+            await DependencyManager.GetService<IProjectLogic>()!.UploadCardsPrimitive(cards);
         }
     }
 }

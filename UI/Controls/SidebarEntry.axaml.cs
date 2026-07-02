@@ -3,13 +3,20 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Metadata;
 
 namespace UI.Controls;
 
 public partial class SidebarEntry : UserControl
 {
+    public static readonly StyledProperty<object?> IconProperty = AvaloniaProperty.Register<SidebarEntry, object?>(nameof(Icon));
+    public object? Icon
+    {
+        get => GetValue(IconProperty);
+        set => SetValue(IconProperty, value);
+    }
 
-    public static readonly StyledProperty<string> LabelProperty = AvaloniaProperty.Register<ButtonWrapper, string>(nameof(Label), defaultValue: "Action");
+    public static readonly StyledProperty<string> LabelProperty = AvaloniaProperty.Register<SidebarEntry, string>(nameof(Label), defaultValue: "Action");
     public string Label
     {
         get => GetValue(LabelProperty);
@@ -22,8 +29,6 @@ public partial class SidebarEntry : UserControl
     public SidebarEntry()
     {
         InitializeComponent();
-        DataContext = this;
-
         cont_Border.PointerPressed += (_, __) => onSelectCallback?.Invoke();
     }
 

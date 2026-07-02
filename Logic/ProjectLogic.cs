@@ -5,7 +5,7 @@ using Models.Interfaces;
 
 namespace Logic;
 
-public static class ProjectLogic
+public class ProjectLogic : IProjectLogic
 {
     private record struct ProjectCache
     {
@@ -13,10 +13,10 @@ public static class ProjectLogic
         public ProjectInfo? info;
     }
 
-    private static IDataRepository data => DependencyManager.dataRepo!;
-    private static Dictionary<int, ProjectCache> cache = new Dictionary<int, ProjectCache>();
+    private IDataRepository data => DependencyManager.GetService<IDataRepository>()!;
+    private Dictionary<int, ProjectCache> cache = new Dictionary<int, ProjectCache>();
 
-    public static async Task<ProjectCard[]> Search(ProjectSearch search)
+    public async Task<ProjectCard[]> Search(ProjectSearch search)
     {
         (int[] results, _) = await data.Search(search);
 
@@ -57,7 +57,7 @@ public static class ProjectLogic
         return cards.ToArray();
     }
 
-    public static async Task<ProjectInfo> GetProjectInfo(int id)
+    public async Task<ProjectInfo> GetProjectInfo(int id)
     {
         ProjectCache proj = new();
 
@@ -76,8 +76,8 @@ public static class ProjectLogic
         return info;
     }
 
-    public static async Task BrowseTo(int id) => await BrowseTo(await GetProjectInfo(id));
-    public static async Task BrowseTo(ProjectInfo info)
+    public async Task BrowseTo(int id) => await BrowseTo(await GetProjectInfo(id));
+    public async Task BrowseTo(ProjectInfo info)
     {
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
@@ -95,7 +95,7 @@ public static class ProjectLogic
         process.Start();
     }
 
-    public static async Task<ProjectInfo[]> TryToUpload(string[] folders)
+    public async Task<ProjectInfo[]> TryToUpload(string[] folders)
     {
         List<ProjectInfo> potentialCards = new List<ProjectInfo>();
 
@@ -131,12 +131,12 @@ public static class ProjectLogic
         }
     }
 
-    public static async Task UploadCardsPrimitive(ProjectInfo[] cards)
+    public async Task UploadCardsPrimitive(ProjectInfo[] cards)
     {
         await data.CreateCards(cards);
     }
 
-    public static async Task DeriveProjectInfo(ProjectInfo info)
+    public async Task DeriveProjectInfo(ProjectInfo info)
     {
         string versionFile = Path.Combine(info.directory, "ProjectSettings", "ProjectVersion.txt");
 
