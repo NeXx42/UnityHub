@@ -58,11 +58,10 @@ public class SqliteDataRepo : IDataRepository
 
     public async Task<(int[], int)> Search(ProjectSearch search)
     {
-        StringBuilder sql = new StringBuilder($"SELECT p.{nameof(dbo_Project.id)} as id, count(*) OVER() as total_count FROM {dbo_Project.tableName} p");
-        sql.Append($" LIMIT {search.take} OFFSET {search.skip}");
+        string sql = GenerateSearchSQL(search);
 
         int? totalCount = null;
-        int[] res = await database!.GetItemsGeneric(sql.ToString(), DeserializeDatabaseRequest, CancellationToken.None);
+        int[] res = await database!.GetItemsGeneric(sql, DeserializeDatabaseRequest, CancellationToken.None);
 
         return (res, totalCount ?? 0);
 
@@ -71,6 +70,41 @@ public class SqliteDataRepo : IDataRepository
             totalCount ??= Convert.ToInt32(reader["total_count"]);
             return Convert.ToInt32(reader["id"]);
         }
+    }
+
+    private string GenerateSearchSQL(ProjectSearch search)
+    {
+        StringBuilder sql = new StringBuilder($"SELECT p.{nameof(dbo_Project.id)} as id, count(*) OVER() as total_count FROM {dbo_Project.tableName} p\n");
+
+        List<string> leftJoinClauses = new List<string>();
+        List<string> whereClauses = new List<string>();
+
+        if ((search.collections?.Length ?? 0) > 0)
+        {
+            leftJoinClauses.Add($"LEFT JOIN {dbo_ProjectCollection.tableName} pc on pc.{nameof(dbo_ProjectCollection.ProjectId)} = p.{nameof(dbo_Project.id)}");
+            whereClauses.Add($"pc.{nameof(dbo_ProjectCollection.CollectionId)} in ({string.Join(",", search.collections!)})");
+        }
+
+        if ((search.tags?.Length ?? 0) > 0)
+        {
+            leftJoinClauses.Add($"LEFT JOIN {dbo_ProjectTag.tableName} pt on pt.{nameof(dbo_ProjectTag.ProjectId)} = p.{nameof(dbo_Project.id)}");
+            whereClauses.Add($"pt.{nameof(dbo_ProjectTag.TagId)} in ({string.Join(",", search.tags!)})");
+        }
+
+        if (leftJoinClauses.Count > 0)
+        {
+            foreach (string join in leftJoinClauses)
+                sql.AppendLine(join);
+        }
+
+        if (whereClauses.Count > 0)
+        {
+            sql.AppendLine(" WHERE");
+            sql.Append(string.Join("AND", whereClauses));
+        }
+
+        sql.AppendLine($" LIMIT {search.take} OFFSET {search.skip}");
+        return sql.ToString();
     }
 
     public async Task<ProjectCard[]> GetCardInfo(IEnumerable<int> ids)
@@ -110,6 +144,36 @@ public class SqliteDataRepo : IDataRepository
                 version = info.version,
                 packageCount = info.packages,
                 pipelineType = (int?)info.renderPipeline
+            };
+        }
+    }
+
+    public async Task<CollectionData[]> GetTags()
+    {
+        dbo_Tag[] tags = await database!.GetItems<dbo_Tag>();
+        return tags.Select(Map).ToArray();
+
+        CollectionData Map(dbo_Tag db)
+        {
+            return new CollectionData()
+            {
+                collectionId = db.Id,
+                collectionName = db.Name,
+            };
+        }
+    }
+
+    public async Task<CollectionData[]> GetCollections()
+    {
+        dbo_Collection[] tags = await database!.GetItems<dbo_Collection>();
+        return tags.Select(Map).ToArray();
+
+        CollectionData Map(dbo_Collection db)
+        {
+            return new CollectionData()
+            {
+                collectionId = db.Id,
+                collectionName = db.Name,
             };
         }
     }

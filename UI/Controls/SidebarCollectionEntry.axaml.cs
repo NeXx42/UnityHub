@@ -23,20 +23,27 @@ public partial class SidebarCollectionEntry : UserControl
         set => SetValue(LabelProperty, value);
     }
 
+
     public SidebarCollectionEntry()
     {
         InitializeComponent();
         DataContext = this;
     }
 
-    public void Init(Func<Task> onSelect, Func<Task<CollectionData[]>> dataFetch)
+    public async Task Init(Func<int, Task> onSelect, Func<Task<CollectionData[]>> dataFetch)
     {
-        container.Children.Add(CreateEntry());
+        CollectionData[] data = await dataFetch();
 
-        UserControl CreateEntry()
+        foreach (CollectionData dat in data)
+        {
+            container.Children.Add(CreateEntry(dat));
+        }
+
+        UserControl CreateEntry(CollectionData dat)
         {
             SidebarEntry sidebar = new SidebarEntry();
-            sidebar.Label = "Test";
+            sidebar.Init(async () => await onSelect(dat.collectionId));
+            sidebar.Label = dat.collectionName;
 
             return sidebar;
         }

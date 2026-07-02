@@ -5,13 +5,36 @@ namespace Logic;
 
 public class TaggingLogic : ITaggingLogic
 {
-    public Task<CollectionData[]> GetCollections()
+    private IDataRepository data => DependencyManager.GetService<IDataRepository>()!;
+
+    private Dictionary<int, CollectionData>? cachedTags;
+    private Dictionary<int, CollectionData>? cachedCollections;
+
+    public async Task<CollectionData[]> GetCollections()
     {
-        throw new NotImplementedException();
+        if (cachedCollections == null)
+        {
+            CollectionData[] cols = await data.GetCollections();
+            cachedCollections = new Dictionary<int, CollectionData>(cols.Length);
+
+            foreach (CollectionData col in cols)
+                cachedCollections[col.collectionId] = col;
+        }
+
+        return cachedCollections!.Values.ToArray();
     }
 
-    public Task<CollectionData[]> GetTags()
+    public async Task<CollectionData[]> GetTags()
     {
-        throw new NotImplementedException();
+        if (cachedTags == null)
+        {
+            CollectionData[] tags = await data.GetTags();
+            cachedTags = new Dictionary<int, CollectionData>(tags.Length);
+
+            foreach (CollectionData col in tags)
+                cachedTags[col.collectionId] = col;
+        }
+
+        return cachedTags!.Values.ToArray();
     }
 }

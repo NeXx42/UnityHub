@@ -13,4 +13,7 @@ public interface IDataRepository
 
     public Task CreateCard(ProjectInfo info);
     public Task CreateCards(IEnumerable<ProjectInfo> cards);
+
+    public Task<CollectionData[]> GetTags();
+    public Task<CollectionData[]> GetCollections();
 }

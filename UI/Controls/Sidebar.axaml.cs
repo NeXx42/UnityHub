@@ -19,18 +19,18 @@ public partial class Sidebar : UserControl
         InitializeComponent();
     }
 
-    public void Init(Pages.HomePage.Page homepage)
+    public async Task Init(Pages.HomePage.Page homepage)
     {
         this.homepage = homepage;
 
         entry_All.Init(() => UpdateSelection(0));
         entry_Favs.Init(() => UpdateSelection(1));
         entry_Recent.Init(() => UpdateSelection(2));
-        entry_Cols.Init(() => UpdateSelection(3), DependencyManager.GetService<ITaggingLogic>().GetCollections);
-        entry_Tags.Init(() => UpdateSelection(4), DependencyManager.GetService<ITaggingLogic>().GetTags);
+        await entry_Cols.Init((cId) => UpdateSelection(3, cId), DependencyManager.GetService<ITaggingLogic>()!.GetCollections);
+        await entry_Tags.Init((cId) => UpdateSelection(4, cId), DependencyManager.GetService<ITaggingLogic>()!.GetTags);
     }
 
-    private async Task UpdateSelection(int id)
+    private async Task UpdateSelection(int id, int? subArg = null)
     {
         ProjectSearch search = new ProjectSearch();
 
@@ -43,9 +43,11 @@ public partial class Sidebar : UserControl
                 break;
 
             case 3: // Collections
+                search.collections = [subArg!.Value];
                 break;
 
             case 4: // Tags
+                search.tags = [subArg!.Value];
                 break;
         }
 
