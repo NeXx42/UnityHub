@@ -4,8 +4,9 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.Page"
   xmlns:local="clr-namespace:UI.Pages.HomePage"
   xmlns:controls="clr-namespace:UI.Controls">
-  <Grid ColumnDefinitions="* 10 Auto" Margin="15">
-    <Grid RowDefinitions="Auto *">
+  <Grid ColumnDefinitions="* 10 Auto">
+    <Grid RowDefinitions="Auto * Auto">
+      <!-- Searching -->
       <StackPanel Orientation="Vertical">
         <Grid Height="45">
           <TextBox HorizontalAlignment="Left"/>
@@ -22,7 +23,11 @@
       </StackPanel>
 
 
-      <WrapPanel Grid.Row="1" x:Name="grid_Content" ItemSpacing="10" LineSpacing="10" />
+      <ScrollViewer Grid.Row="1">
+        <WrapPanel x:Name="grid_Content" ItemSpacing="10" LineSpacing="10" />
+      </ScrollViewer>
+
+      <StackPanel Grid.Row="2" x:Name="cont_PageControls" Height="30" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center"/>
     </Grid>
 
     <local:MoreInfo Grid.Column="2" x:Name="control_MoreInfo"/>

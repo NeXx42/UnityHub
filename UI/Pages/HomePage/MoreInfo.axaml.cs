@@ -17,8 +17,8 @@ public partial class MoreInfo : UserControl
     {
         InitializeComponent();
 
-        btn_OpenProject.Click += (_, __) => _ = DependencyManager.GetService<IEditorLogic>()!.LaunchProject(info!);
-        btn_OpenExplorer.Click += (_, __) => _ = DependencyManager.GetService<IProjectLogic>()!.BrowseTo(info!);
+        btn_OpenProject.RegisterClick(() => DependencyManager.GetService<IEditorLogic>()!.LaunchProject(info!));
+        btn_OpenExplorer.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.BrowseTo(info!));
     }
 
     public async Task Show(int id)

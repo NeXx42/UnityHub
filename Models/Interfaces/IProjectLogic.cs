@@ -4,7 +4,7 @@ namespace Models.Interfaces;
 
 public interface IProjectLogic
 {
-    public Task<ProjectCard[]> Search(ProjectSearch search);
+    public Task<(ProjectCard[], int total)> Search(ProjectSearch search);
     public Task<ProjectInfo> GetProjectInfo(int id);
 
     public Task BrowseTo(int id);

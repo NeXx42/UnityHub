@@ -20,7 +20,7 @@
       <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch">
         <Image x:Name="img" VerticalAlignment="Top" HorizontalAlignment="Stretch" StretchDirection="DownOnly">
           <Image.Effect>
-            <BlurEffect Radius="2"/>
+            <BlurEffect Radius="0"/>
           </Image.Effect>
         </Image>
       </Grid>

@@ -43,9 +43,9 @@ public class ProjectLogic : IProjectLogic
         await data.Migrate(iconsToUpdate);
     }
 
-    public async Task<ProjectCard[]> Search(ProjectSearch search)
+    public async Task<(ProjectCard[], int total)> Search(ProjectSearch search)
     {
-        (int[] results, _) = await data.Search(search);
+        (int[] results, int total) = await data.Search(search);
 
         List<int> missingCardIds = new List<int>();
         List<ProjectCard> cards = new List<ProjectCard>();
@@ -81,7 +81,7 @@ public class ProjectLogic : IProjectLogic
             }
         }
 
-        return cards.ToArray();
+        return (cards.ToArray(), total);
     }
 
     public async Task<ProjectInfo> GetProjectInfo(int id)

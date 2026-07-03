@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +8,7 @@ using Logic;
 using Models.Data;
 using Models.Helpers;
 using Models.Interfaces;
+using UI.Controls;
 using UI.Helpers;
 using UI.Modals;
 
@@ -19,9 +22,16 @@ public partial class Page : UserControl
         Add_Folder,
     }
 
-    private int? currentSelectedCard;
-    private ReusableList<ImageCard> cards;
+    const int ItemsPerPage = 16;
 
+    private int maxPages = 5;
+
+    private int? currentSelectedCard;
+
+    private ReusableList<ImageCard> cards;
+    private ReusableList<ButtonWrapper> pageControls;
+
+    private ProjectSearch activeSearch;
     private ProjectCard[]? cardInfo;
 
     public Page()
@@ -29,17 +39,27 @@ public partial class Page : UserControl
         InitializeComponent();
 
         cards = new ReusableList<ImageCard>(grid_Content);
+        pageControls = new ReusableList<ButtonWrapper>(cont_PageControls);
 
         btn_NewProject.RegisterOptions(((NewProjectOptions[])System.Enum.GetValues(typeof(NewProjectOptions))).Select(s => s.GetDisplayName()), SelectNewProjectOption);
         btn_NewProject.RegisterClick(CreateNewProject);
+
+        activeSearch = new ProjectSearch()
+        {
+            page = 0
+        };
     }
 
     public async Task SearchCards(ProjectSearch search)
     {
-        search.take = 16;
+        activeSearch = search;
+        search.take = ItemsPerPage;
 
-        cardInfo = await DependencyManager.GetService<IProjectLogic>()!.Search(search);
+        (cardInfo, int totalCards) = await DependencyManager.GetService<IProjectLogic>()!.Search(activeSearch);
+        maxPages = (int)Math.Ceiling(totalCards / (float)ItemsPerPage);
+
         cards.Draw(cardInfo, (c, i, dat) => _ = c.Draw(dat, i, SelectCard));
+        RedrawPageControls();
     }
 
     private async Task SelectCard(int cardPos)
@@ -89,5 +109,34 @@ public partial class Page : UserControl
             // show popup to confirm each card (this code would be in there)
             await DependencyManager.GetService<IProjectLogic>()!.UploadCardsPrimitive(cards);
         }
+    }
+
+    private async Task UpdatePage(int to)
+    {
+        activeSearch.page = to;
+        await SearchCards(activeSearch);
+    }
+
+    private void RedrawPageControls()
+    {
+        const int MaxPageDistance = 4;
+        List<int> pageOptions = new List<int>();
+
+        for (int i = activeSearch.page - MaxPageDistance; i < activeSearch.page + MaxPageDistance; i++)
+        {
+            if (i >= 0 && i < maxPages)
+                pageOptions.Add(i);
+        }
+
+        pageControls.Draw(pageOptions, (lbl, _, dat) =>
+        {
+            lbl.Label = (dat + 1).ToString();
+            lbl.RegisterClick(() => UpdatePage(dat));
+
+            if (dat == activeSearch.page)
+                lbl.Classes.Add("Selected");
+            else
+                lbl.Classes.Remove("Selected");
+        });
     }
 }

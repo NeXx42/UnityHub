@@ -1,7 +1,42 @@
 <UserControl xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.ButtonWrapper"
-  xmlns:local="clr-namespace:UI.Controls" x:DataType="local:ButtonWrapper">
-  <Button x:Name="btn" Content="{Binding Label}"/>
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.ButtonWrapper" x:Name="root">
+  <UserControl.Styles>
+    <Style Selector="Border#btn">
+      <Setter Property="Background" Value="{DynamicResource ButtonBackground}"/>
+
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorder}"/>
+
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="Padding" Value="12 6"/>
+    </Style>
+
+    <Style Selector="Border#btn > Label">
+      <Setter Property="Foreground" Value="{DynamicResource Colour_TextColour}"/>
+    </Style>
+
+
+    <Style Selector=".Primary Border#btn">
+      <Setter Property="Background" Value="{DynamicResource Colour_AccentColour}"/>
+    </Style>
+
+    <Style Selector=".Primary #btn > Label">
+      <Setter Property="Foreground" Value="{DynamicResource Colour_TextColour}"/>
+    </Style>
+
+    <Style Selector="Border#btn:pointerover">
+      <Setter Property="Background" Value="{DynamicResource PrimaryHoverBrush}"/>
+    </Style>
+  </UserControl.Styles>
+
+  <Border x:Name="btn" CornerRadius="{Binding #root.CornerRadius}">
+    <Grid>
+      <Label Content="{Binding #root.Label}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+      <Viewbox >
+        <ContentPresenter Content="{Binding #root.Icon}"/>
+      </Viewbox>
+    </Grid>
+  </Border>
 </UserControl>

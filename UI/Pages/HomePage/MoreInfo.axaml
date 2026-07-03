@@ -2,16 +2,16 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.MoreInfo"
-  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectInfo" Width="340">
-  <Border BorderThickness="1 0 0 0" BorderBrush="{DynamicResource ButtonBorder}" Padding="5 0 0 0">
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectInfo" Width="300"
+  xmlns:controls="clr-namespace:UI.Controls">
+  <Border BorderThickness="1 0 0 0" BorderBrush="{DynamicResource ButtonBorder}" Padding="10">
     <StackPanel Spacing="15">
+      <!-- ICON -->
+      <Border HorizontalAlignment="Stretch" Height="200" Background="Red" CornerRadius="18" ClipToBounds="True">
+        <Image x:Name="img"/>
+      </Border>
 
-      <StackPanel Spacing="10">
-        <!-- ICON -->
-        <Border HorizontalAlignment="Stretch" Height="200" Background="Red" CornerRadius="18" ClipToBounds="True">
-          <Image x:Name="img"/>
-        </Border>
-
+      <StackPanel Spacing="10" Margin="8 0">
         <!-- Title bar -->
         <Grid>
           <Label Content="{Binding name}"/>
@@ -27,24 +27,54 @@
             </Style>
           </StackPanel.Styles>
 
-          <Button x:Name="btn_OpenProject" Content="Open Project" Classes="Primary"/>
-          <Button x:Name="btn_OpenIDE" Content="Open in Visual Studio" />
-          <Button x:Name="btn_OpenExplorer" Content="Reveal in Explorer" />
+          <controls:DropDownButton x:Name="btn_OpenProject" ButtonLabel="Open Project"/>
+
+          <controls:ButtonWrapper x:Name="btn_OpenId" Label="Open in Visual Studio"/>
+          <controls:ButtonWrapper x:Name="btn_OpenExplorer" Label="Reveal in Explorer"/>
 
           <Grid ColumnDefinitions="* * * *">
-            <Button Content="Git" />
-            <Button Margin="5 0 0 0" Grid.Column="1" Content="Shell" />
-            <Button Margin="5 0 0 0" Grid.Column="2" Content="Copy" />
-            <Button Margin="5 0 0 0" Grid.Column="3" Content="Delete" />
+            <controls:ButtonWrapper Margin="0 0 0 0" Grid.Column="0">
+              <controls:ButtonWrapper.Icon>
+                <Viewbox Width="12" Height="12">
+                  <Path Fill="White" Data="M15.698 7.287 8.712.302a1.03 1.03 0 0 0-1.457 0l-1.45 1.45 1.84 1.84a1.223 1.223 0 0 1 1.55 1.56l1.773 1.774a1.224 1.224 0 0 1 1.267 2.025 1.226 1.226 0 0 1-2.002-1.334L8.58 5.963v4.353a1.226 1.226 0 1 1-1.008-.036V5.887a1.226 1.226 0 0 1-.666-1.608L5.093 2.465l-4.79 4.79a1.03 1.03 0 0 0 0 1.457l6.986 6.986a1.03 1.03 0 0 0 1.457 0l6.953-6.953a1.03 1.03 0 0 0 0-1.457"/>
+                </Viewbox>
+              </controls:ButtonWrapper.Icon>
+            </controls:ButtonWrapper>
+            <controls:ButtonWrapper Margin="5 0 0 0" Grid.Column="1">
+              <controls:ButtonWrapper.Icon>
+                <Viewbox Width="12" Height="12">
+                  <Grid>
+                    <Path Fill="White" Data="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9M3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708z"/>
+                    <Path Fill="White" Data="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/>
+                  </Grid>
+                </Viewbox>
+              </controls:ButtonWrapper.Icon>
+            </controls:ButtonWrapper>
+            <controls:ButtonWrapper Margin="5 0 0 0" Grid.Column="2">
+              <controls:ButtonWrapper.Icon>
+                <Viewbox Width="12" Height="12">
+                  <Path Fill="White" Data="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
+                </Viewbox>
+              </controls:ButtonWrapper.Icon>
+            </controls:ButtonWrapper>
+            <controls:ButtonWrapper Margin="5 0 0 0" Grid.Column="3">
+              <controls:ButtonWrapper.Icon>
+                <Viewbox Width="12" Height="12">
+                  <Grid>
+                    <Path Fill="White" Data="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                    <Path Fill="White" Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                  </Grid>
+                </Viewbox>
+              </controls:ButtonWrapper.Icon>
+            </controls:ButtonWrapper>
           </Grid>
         </StackPanel>
-
       </StackPanel>
 
-      <Border Background="{DynamicResource ButtonBorder}" Height="1" HorizontalAlignment="Stretch"/>
+      <Border Background="{DynamicResource ButtonBorder}" Height="1" HorizontalAlignment="Stretch" Margin="8 0"/>
 
       <!-- Meta -->
-      <StackPanel Orientation="Vertical">
+      <StackPanel Orientation="Vertical" Margin="8 0">
         <StackPanel.Styles>
           <Style Selector="StackPanel > StackPanel > Label">
             <Setter Property="Foreground" Value="{DynamicResource TextColourMuted}"/>
