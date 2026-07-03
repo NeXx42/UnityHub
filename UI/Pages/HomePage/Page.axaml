@@ -4,12 +4,12 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.Page"
   xmlns:local="clr-namespace:UI.Pages.HomePage"
   xmlns:controls="clr-namespace:UI.Controls">
-  <Grid ColumnDefinitions="* 10 Auto">
-    <Grid RowDefinitions="Auto * Auto">
+  <Grid ColumnDefinitions="* Auto">
+    <Grid RowDefinitions="Auto * Auto" Margin="15">
       <!-- Searching -->
       <StackPanel Orientation="Vertical">
-        <Grid Height="45">
-          <TextBox HorizontalAlignment="Left"/>
+        <Grid Height="40">
+          <TextBox HorizontalAlignment="Left" CornerRadius="8" Width="250" Background="{DynamicResource ButtonBackground}" Foreground="{DynamicResource TextColourMuted}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" PlaceholderText="Search projects" VerticalContentAlignment="Center"/>
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
             <Button VerticalAlignment="Stretch" Content="Refresh"/>
             <Button VerticalAlignment="Stretch" Content="Sort: Last Opened"/>
@@ -23,13 +23,13 @@
       </StackPanel>
 
 
-      <ScrollViewer Grid.Row="1">
-        <WrapPanel x:Name="grid_Content" ItemSpacing="10" LineSpacing="10" />
+      <ScrollViewer Grid.Row="1" Margin="0 5">
+        <WrapPanel x:Name="grid_Content" ItemSpacing="10" LineSpacing="10" HorizontalAlignment="Center" />
       </ScrollViewer>
 
       <StackPanel Grid.Row="2" x:Name="cont_PageControls" Height="30" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center"/>
     </Grid>
 
-    <local:MoreInfo Grid.Column="2" x:Name="control_MoreInfo"/>
+    <local:MoreInfo Grid.Column="1" x:Name="control_MoreInfo"/>
   </Grid>
 </UserControl>

@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.ImageCard" Width="320" Height="220"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.ImageCard" Width="320" Height="260"
   xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectCard" x:Name="root">
   <UserControl.Styles>
     <Style Selector="Border#border_Main">
@@ -17,7 +17,7 @@
 
   <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="20" ClipToBounds="True" x:Name="border_Main">
     <Grid>
-      <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch">
+      <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch" MaxHeight="200">
         <Image x:Name="img" VerticalAlignment="Top" HorizontalAlignment="Stretch" StretchDirection="DownOnly">
           <Image.Effect>
             <BlurEffect Radius="0"/>
@@ -26,20 +26,20 @@
       </Grid>
 
       <!-- Gradient overlay -->
-      <Border VerticalAlignment="Bottom" Height="170" Margin="0 0 0 20">
+      <Border VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0 20 0 20">
         <Border.Background>
           <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-            <GradientStop Offset="0" Color="#0012171c"/>
-            <GradientStop Offset=".8" Color="#12171c"/>
+            <GradientStop Offset=".3" Color="#0012171c"/>
+            <GradientStop Offset=".65" Color="#12171c"/>
           </LinearGradientBrush>
         </Border.Background>
       </Border>
 
       <!-- Content -->
-      <StackPanel VerticalAlignment="Bottom" Height="100" Margin="5">
-        <Label Content="{Binding name}"/>
+      <Grid VerticalAlignment="Bottom" Height="120" Margin="5" RowDefinitions="Auto Auto 25 25 *">
+        <Label Content="{Binding name}" Grid.Row="0"/>
 
-        <StackPanel Orientation="Horizontal" x:Name="cont_Version">
+        <StackPanel Orientation="Horizontal" x:Name="cont_Version" Grid.Row="1" Margin="8 0 0 0">
           <StackPanel.Styles>
             <Style Selector="Label">
               <Setter Property="Foreground" Value="{DynamicResource TextColourMuted}" />
@@ -55,19 +55,19 @@
           <Viewbox Height="12" Width="12">
             <Path Data="m 12.8497 1 v 3.9324 l 3.4868 2.0108 c 0.0279 0.0167 0.0501 0.0446 0.0668 0.0724 c 0.0223 0.0278 0.0279 0.0613 0.0279 0.0947 c 0 0.0334 -0.0056 0.0668 -0.0279 0.1003 c -0.0167 0.0278 -0.039 0.0501 -0.0668 0.0724 l -4.1441 2.384 c -0.0557 0.039 -0.1281 0.0557 -0.195 0.0557 c -0.0668 0 -0.1337 -0.0167 -0.195 -0.0557 l -4.1441 -2.384 c -0.0279 -0.0167 -0.0501 -0.0446 -0.0668 -0.0724 c -0.0167 -0.0279 -0.0279 -0.0613 -0.0279 -0.0947 c 0 -0.0334 0.0111 -0.0668 0.0279 -0.1003 c 0.0167 -0.0279 0.039 -0.0501 0.0668 -0.0724 l 3.4868 -2.0052 v -3.938 l -8.8953 5.13 v 10.2544 l 3.4144 -1.9662 v -4.0215 c 0 -0.0334 0.0056 -0.0668 0.0223 -0.0947 c 0.0167 -0.0279 0.0446 -0.0501 0.0724 -0.0724 c 0.0278 -0.0167 0.0613 -0.0223 0.1003 -0.0223 c 0.0334 0 0.0668 0.0056 0.0947 0.0223 l 4.1441 2.3895 c 0.0613 0.0334 0.1114 0.0836 0.1448 0.1448 c 0.0334 0.0557 0.0501 0.1225 0.0501 0.1949 v 4.7735 c 0 0.0334 -0.0056 0.0668 -0.0278 0.1003 c -0.0167 0.0279 -0.039 0.0557 -0.0668 0.0724 c -0.0334 0.0167 -0.0668 0.0223 -0.1003 0.0223 c -0.0334 0 -0.0668 -0.0056 -0.0947 -0.0223 l -3.4868 -2.0108 l -3.4144 1.9662 l 8.8953 5.13 l 8.8953 -5.13 l -3.4144 -1.9662 l -3.4868 2.0108 c -0.0278 0.0167 -0.0613 0.0223 -0.0947 0.0223 c -0.0334 0 -0.0668 -0.0111 -0.0947 -0.0279 c -0.0334 -0.0167 -0.0557 -0.039 -0.0724 -0.0668 c -0.0167 -0.0334 -0.0279 -0.0668 -0.0279 -0.1003 v -4.7735 c 0 -0.0724 0.0167 -0.1393 0.0501 -0.1949 c 0.039 -0.0613 0.0836 -0.1114 0.1448 -0.1448 l 4.1441 -2.3895 c 0.0278 -0.0167 0.0613 -0.0223 0.0947 -0.0223 c 0.0334 0 0.0668 0.0056 0.1003 0.0223 c 0.0278 0.0223 0.0501 0.0446 0.0668 0.0724 c 0.0223 0.0279 0.0279 0.0613 0.0279 0.1003 v 4.016 l 3.4144 1.9662 v -10.2544 l -8.8953 -5.13 z" Fill="white" />
           </Viewbox>
-          <Label x:Name="lbl_Version" Content="{Binding version}" FontSize="12"/>
+          <Label x:Name="lbl_Version" Content="{Binding version}" FontSize="11" />
         </StackPanel>
 
-        <Label Content="{Binding directory}" FontSize="10" Foreground="{DynamicResource TextColourMuted}"/>
+        <Label Content="{Binding directory}" FontSize="11" Foreground="{DynamicResource TextColourMuted}" Grid.Row="2" Margin="8 0 0 0" VerticalContentAlignment="Top"/>
 
-        <StackPanel Orientation="Horizontal" x:Name="cont_Tags">
+        <StackPanel Orientation="Horizontal" x:Name="cont_Tags" Grid.Row="3" Margin="8 0 0 0">
         </StackPanel>
 
-        <Grid >
-          <Label x:Name="lbl_LastAccessed"/>
+        <Grid Grid.Row="4" Margin="8 0 0 0" VerticalAlignment="Bottom">
+          <Label x:Name="lbl_LastAccessed" Content="{Binding #root.LastOpened}" Foreground="{DynamicResource TextColourMuted}" FontSize="10"/>
           <Label x:Name="lbl_Branch"/>
         </Grid>
-      </StackPanel>
+      </Grid>
     </Grid>
   </Border>
 </UserControl>

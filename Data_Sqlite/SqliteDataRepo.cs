@@ -34,7 +34,10 @@ public class SqliteDataRepo : IDataRepository
 
             version = dbData.version,
             packages = dbData.packageCount,
-            renderPipeline = (RenderPipelineTypes?)dbData.pipelineType
+            renderPipeline = (RenderPipelineTypes?)dbData.pipelineType,
+
+            tags = dbData.tags.ToArray(),
+            collections = dbData.collections.ToArray()
         };
     }
 
@@ -47,6 +50,9 @@ public class SqliteDataRepo : IDataRepository
             directory = dbData.directory,
             version = dbData.version,
             iconUrl = dbData.iconPath,
+
+            tags = dbData.tags.ToArray(),
+            collections = dbData.collections.ToArray()
         };
     }
 
@@ -102,16 +108,28 @@ public class SqliteDataRepo : IDataRepository
         return sql.ToString();
     }
 
-    public async Task<ProjectCard[]> GetCardInfo(IEnumerable<int> ids)
-    {
-        dbo_Project[] projects = await database!.GetItems<dbo_Project>(SQLFilter.In(nameof(dbo_Project.id), ids));
-        return projects.Select(MapToCard).ToArray();
-    }
+    public async Task<ProjectCard[]> GetCardInfo(IEnumerable<int> ids) => await FetchInternal(ids, MapToCard);
+    public async Task<ProjectInfo> GetProjectInfo(int id) => (await FetchInternal([id], MapToInfo)).FirstOrDefault();
 
-    public async Task<ProjectInfo> GetProjectInfo(int id)
+    private async Task<T[]> FetchInternal<T>(IEnumerable<int> ids, Func<dbo_Project, T> mapper)
     {
-        dbo_Project? project = await database!.GetItem<dbo_Project>(SQLFilter.Equal(nameof(dbo_Project.id), id));
-        return MapToInfo(project);
+        Dictionary<int, dbo_Project> projects = (await database!.GetItems<dbo_Project>(SQLFilter.In(nameof(dbo_Project.id), ids))).ToDictionary(p => p.id, p => p);
+        dbo_ProjectCollection[] collections = await database!.GetItems<dbo_ProjectCollection>(SQLFilter.In(nameof(dbo_ProjectCollection.ProjectId), ids));
+        dbo_ProjectTag[] tags = await database!.GetItems<dbo_ProjectTag>(SQLFilter.In(nameof(dbo_ProjectTag.ProjectId), ids));
+
+        foreach (dbo_ProjectCollection col in collections)
+        {
+            if (projects.TryGetValue(col.ProjectId, out dbo_Project? proj) && proj != null)
+                proj.collections.Add(col.CollectionId);
+        }
+
+        foreach (dbo_ProjectTag tag in tags)
+        {
+            if (projects.TryGetValue(tag.ProjectId, out dbo_Project? proj) && proj != null)
+                proj.tags.Add(tag.TagId);
+        }
+
+        return projects.Values.Select(mapper).ToArray();
     }
 
 

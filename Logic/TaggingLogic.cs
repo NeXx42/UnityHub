@@ -37,4 +37,38 @@ public class TaggingLogic : ITaggingLogic
 
         return cachedTags!.Values.ToArray();
     }
+
+    public async Task<CollectionData[]> MapTags(IEnumerable<int> from)
+    {
+        if (cachedTags == null)
+            await GetTags();
+
+        if (cachedTags == null || from.Count() == 0) // failed recache?
+            return [];
+
+        List<CollectionData> res = new List<CollectionData>();
+
+        foreach (int id in from)
+            if (cachedTags.TryGetValue(id, out CollectionData? dat) && dat != null)
+                res.Add(dat);
+
+        return res.ToArray();
+    }
+
+    public async Task<CollectionData[]> MapCollections(IEnumerable<int> from)
+    {
+        if (cachedCollections == null)
+            await GetCollections();
+
+        if (cachedCollections == null || from.Count() == 0) // failed recache?
+            return [];
+
+        List<CollectionData> res = new List<CollectionData>();
+
+        foreach (int id in from)
+            if (cachedCollections.TryGetValue(id, out CollectionData? dat) && dat != null)
+                res.Add(dat);
+
+        return res.ToArray();
+    }
 }

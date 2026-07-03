@@ -17,6 +17,9 @@ public class dbo_Project : IDatabase_Table
     public int? packageCount { get; set; }
     public int? pipelineType { get; set; }
 
+    public List<int> tags = [];
+    public List<int> collections = [];
+
     public static Database_Column[] getColumns => [
         new Database_Column { columnName = nameof(id), columnType = Database_ColumnType.INTEGER, isPrimaryKey = true, autoIncrement = true, allowNull = false },
 

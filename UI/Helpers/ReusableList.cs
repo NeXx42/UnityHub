@@ -21,7 +21,18 @@ public class ReusableList<T> where T : Control
 
     public async Task DrawAsync<DATA>(Func<Task<DATA[]>> inp, DrawCallback<DATA> draw)
     {
-        var res = await inp();
+        DATA[] res;
+
+        try
+        {
+            res = await inp();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw new Exception("failed to load data for draw");
+        }
+
         Draw(res, draw);
     }
 

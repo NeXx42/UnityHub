@@ -7,6 +7,7 @@ using Avalonia.Media.Imaging;
 using Logic;
 using Models.Data;
 using Models.Interfaces;
+using UI.Controls;
 using UI.Helpers;
 
 namespace UI.Pages.HomePage;
@@ -16,9 +17,15 @@ public partial class ImageCard : UserControl
     private int? pos;
     private Func<int, Task>? onSelect;
 
+    private ReusableList<CollectionItem> tags;
+
+    public string LastOpened { get; set; } = "Never";
+
     public ImageCard()
     {
         InitializeComponent();
+        tags = new ReusableList<CollectionItem>(cont_Tags);
+
         PointerPressed += HandleOnSelect;
     }
 
@@ -28,6 +35,13 @@ public partial class ImageCard : UserControl
 
         this.pos = pos;
         this.onSelect = onClick;
+
+        this.LastOpened = "Never";
+
+        await tags.DrawAsync(() => DependencyManager.GetService<ITaggingLogic>()!.MapTags(info.tags), (ui, _, dat) =>
+        {
+            ui.Init(dat);
+        });
 
         cont_Version.Classes.RemoveRange(0, cont_Version.Classes.Count);
 

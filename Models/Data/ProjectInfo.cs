@@ -23,4 +23,7 @@ public class ProjectInfo
 
     public long? size { get; set; }
     public int? packages { get; set; }
+
+    public int[] tags { get; set; } = [];
+    public int[] collections { get; set; } = [];
 }

@@ -26,6 +26,12 @@
       <Setter Property="Foreground" Value="{DynamicResource Colour_TextColour}"/>
     </Style>
 
+    <Style Selector=".Transparent Border#btn">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+
     <Style Selector="Border#btn:pointerover">
       <Setter Property="Background" Value="{DynamicResource PrimaryHoverBrush}"/>
     </Style>
@@ -34,9 +40,7 @@
   <Border x:Name="btn" CornerRadius="{Binding #root.CornerRadius}">
     <Grid>
       <Label Content="{Binding #root.Label}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-      <Viewbox >
-        <ContentPresenter Content="{Binding #root.Icon}"/>
-      </Viewbox>
+      <ContentPresenter Content="{Binding #root.Icon}"/>
     </Grid>
   </Border>
 </UserControl>
