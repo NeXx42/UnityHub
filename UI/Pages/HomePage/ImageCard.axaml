@@ -2,8 +2,20 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.ImageCard" Width="320" Height="220"
-  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectCard">
-  <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="20" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" ClipToBounds="True">
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectCard" x:Name="root">
+  <UserControl.Styles>
+    <Style Selector="Border#border_Main">
+      <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorder}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <Style Selector=".Selected Border#border_Main">
+      <Setter Property="BorderBrush" Value="{DynamicResource AccentColour}"/>
+      <Setter Property="BorderThickness" Value="2"/>
+    </Style>
+  </UserControl.Styles>
+
+  <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="20" ClipToBounds="True" x:Name="border_Main">
     <Grid>
       <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch">
         <Image x:Name="img" VerticalAlignment="Top" HorizontalAlignment="Stretch" StretchDirection="DownOnly">

@@ -1,0 +1,14 @@
+{
+    "name": "Nexx.HubLinker.Editor",
+    "rootNamespace": "Nexx.HubLinker",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

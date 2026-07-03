@@ -52,11 +52,9 @@ public partial class ImageCard : UserControl
 
     public void ToggleSelection(bool to)
     {
-        Classes.RemoveRange(0, Classes.Count);
-
         if (to)
-        {
-            Classes.Add("Selected");
-        }
+            root.Classes.Add("Selected");
+        else
+            root.Classes.Remove("Selected");
     }
 }

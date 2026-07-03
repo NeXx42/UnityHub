@@ -11,14 +11,16 @@ public static class DependencyManager
         where TServiceType : class
         where TServiceImplementation : class, TServiceType
     {
-        _ = RegisterService<TServiceType, TServiceImplementation>(() => Task.FromResult(Activator.CreateInstance<TServiceImplementation>()));
+        _ = RegisterService<TServiceType, TServiceImplementation>(_ => Task.CompletedTask);
     }
 
-    public static async Task RegisterService<TServiceType, TServiceImplementation>(Func<Task<TServiceImplementation>> factory)
+    public static async Task RegisterService<TServiceType, TServiceImplementation>(Func<TServiceImplementation, Task> factory)
         where TServiceType : class
         where TServiceImplementation : class, TServiceType
     {
-        TServiceImplementation service = await factory();
+        TServiceImplementation service = Activator.CreateInstance<TServiceImplementation>();
+        await factory(service);
+
         activeServices[typeof(TServiceType)] = service;
     }
 

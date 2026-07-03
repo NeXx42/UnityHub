@@ -13,5 +13,4 @@ public interface IProjectLogic
     public Task<ProjectInfo[]> TryToUpload(string[] folders);
 
     public Task UploadCardsPrimitive(ProjectInfo[] cards);
-    public Task DeriveProjectInfo(ProjectInfo info);
 }

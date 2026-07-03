@@ -2,9 +2,21 @@ using System.Runtime.InteropServices;
 
 namespace Models;
 
-public class GlobalConfig
+public static class GlobalConfig
 {
     public const string APPLICATION_NAME = "NexxUnityHub";
+    public static string getDataFolder
+    {
+        get
+        {
+            string path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), APPLICATION_NAME));
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            return path;
+        }
+    }
 
     public static bool isOnLinux
     {

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+using Models;
 using Models.Data;
 using Models.Interfaces;
 
@@ -15,6 +16,32 @@ public class ProjectLogic : IProjectLogic
 
     private IDataRepository data => DependencyManager.GetService<IDataRepository>()!;
     private Dictionary<int, ProjectCache> cache = new Dictionary<int, ProjectCache>();
+
+    public async Task Migrate()
+    {
+        string dirtyFile = Path.Combine(GlobalConfig.getDataFolder, "dirty");
+
+        if (!File.Exists(dirtyFile))
+            return;
+
+        List<int> iconsToUpdate = new List<int>();
+        string[] changes = File.ReadAllLines(dirtyFile);
+
+        foreach (string change in changes)
+        {
+            string[] pair = change.Split(":");
+
+            if (pair.Length > 1 && int.TryParse(pair[0], out int projectId))
+            {
+                iconsToUpdate.Add(projectId);
+            }
+        }
+
+        File.Delete(dirtyFile);
+
+        // may update more?
+        await data.Migrate(iconsToUpdate);
+    }
 
     public async Task<ProjectCard[]> Search(ProjectSearch search)
     {
@@ -113,7 +140,7 @@ public class ProjectLogic : IProjectLogic
                 name = dirInfo.Name
             };
 
-            await DeriveProjectInfo(card);
+            await DependencyManager.GetService<EditorLogic>()!.DeriveProjectInfo(card);
             potentialCards.Add(card);
         }
 
@@ -134,44 +161,5 @@ public class ProjectLogic : IProjectLogic
     public async Task UploadCardsPrimitive(ProjectInfo[] cards)
     {
         await data.CreateCards(cards);
-    }
-
-    public async Task DeriveProjectInfo(ProjectInfo info)
-    {
-        string versionFile = Path.Combine(info.directory, "ProjectSettings", "ProjectVersion.txt");
-
-        if (File.Exists(versionFile))
-        {
-            using (StreamReader reader = new StreamReader(versionFile))
-            {
-                string? line = await reader.ReadLineAsync();
-
-                if (!string.IsNullOrEmpty(line))
-                {
-                    string[] parts = line.Split(":");
-                    info.version = parts[1].Replace(" ", "");
-                }
-            }
-        }
-
-        string manifestFile = Path.Combine(info.directory, "Packages", "manifest.json");
-
-        if (File.Exists(manifestFile))
-        {
-            using (StreamReader reader = new StreamReader(manifestFile))
-            {
-                string manifestJson = await reader.ReadToEndAsync();
-                JsonElement element = JsonDocument.Parse(manifestJson).RootElement.GetProperty("dependencies");
-
-                info.packages = element.GetPropertyCount();
-
-                if (element.TryGetProperty("com.unity.render-pipelines.universal", out _))
-                    info.renderPipeline = RenderPipelineTypes.Universal_Render_Pipeline;
-                else if (element.TryGetProperty("com.unity.render-pipelines.high-definition", out _))
-                    info.renderPipeline = RenderPipelineTypes.High_Definition_Render_Pipeline;
-                else
-                    info.renderPipeline = RenderPipelineTypes.Built_In_Render_Pipeline;
-            }
-        }
     }
 }

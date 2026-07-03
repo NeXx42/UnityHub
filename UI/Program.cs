@@ -21,16 +21,10 @@ class Program
 
         async Task Setup()
         {
-            await DependencyManager.RegisterService<IDataRepository, SqliteDataRepo>(async () =>
-            {
-                SqliteDataRepo repo = new SqliteDataRepo();
-                await repo.Setup();
-
-                return repo;
-            });
+            await DependencyManager.RegisterService<IDataRepository, SqliteDataRepo>(repo => repo.Setup());
 
             DependencyManager.RegisterService<IEditorLogic, EditorLogic>();
-            DependencyManager.RegisterService<IProjectLogic, ProjectLogic>();
+            await DependencyManager.RegisterService<IProjectLogic, ProjectLogic>(logic => logic.Migrate());
             DependencyManager.RegisterService<ITaggingLogic, TaggingLogic>();
         }
     }

@@ -1,0 +1,11 @@
+{
+    "name": "com.nexx.unityhublink",
+    "displayName": "Nexx Unity Hub Linker",
+    "version": "1.0.0",
+    "description": "Provides tooling to link back to the unityhub.",
+    "author": {
+        "name": "Matthew",
+        "url": "https://github.com/nexx42",
+        "email": "nexx42tv@gmail.com"
+    }
+}

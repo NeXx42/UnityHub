@@ -83,4 +83,9 @@ public class MockDataRepo : IDataRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task Migrate(IEnumerable<int> ids)
+    {
+        throw new NotImplementedException();
+    }
 }

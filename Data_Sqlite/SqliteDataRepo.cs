@@ -14,13 +14,8 @@ public class SqliteDataRepo : IDataRepository
 
     public async Task Setup()
     {
-        string path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), GlobalConfig.APPLICATION_NAME));
-
-        if (!Directory.Exists(path))
-            Directory.CreateDirectory(path);
-
         database = new Database_Manager.DatabaseInstance();
-        await database.Init(Path.Combine(path, "data.db"), ExceptionHandler);
+        await database.Init(Path.Combine(GlobalConfig.getDataFolder, "data.db"), ExceptionHandler);
     }
 
     private void ExceptionHandler(Exception e, string? sql)
@@ -175,6 +170,18 @@ public class SqliteDataRepo : IDataRepository
                 collectionId = db.Id,
                 collectionName = db.Name,
             };
+        }
+    }
+
+    public async Task Migrate(IEnumerable<int> ids)
+    {
+        // temp code
+        dbo_Project[] projs = await database!.GetItems<dbo_Project>(SQLFilter.In(nameof(dbo_Project.id), ids));
+
+        foreach (dbo_Project proj in projs)
+        {
+            proj.iconPath = Path.Combine(GlobalConfig.getDataFolder, proj.id.ToString(), "icon.png");
+            await database.Update(proj, SQLFilter.Equal(nameof(dbo_Project.id), proj.id), nameof(dbo_Project.iconPath));
         }
     }
 }
