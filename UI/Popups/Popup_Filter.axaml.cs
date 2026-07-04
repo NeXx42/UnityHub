@@ -101,10 +101,44 @@ public partial class Popup_Filter : UserControl, IPopup
 
     private async Task LoadVersions(Popup_FilterGroup ui, int pos)
     {
-        ui.Init("Version", ["A", "B", "C"], [], false, () => selectedGroup = pos, OnUpdateSelection);
+        List<string> individualVersions = DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersions().ToList();
+        individualVersions.AddRange(await DependencyManager.GetService<IProjectLogic>()!.GetProjectVersions());
+        individualVersions = individualVersions.Distinct().OrderDescending().ToList();
+
+        string[] allOptions = ["Any", "Installed", .. individualVersions];
+        int existingOption = activeSearch?.versions?.Count() ?? 0;
+
+        if (existingOption == 1)
+        {
+            existingOption = allOptions.IndexOf(activeSearch!.versions.ElementAt(0));
+        }
+        else if (existingOption > 1)
+        {
+            existingOption = 1; // if multiple in the filter its assumed to be filtering on installed
+        }
+
+        ui.Init("Version", allOptions, [existingOption], false, () => selectedGroup = pos, OnUpdateSelection);
 
         async Task OnUpdateSelection(IEnumerable<int> selectedOptions)
         {
+            int? option = selectedOptions.FirstOrDefault();
+
+            switch (option)
+            {
+                case null:
+                case 0:
+                    activeSearch?.versions = [];
+                    break;
+
+                case 1:
+                    activeSearch?.versions = DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersions();
+                    break;
+
+                default:
+                    activeSearch?.versions = [allOptions[option.Value]]; // first two options are default filters
+                    break;
+            }
+
             await (search?.Invoke() ?? Task.CompletedTask);
         }
     }

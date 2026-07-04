@@ -174,7 +174,30 @@ public partial class Page : UserControl, IPage
         List<CollectionData> filters = new List<CollectionData>();
         filters.AddRange(await tagService.MapCollections(activeSearch.collections ?? []));
         filters.AddRange(await tagService.MapTags(activeSearch.tags ?? []));
+        filters.AddRange(activeSearch.versions.Select(v => new CollectionData()
+        {
+            collectionId = -1,
+            collectionName = v,
+            type = "version"
+        }));
 
-        activeFilters.Draw(filters, (ui, _, dat) => ui.Init(dat));
+        activeFilters.Draw(filters, (ui, _, dat) => ui.Init(dat, () => RemoveFilter(dat)));
+
+        Task RemoveFilter(CollectionData data)
+        {
+            switch (data.type.ToLower())
+            {
+                case "version":
+                    break;
+
+                case "tag":
+                    break;
+
+                case "collection":
+                    break;
+            }
+
+            return Task.CompletedTask;
+        }
     }
 }

@@ -35,6 +35,27 @@ public class EditorLogic : IEditorLogic
         return null;
     }
 
+    public string[] GetInstalledEditorVersions()
+    {
+        HashSet<string> installs = new HashSet<string>();
+        string[] dirs;
+
+        foreach (string root in editorLocations)
+        {
+            dirs = Directory.GetDirectories(root);
+
+            foreach (string dir in dirs)
+            {
+                string versionName = Path.GetFileName(dir)!;
+
+                if (!installs.Contains(versionName))
+                    installs.Add(versionName);
+            }
+        }
+
+        return installs.ToArray();
+    }
+
     public async Task LaunchProject(int id) => await LaunchProject(await DependencyManager.GetService<IProjectLogic>()!.GetProjectInfo(id));
     public async Task LaunchProject(ProjectInfo? info)
     {

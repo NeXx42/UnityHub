@@ -23,4 +23,6 @@ public interface IDataRepository
 
     public Task CreateTag(CollectionData src);
     public Task CreateCollection(CollectionData src);
+
+    public Task<string[]> GetProjectVersions();
 }

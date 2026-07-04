@@ -95,4 +95,9 @@ public class MockDataRepo : IDataRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<string[]> GetProjectVersions()
+    {
+        throw new NotImplementedException();
+    }
 }

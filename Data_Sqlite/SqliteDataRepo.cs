@@ -64,6 +64,8 @@ public class SqliteDataRepo : IDataRepository
         List<string> leftJoinClauses = new List<string>();
         List<string> whereClauses = new List<string>();
 
+        // build filters
+
         if ((search.collections?.Count() ?? 0) > 0)
         {
             leftJoinClauses.Add($"INNER JOIN {dbo_ProjectCollection.tableName} pc on pc.{nameof(dbo_ProjectCollection.ProjectId)} = p.{nameof(dbo_Project.id)}");
@@ -75,6 +77,13 @@ public class SqliteDataRepo : IDataRepository
             leftJoinClauses.Add($"INNER JOIN {dbo_ProjectTag.tableName} pt on pt.{nameof(dbo_ProjectTag.ProjectId)} = p.{nameof(dbo_Project.id)}");
             whereClauses.Add($"pt.{nameof(dbo_ProjectTag.TagId)} in ({string.Join(",", search.tags!)})");
         }
+
+        if (search.versions.Count() > 0)
+        {
+            whereClauses.Add($"p.{nameof(dbo_Project.version)} in ({string.Join(",", search.versions.Select(v => $"'{v}'"))})");
+        }
+
+        // writing
 
         if (leftJoinClauses.Count > 0)
         {
@@ -243,5 +252,16 @@ public class SqliteDataRepo : IDataRepository
             Name = src.collectionName,
             Colour = src.colour
         });
+    }
+
+    public async Task<string[]> GetProjectVersions()
+    {
+        string sql = $"select distinct {nameof(dbo_Project.version)} from {dbo_Project.tableName}";
+        return await database!.GetItemsGeneric(sql, Deserialize);
+
+        Task<string> Deserialize(SQLiteDataReader reader)
+        {
+            return Task.FromResult(reader[nameof(dbo_Project.version)].ToString()!);
+        }
     }
 }

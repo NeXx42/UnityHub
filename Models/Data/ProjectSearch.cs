@@ -4,8 +4,9 @@ public class ProjectSearch
 {
     public string? text;
 
-    public IEnumerable<int>? tags;
-    public IEnumerable<int>? collections;
+    public IEnumerable<int> tags = [];
+    public IEnumerable<int> collections = [];
+    public IEnumerable<string> versions = [];
 
     public int page;
     public int take;
@@ -16,7 +17,9 @@ public class ProjectSearch
     {
         text = string.Empty;
         page = 0;
+
         tags = [];
+        versions = [];
         collections = [];
     }
 }

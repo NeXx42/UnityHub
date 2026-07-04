@@ -141,4 +141,6 @@ public class ProjectLogic : IProjectLogic
     {
         await data.CreateCards(cards);
     }
+
+    public Task<string[]> GetProjectVersions() => data.GetProjectVersions();
 }

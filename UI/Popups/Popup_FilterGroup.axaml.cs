@@ -69,10 +69,9 @@ public partial class Popup_FilterGroup : UserControl
             {
                 ui.Content = val;
                 ui.GroupName = groupName;
-                ui.IsCheckedChanged -= (sender, _) => UpdateNonMutualOption(pos, ((RadioButton?)sender)?.IsChecked ?? false);
 
-                if (pos == selectedIndex)
-                    ui.IsChecked = true;
+                ui.IsCheckedChanged -= (sender, _) => UpdateNonMutualOption(pos, ((RadioButton?)sender)?.IsChecked ?? false);
+                ui.IsChecked = pos == selectedIndex;
 
                 ui.IsCheckedChanged += (sender, _) => UpdateNonMutualOption(pos, ((RadioButton?)sender)?.IsChecked ?? false);
             });
