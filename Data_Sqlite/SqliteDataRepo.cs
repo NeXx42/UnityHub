@@ -238,4 +238,22 @@ public class SqliteDataRepo : IDataRepository
             await database!.Delete<dbo_ProjectCollection>(SQLFilter.Equal(nameof(dbo_ProjectCollection.ProjectId), projId).Equal(nameof(dbo_ProjectCollection.CollectionId), colId));
         }
     }
+
+    public async Task CreateTag(CollectionData src)
+    {
+        await database!.InsertItem(new dbo_Tag
+        {
+            Name = src.collectionName,
+            Colour = src.colour
+        });
+    }
+
+    public async Task CreateCollection(CollectionData src)
+    {
+        await database!.InsertItem(new dbo_Collection
+        {
+            Name = src.collectionName,
+            Colour = src.colour
+        });
+    }
 }

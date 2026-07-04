@@ -98,4 +98,14 @@ public class MockDataRepo : IDataRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task CreateTag(CollectionData src)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task CreateCollection(CollectionData src)
+    {
+        throw new NotImplementedException();
+    }
 }

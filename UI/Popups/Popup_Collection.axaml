@@ -1,11 +1,13 @@
 <UserControl xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Popups.Popup_Collection">
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Popups.Popup_Collection"
+  xmlns:controls="clr-namespace:UI.Controls" x:Name="root">
+
   <Border Background="{DynamicResource BackgroundColour}" BorderThickness="2" BorderBrush="{DynamicResource BackgroundBorder}" CornerRadius="8" BoxShadow="0 0 12 0 #40000000">
     <ScrollViewer>
       <StackPanel Margin="10" Spacing="10">
-        <Label HorizontalAlignment="Center">Tags</Label>
+        <Label HorizontalAlignment="Center" Content="{Binding #root.CollectionName}s"/>
 
         <Border Background="{DynamicResource ButtonBorder}" Height="1" HorizontalAlignment="Stretch" Margin="8 0"/>
 
@@ -14,10 +16,7 @@
 
         <Border Background="{DynamicResource ButtonBorder}" Height="1" HorizontalAlignment="Stretch" Margin="8 0"/>
 
-        <Button HorizontalAlignment="Center">
-          Create Tag
-        </Button>
-
+        <controls:ButtonWrapper Label="{Binding #root.CollectionName}" Classes="Primary" x:Name="btn_Add"/>
       </StackPanel>
     </ScrollViewer>
   </Border>

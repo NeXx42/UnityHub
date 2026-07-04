@@ -43,8 +43,18 @@ public partial class MoreInfo : UserControl
 
         img.Source = await IconFetcher.GetImage(info.iconUrl);
 
-        btn_AddTag.RegisterPopup(await new Popup_Collection().Init(logic.GetTags, AddTag));
-        btn_AddCollection.RegisterPopup(await new Popup_Collection().Init(logic.GetCollections, AddCollection));
+        btn_AddTag.RegisterPopup(await new Popup_Collection().Init(
+                logic.GetTags,
+                AddTag,
+                logic.CreateTag,
+                () => btn_AddTag.IsOpen = false)
+        );
+        btn_AddCollection.RegisterPopup(await new Popup_Collection().Init(
+            logic.GetCollections,
+            AddCollection,
+            logic.CreateCollection,
+            () => btn_AddCollection.IsOpen = false)
+        );
     }
 
     private async Task AddTag(CollectionData data)
@@ -57,8 +67,6 @@ public partial class MoreInfo : UserControl
         ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
         await logic.UpdateTag(info.id, data.collectionId, true);
         await tags.DrawAsync(() => logic.MapTags(info.tags), (ui, _, dat) => ui.Init(dat));
-
-        btn_AddTag.IsOpen = false;
     }
 
     private async Task AddCollection(CollectionData data)
@@ -71,7 +79,5 @@ public partial class MoreInfo : UserControl
         ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
         await logic.UpdateTag(info.id, data.collectionId, true);
         await collections.DrawAsync(() => logic.MapTags(info.collections), (ui, _, dat) => ui.Init(dat));
-
-        btn_AddCollection.IsOpen = false;
     }
 }

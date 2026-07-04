@@ -12,4 +12,7 @@ public interface ITaggingLogic
 
     public Task UpdateTag(int projId, int tagId, bool to);
     public Task UpdateCollection(int projId, int colId, bool to);
+
+    public Task CreateTag(CollectionData data);
+    public Task CreateCollection(CollectionData data);
 }

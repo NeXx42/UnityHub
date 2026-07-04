@@ -58,7 +58,7 @@ public partial class Page : UserControl
         (cardInfo, int totalCards) = await DependencyManager.GetService<IProjectLogic>()!.Search(activeSearch);
         maxPages = (int)Math.Ceiling(totalCards / (float)ItemsPerPage);
 
-        cards.Draw(cardInfo, (c, i, dat) => c.Draw(dat, i, SelectCard));
+        cards.Draw(cardInfo, (c, i, dat) => c.Draw(dat, i, SelectCard).Wrap());
         RedrawPageControls();
     }
 
