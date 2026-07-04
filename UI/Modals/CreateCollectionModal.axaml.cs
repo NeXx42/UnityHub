@@ -4,11 +4,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Models.Data;
+using UI.Controls;
 
 namespace UI.Modals;
 
-public partial class CreateCollectionModal : UserControl
+public partial class CreateCollectionModal : UserControl, IModal
 {
+    private ModalContainer? container;
     private TaskCompletionSource<CollectionData?>? saveTask;
 
     public CreateCollectionModal()
@@ -17,10 +19,19 @@ public partial class CreateCollectionModal : UserControl
         btn.Click += (_, __) => Save();
     }
 
+    public bool killable => true;
+    public ModalContainer setContainer { set => container = value; }
+
     public Task<CollectionData?> Init()
     {
         saveTask = new TaskCompletionSource<CollectionData?>();
         return saveTask.Task;
+    }
+
+    public Task Kill()
+    {
+        saveTask?.SetCanceled();
+        return Task.CompletedTask;
     }
 
     private void Save()
@@ -33,5 +44,7 @@ public partial class CreateCollectionModal : UserControl
             collectionId = -1,
             collectionName = txt.Text
         });
+
+        container?.requestCloserEvent?.Invoke();
     }
 }

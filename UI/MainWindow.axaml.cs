@@ -6,12 +6,15 @@ using System.Net;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using Logic;
+using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
+using UI.Modals;
 
 namespace UI;
 
-public partial class MainWindow : Window
+public partial class MainWindow : Window, IUILinker
 {
     public static MainWindow? instance;
     private Stack<ModalContainer> activeModals;
@@ -20,13 +23,15 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        DependencyManager.Init(this);
+
         instance = this;
         activeModals = new Stack<ModalContainer>();
 
         el_Sidebar.Init(page_HomePage).Wrap();
     }
 
-    public static T ShowModal<T>(out int pos) where T : UserControl
+    public static T ShowModal<T>(out int pos) where T : UserControl, IModal
     {
         pos = instance!.activeModals.Count;
 
@@ -38,7 +43,7 @@ public partial class MainWindow : Window
         return container.ShowModal<T>(pos, CloseModal);
     }
 
-    public static void CloseModal(int pos)
+    public static async Task CloseModal(int pos)
     {
         for (int i = instance!.activeModals.Count - 1; i >= pos; i--)
         {
@@ -67,5 +72,13 @@ public partial class MainWindow : Window
     {
         var res = await OpenFoldersDialog(title);
         return res != null ? res[0] : null;
+    }
+
+    public async Task ShowMessageBox(string header, string paragraph)
+    {
+        MessageBox msg = ShowModal<MessageBox>(out int pos);
+        await msg.Show(header, paragraph);
+
+        await CloseModal(pos);
     }
 }

@@ -5,7 +5,13 @@ namespace Logic;
 
 public static class DependencyManager
 {
+    public static IUILinker? ui { get; private set; }
     private static readonly ConcurrentDictionary<Type, object> activeServices = new();
+
+    public static void Init(IUILinker ui)
+    {
+        DependencyManager.ui = ui;
+    }
 
     public static void RegisterService<TServiceType, TServiceImplementation>()
         where TServiceType : class

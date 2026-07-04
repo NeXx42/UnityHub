@@ -75,9 +75,10 @@ public partial class ImageCard : UserControl
     public void ToggleSelection(bool to)
     {
         if (to)
-            root.Classes.Add("Selected");
+            border_Main.Classes.Add("Selected");
         else
-            root.Classes.Remove("Selected");
+            border_Main.Classes.Remove("Selected");
+
     }
 
     private void UpdateTagging(int? projectId, string msg)

@@ -1,13 +1,18 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using UI.Helpers;
+using UI.Modals;
 
 namespace UI.Controls;
 
 public partial class ModalContainer : UserControl
 {
-    private Action? requestCloserEvent;
+    public Action? requestCloserEvent { private set; get; }
+
+    private IModal? activeModal;
     private UserControl? activeControl;
 
     public ModalContainer()
@@ -17,11 +22,14 @@ public partial class ModalContainer : UserControl
         Container.PointerPressed += (_, __) => requestCloserEvent?.Invoke();
     }
 
-    public T ShowModal<T>(int pos, Action<int> requestClosure) where T : UserControl
+    public T ShowModal<T>(int pos, Func<int, Task> requestClosure) where T : UserControl, IModal
     {
-        requestCloserEvent = () => requestClosure(pos);
+        requestCloserEvent = () => requestClosure(pos).Wrap();
 
         T control = Activator.CreateInstance<T>();
+        control.setContainer = this;
+
+        activeModal = control;
         activeControl = control;
 
         activeControl.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;

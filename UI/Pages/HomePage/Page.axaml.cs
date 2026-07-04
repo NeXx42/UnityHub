@@ -68,7 +68,7 @@ public partial class Page : UserControl
             cards[currentSelectedCard.Value].ToggleSelection(false);
 
         currentSelectedCard = cardPos;
-        cards[currentSelectedCard.Value].ToggleSelection(false);
+        cards[currentSelectedCard.Value].ToggleSelection(true);
 
         await control_MoreInfo.Show(cardInfo![cardPos].id);
     }

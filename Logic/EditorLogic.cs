@@ -36,8 +36,20 @@ public class EditorLogic : IEditorLogic
     }
 
     public async Task LaunchProject(int id) => await LaunchProject(await DependencyManager.GetService<IProjectLogic>()!.GetProjectInfo(id));
-    public async Task LaunchProject(ProjectInfo info)
+    public async Task LaunchProject(ProjectInfo? info)
     {
+        if (info == null)
+        {
+            await DependencyManager.ui!.ShowMessageBox("Project is invalid", "Failed to launch the project because the id didn't correspond with a known entry.");
+            return;
+        }
+
+        if (!IsVersionInstalled(info.version))
+        {
+            await DependencyManager.ui!.ShowMessageBox("Version not found", $"Failed to launch the project because the unity editor version {info.version} was not found.");
+            return;
+        }
+
         if (true)
         {
             await InjectLinker(info.directory, info.id);

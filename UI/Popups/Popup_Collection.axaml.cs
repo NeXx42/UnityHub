@@ -63,7 +63,7 @@ public partial class Popup_Collection : UserControl
         CreateCollectionModal creator = MainWindow.ShowModal<CreateCollectionModal>(out int pos);
         CollectionData? dat = await creator.Init();
 
-        MainWindow.CloseModal(pos);
+        await MainWindow.CloseModal(pos);
 
         if (dat != null && saver != null)
         {
