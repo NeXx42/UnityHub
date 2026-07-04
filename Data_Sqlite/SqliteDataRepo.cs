@@ -36,8 +36,8 @@ public class SqliteDataRepo : IDataRepository
             packages = dbData.packageCount,
             renderPipeline = (RenderPipelineTypes?)dbData.pipelineType,
 
-            tags = dbData.tags.ToArray(),
-            collections = dbData.collections.ToArray()
+            tags = dbData.tags.Distinct().ToHashSet(),
+            collections = dbData.collections.Distinct().ToHashSet()
         };
     }
 
@@ -200,6 +200,42 @@ public class SqliteDataRepo : IDataRepository
         {
             proj.iconPath = Path.Combine(GlobalConfig.getDataFolder, proj.id.ToString(), "icon.png");
             await database.Update(proj, SQLFilter.Equal(nameof(dbo_Project.id), proj.id), nameof(dbo_Project.iconPath));
+        }
+    }
+
+    public async Task ToggleTag(int projId, int tagId, bool to)
+    {
+        if (to)
+        {
+            dbo_ProjectTag tag = new dbo_ProjectTag()
+            {
+                ProjectId = projId,
+                TagId = tagId
+            };
+
+            await database!.AddOrUpdate(tag, SQLFilter.Equal(nameof(dbo_ProjectTag.ProjectId), projId).Equal(nameof(dbo_ProjectTag.TagId), tagId));
+        }
+        else
+        {
+            await database!.Delete<dbo_ProjectTag>(SQLFilter.Equal(nameof(dbo_ProjectTag.ProjectId), projId).Equal(nameof(dbo_ProjectTag.TagId), tagId));
+        }
+    }
+
+    public async Task ToggleCollection(int projId, int colId, bool to)
+    {
+        if (to)
+        {
+            dbo_ProjectCollection tag = new dbo_ProjectCollection()
+            {
+                ProjectId = projId,
+                CollectionId = colId
+            };
+
+            await database!.AddOrUpdate(tag, SQLFilter.Equal(nameof(dbo_ProjectCollection.ProjectId), projId).Equal(nameof(dbo_ProjectCollection.CollectionId), colId));
+        }
+        else
+        {
+            await database!.Delete<dbo_ProjectCollection>(SQLFilter.Equal(nameof(dbo_ProjectCollection.ProjectId), projId).Equal(nameof(dbo_ProjectCollection.CollectionId), colId));
         }
     }
 }

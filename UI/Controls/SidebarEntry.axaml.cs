@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Metadata;
+using UI.Helpers;
 
 namespace UI.Controls;
 
@@ -34,6 +35,6 @@ public partial class SidebarEntry : UserControl
 
     public void Init(Func<Task> onSelect)
     {
-        onSelectCallback = () => _ = onSelect();
+        onSelectCallback = onSelect().Wrap;
     }
 }

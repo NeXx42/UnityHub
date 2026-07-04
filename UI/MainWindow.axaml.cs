@@ -23,16 +23,7 @@ public partial class MainWindow : Window
         instance = this;
         activeModals = new Stack<ModalContainer>();
 
-
-
-        try
-        {
-            _ = el_Sidebar.Init(page_HomePage);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Top level error, {e.Message}");
-        }
+        el_Sidebar.Init(page_HomePage).Wrap();
     }
 
     public static T ShowModal<T>(out int pos) where T : UserControl

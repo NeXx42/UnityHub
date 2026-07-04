@@ -11,6 +11,12 @@
 
       <Setter Property="CornerRadius" Value="8"/>
       <Setter Property="Padding" Value="12 6"/>
+
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.1"/>
+        </Transitions>
+      </Setter>
     </Style>
 
     <Style Selector="Border#btn > Label">
@@ -33,14 +39,20 @@
 
 
     <Style Selector="Border#btn:pointerover">
-      <Setter Property="Background" Value="{DynamicResource PrimaryHoverBrush}"/>
+      <Setter Property="Background" Value="{DynamicResource BackgroundColourLight}"/>
     </Style>
   </UserControl.Styles>
 
-  <Border x:Name="btn" CornerRadius="{Binding #root.CornerRadius}">
-    <Grid>
-      <Label Content="{Binding #root.Label}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-      <ContentPresenter Content="{Binding #root.Icon}"/>
-    </Grid>
-  </Border>
+  <Panel x:Name="RootPanel" HorizontalAlignment="Stretch">
+    <Border x:Name="btn" CornerRadius="{Binding #root.CornerRadius}" Cursor="Hand">
+      <Grid IsHitTestVisible="False">
+        <Label IsHitTestVisible="False" Content="{Binding #root.Label}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+        <ContentPresenter IsHitTestVisible="False" Content="{Binding #root.Icon}"/>
+      </Grid>
+    </Border>
+
+    <Popup IsOpen="{Binding #root.IsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=RootPanel}" MinWidth="{Binding ElementName=RootPanel, Path=Bounds.Width}" IsLightDismissEnabled="True">
+      <ContentPresenter Content="{Binding #root.PopupContent}"/>
+    </Popup>
+  </Panel>
 </UserControl>

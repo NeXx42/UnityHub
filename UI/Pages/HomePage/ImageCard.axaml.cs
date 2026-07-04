@@ -61,7 +61,7 @@ public partial class ImageCard : UserControl
         if (!pos.HasValue || onSelect == null)
             return;
 
-        _ = onSelect(pos.Value);
+        onSelect(pos.Value).Wrap();
     }
 
     public void ToggleSelection(bool to)

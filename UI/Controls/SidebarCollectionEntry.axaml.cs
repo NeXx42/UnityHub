@@ -2,7 +2,9 @@ using System;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Models.Data;
 
 namespace UI.Controls;
@@ -40,9 +42,21 @@ public partial class SidebarCollectionEntry : UserControl
 
         UserControl CreateEntry(CollectionData dat)
         {
+            const int radius = 10;
+
+            Viewbox iconContainer = new Viewbox();
+            Path iconPath = new Path
+            {
+                Data = new EllipseGeometry(new Rect(0, 0, radius, radius)),
+                Fill = Brushes.Red
+            };
+
+            iconContainer.Child = iconPath;
+
             SidebarEntry sidebar = new SidebarEntry();
             sidebar.Init(async () => await onSelect(dat.collectionId));
             sidebar.Label = dat.collectionName;
+            sidebar.Icon = iconContainer;
 
             return sidebar;
         }

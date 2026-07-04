@@ -7,6 +7,7 @@ using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
+using UI.Popups;
 
 namespace UI.Pages.HomePage;
 
@@ -33,12 +34,44 @@ public partial class MoreInfo : UserControl
         info = await DependencyManager.GetService<IProjectLogic>()!.GetProjectInfo(id);
         DataContext = info;
 
+        ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
+
         Task.WaitAll([
-            tags.DrawAsync(() => DependencyManager.GetService<ITaggingLogic>()!.MapTags(info.tags), (ui, _, dat) => ui.Init(dat)),
-            collections.DrawAsync(() => DependencyManager.GetService<ITaggingLogic>()!.MapCollections(info.collections), (ui, _, dat) => ui.Init(dat)),
+            tags.DrawAsync(() => logic.MapTags(info.tags), (ui, _, dat) => ui.Init(dat)),
+            collections.DrawAsync(() => logic.MapCollections(info.collections), (ui, _, dat) => ui.Init(dat)),
         ]);
 
         img.Source = await IconFetcher.GetImage(info.iconUrl);
 
+        btn_AddTag.RegisterPopup(await new Popup_Collection().Init(logic.GetTags, AddTag));
+        btn_AddCollection.RegisterPopup(await new Popup_Collection().Init(logic.GetCollections, AddCollection));
+    }
+
+    private async Task AddTag(CollectionData data)
+    {
+        if (info == null || info.tags.Contains(data.collectionId))
+            return;
+
+        info.tags.Add(data.collectionId);
+
+        ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
+        await logic.UpdateTag(info.id, data.collectionId, true);
+        await tags.DrawAsync(() => logic.MapTags(info.tags), (ui, _, dat) => ui.Init(dat));
+
+        btn_AddTag.IsOpen = false;
+    }
+
+    private async Task AddCollection(CollectionData data)
+    {
+        if (info == null || info.collections.Contains(data.collectionId))
+            return;
+
+        info.collections.Add(data.collectionId);
+
+        ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
+        await logic.UpdateTag(info.id, data.collectionId, true);
+        await collections.DrawAsync(() => logic.MapTags(info.collections), (ui, _, dat) => ui.Init(dat));
+
+        btn_AddCollection.IsOpen = false;
     }
 }

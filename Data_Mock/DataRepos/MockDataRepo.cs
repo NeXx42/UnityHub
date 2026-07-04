@@ -88,4 +88,14 @@ public class MockDataRepo : IDataRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task ToggleTag(int projId, int tagId, bool to)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task ToggleCollection(int projId, int colId, bool to)
+    {
+        throw new NotImplementedException();
+    }
 }

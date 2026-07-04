@@ -18,13 +18,6 @@ public partial class DropDownButton : UserControl
         set => SetValue(ButtonLabelProperty, value);
     }
 
-    public static new readonly StyledProperty<CornerRadius> CornerRadiusProperty = AvaloniaProperty.Register<DropDownButton, CornerRadius>(nameof(CornerRadius), defaultValue: new CornerRadius(8));
-    public new CornerRadius CornerRadius
-    {
-        get => GetValue(CornerRadiusProperty);
-        set => SetValue(CornerRadiusProperty, value);
-    }
-
     public static readonly StyledProperty<bool> IsOpenProperty = AvaloniaProperty.Register<DropDownButton, bool>(nameof(IsOpen), defaultValue: false);
     public bool IsOpen
     {

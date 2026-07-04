@@ -3,14 +3,14 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.DropDownButton"
   xmlns:local="clr-namespace:UI.Controls" x:DataType="local:DropDownButton">
-  <Panel x:Name="RootPanel">
+  <Panel x:Name="RootPanel" HorizontalAlignment="Stretch">
 
-    <StackPanel Orientation="Horizontal" Spacing="1">
-      <local:ButtonWrapper x:Name="btn" Label="{Binding ButtonLabel}" CornerRadius="8 0 0 8"/>
-      <ToggleButton IsChecked="{Binding IsOpen, Mode=TwoWay}" Background="{DynamicResource AccentColour}" CornerRadius="0 8 8 0" VerticalAlignment="Stretch">
+    <Grid ColumnDefinitions="* 1 Auto">
+      <local:ButtonWrapper x:Name="btn" Label="{Binding ButtonLabel}" CornerRadius="8 0 0 8" Classes="Primary"/>
+      <ToggleButton IsChecked="{Binding IsOpen, Mode=TwoWay}" Background="{DynamicResource AccentColour}" CornerRadius="0 8 8 0" VerticalAlignment="Stretch" Grid.Column="2">
         <Path Data="M 0 0 L 6 6 L 12 0" Stroke="White" StrokeThickness="2" StrokeLineCap="Round" HorizontalAlignment="Center" VerticalAlignment="Center" />
       </ToggleButton>
-    </StackPanel>
+    </Grid>
 
     <Popup IsOpen="{Binding IsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=RootPanel}" MinWidth="{Binding ElementName=RootPanel, Path=Bounds.Width}" IsLightDismissEnabled="True">
       <Border Background="Red">

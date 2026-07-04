@@ -5,6 +5,7 @@ using Data.DataRepos;
 using Data_Sqlite;
 using Logic;
 using Models.Interfaces;
+using UI.Helpers;
 
 namespace UI;
 
@@ -16,7 +17,7 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        _ = Setup();
+        Setup().Wrap();
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
         async Task Setup()

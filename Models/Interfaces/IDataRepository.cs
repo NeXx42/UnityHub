@@ -17,4 +17,7 @@ public interface IDataRepository
 
     public Task<CollectionData[]> GetTags();
     public Task<CollectionData[]> GetCollections();
+
+    public Task ToggleTag(int projId, int tagId, bool to);
+    public Task ToggleCollection(int projId, int colId, bool to);
 }

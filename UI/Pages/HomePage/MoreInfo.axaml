@@ -3,7 +3,8 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.MoreInfo"
   xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectInfo" Width="300"
-  xmlns:controls="clr-namespace:UI.Controls">
+  xmlns:controls="clr-namespace:UI.Controls"
+  xmlns:popups="clr-namespace:UI.Popups">
   <Border BorderThickness="1 0 0 0" BorderBrush="{DynamicResource ButtonBorder}" Padding="10">
     <StackPanel Spacing="15">
       <!-- ICON -->
@@ -27,7 +28,7 @@
             </Style>
           </StackPanel.Styles>
 
-          <controls:DropDownButton x:Name="btn_OpenProject" ButtonLabel="Open Project"/>
+          <controls:DropDownButton x:Name="btn_OpenProject" ButtonLabel="Open Project" />
 
           <controls:ButtonWrapper x:Name="btn_OpenId" Label="Open in Visual Studio"/>
           <controls:ButtonWrapper x:Name="btn_OpenExplorer" Label="Reveal in Explorer"/>
@@ -164,7 +165,7 @@
 
       <StackPanel>
         <Grid>
-          <Label HorizontalAlignment="Left">Tags</Label>
+          <Label HorizontalAlignment="Left">Notes</Label>
 
           <controls:ButtonWrapper HorizontalAlignment="Right" Classes="Transparent">
             <controls:ButtonWrapper.Icon>

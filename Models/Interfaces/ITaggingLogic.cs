@@ -9,4 +9,7 @@ public interface ITaggingLogic
 
     public Task<CollectionData[]> MapTags(IEnumerable<int> from);
     public Task<CollectionData[]> MapCollections(IEnumerable<int> from);
+
+    public Task UpdateTag(int projId, int tagId, bool to);
+    public Task UpdateCollection(int projId, int colId, bool to);
 }

@@ -71,4 +71,7 @@ public class TaggingLogic : ITaggingLogic
 
         return res.ToArray();
     }
+
+    public async Task UpdateTag(int projId, int tagId, bool to) => await data.ToggleTag(projId, tagId, to);
+    public async Task UpdateCollection(int projId, int colId, bool to) => await data.ToggleCollection(projId, colId, to);
 }

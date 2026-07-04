@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Models.Helpers;
 
 namespace Models.Data;
@@ -9,7 +11,7 @@ public enum RenderPipelineTypes
     Built_In_Render_Pipeline
 }
 
-public class ProjectInfo
+public class ProjectInfo : INotifyPropertyChanged
 {
     public required int id;
 
@@ -24,6 +26,13 @@ public class ProjectInfo
     public long? size { get; set; }
     public int? packages { get; set; }
 
-    public int[] tags { get; set; } = [];
-    public int[] collections { get; set; } = [];
+    public HashSet<int> tags { get; set; } = [];
+    public HashSet<int> collections { get; set; } = [];
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
