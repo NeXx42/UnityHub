@@ -7,7 +7,7 @@
   <Grid ColumnDefinitions="* Auto">
     <Grid RowDefinitions="Auto * Auto" Margin="15">
       <!-- Searching -->
-      <StackPanel Orientation="Vertical">
+      <StackPanel Orientation="Vertical" Spacing="15">
         <Grid Height="40">
           <TextBox HorizontalAlignment="Left" CornerRadius="8" Width="250" Background="{DynamicResource ButtonBackground}" Foreground="{DynamicResource TextColourMuted}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" PlaceholderText="Search projects" VerticalContentAlignment="Center"/>
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
@@ -17,9 +17,13 @@
           </StackPanel>
         </Grid>
 
-        <StackPanel>
-          <Label Content="100 Projects"></Label>
-        </StackPanel>
+        <Grid>
+          <StackPanel>
+            <WrapPanel x:Name="cont_Filters" ItemSpacing="5" LineSpacing="5"/>
+          </StackPanel>
+
+          <controls:ButtonWrapper HorizontalAlignment="Right" Label="Filters" x:Name="btn_Filters"/>
+        </Grid>
       </StackPanel>
 
 

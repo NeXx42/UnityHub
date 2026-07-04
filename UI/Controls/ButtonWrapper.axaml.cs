@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using UI.Helpers;
+using UI.Interfaces;
 
 namespace UI.Controls;
 
@@ -36,6 +37,7 @@ public partial class ButtonWrapper : UserControl
         get => GetValue(PopupContentProperty);
         set => SetValue(PopupContentProperty, value);
     }
+    private IPopup PopupData;
 
     public static readonly StyledProperty<bool> IsOpenProperty = AvaloniaProperty.Register<ButtonWrapper, bool>(nameof(IsOpen), defaultValue: false);
     public bool IsOpen
@@ -58,10 +60,19 @@ public partial class ButtonWrapper : UserControl
         onClick = callback;
     }
 
-    public void RegisterPopup(UserControl popup)
+    public void RegisterPopup<T>() where T : UserControl, IPopup
+        => RegisterPopup(Activator.CreateInstance<T>());
+
+    public void RegisterPopup<T>(T popup) where T : UserControl, IPopup
     {
         PopupContent = popup;
-        onClick = () => IsOpen = true;
+        PopupData = popup;
+
+        onClick = () =>
+        {
+            IsOpen = true;
+            popup.Show().Wrap();
+        };
     }
 
     public void RegisterClick(Func<Task> callback)

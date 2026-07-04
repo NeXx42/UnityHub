@@ -11,6 +11,7 @@ using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
 using UI.Modals;
+using UI.Popups;
 
 namespace UI.Pages.HomePage;
 
@@ -27,18 +28,23 @@ public partial class Page : UserControl, IPage
     private int maxPages = 5;
 
     private int? currentSelectedCard;
+    private Popup_Filter? filter;
 
     private ReusableList<ImageCard> cards;
     private ReusableList<ButtonWrapper> pageControls;
+    private ReusableList<CollectionItem> activeFilters;
 
-    private ProjectSearch activeSearch;
     private ProjectInfo[]? cardInfo;
+
+    public ProjectSearch activeSearch { private set; get; }
+
 
     public Page()
     {
         InitializeComponent();
 
         cards = new ReusableList<ImageCard>(grid_Content);
+        activeFilters = new ReusableList<CollectionItem>(cont_Filters);
         pageControls = new ReusableList<ButtonWrapper>(cont_PageControls);
 
         btn_NewProject.RegisterOptions(((NewProjectOptions[])System.Enum.GetValues(typeof(NewProjectOptions))).Select(s => s.GetDisplayName()), SelectNewProjectOption);
@@ -46,8 +52,14 @@ public partial class Page : UserControl, IPage
 
         activeSearch = new ProjectSearch()
         {
-            page = 0
+            page = 0,
+            take = ItemsPerPage
         };
+
+        filter = new Popup_Filter();
+        filter.Init(activeSearch, SearchCards);
+
+        btn_Filters.RegisterPopup(filter);
     }
 
 
@@ -67,16 +79,14 @@ public partial class Page : UserControl, IPage
         return Task.CompletedTask;
     }
 
-    public async Task SearchCards(ProjectSearch search)
+    public async Task SearchCards()
     {
-        activeSearch = search;
-        search.take = ItemsPerPage;
-
         (cardInfo, int totalCards) = await DependencyManager.GetService<IProjectLogic>()!.Search(activeSearch);
         maxPages = (int)Math.Ceiling(totalCards / (float)ItemsPerPage);
 
         cards.Draw(cardInfo, (c, i, dat) => c.Draw(dat, i, SelectCard).Wrap());
         RedrawPageControls();
+        await RedrawFilterList();
     }
 
     private async Task SelectCard(int cardPos)
@@ -131,7 +141,7 @@ public partial class Page : UserControl, IPage
     private async Task UpdatePage(int to)
     {
         activeSearch.page = to;
-        await SearchCards(activeSearch);
+        await SearchCards();
     }
 
     private void RedrawPageControls()
@@ -155,5 +165,16 @@ public partial class Page : UserControl, IPage
             else
                 lbl.Classes.Remove("Selected");
         });
+    }
+
+    private async Task RedrawFilterList()
+    {
+        ITaggingLogic tagService = DependencyManager.GetService<ITaggingLogic>()!;
+
+        List<CollectionData> filters = new List<CollectionData>();
+        filters.AddRange(await tagService.MapCollections(activeSearch.collections ?? []));
+        filters.AddRange(await tagService.MapTags(activeSearch.tags ?? []));
+
+        activeFilters.Draw(filters, (ui, _, dat) => ui.Init(dat));
     }
 }

@@ -64,15 +64,15 @@ public class SqliteDataRepo : IDataRepository
         List<string> leftJoinClauses = new List<string>();
         List<string> whereClauses = new List<string>();
 
-        if ((search.collections?.Length ?? 0) > 0)
+        if ((search.collections?.Count() ?? 0) > 0)
         {
-            leftJoinClauses.Add($"LEFT JOIN {dbo_ProjectCollection.tableName} pc on pc.{nameof(dbo_ProjectCollection.ProjectId)} = p.{nameof(dbo_Project.id)}");
+            leftJoinClauses.Add($"INNER JOIN {dbo_ProjectCollection.tableName} pc on pc.{nameof(dbo_ProjectCollection.ProjectId)} = p.{nameof(dbo_Project.id)}");
             whereClauses.Add($"pc.{nameof(dbo_ProjectCollection.CollectionId)} in ({string.Join(",", search.collections!)})");
         }
 
-        if ((search.tags?.Length ?? 0) > 0)
+        if ((search.tags?.Count() ?? 0) > 0)
         {
-            leftJoinClauses.Add($"LEFT JOIN {dbo_ProjectTag.tableName} pt on pt.{nameof(dbo_ProjectTag.ProjectId)} = p.{nameof(dbo_Project.id)}");
+            leftJoinClauses.Add($"INNER JOIN {dbo_ProjectTag.tableName} pt on pt.{nameof(dbo_ProjectTag.ProjectId)} = p.{nameof(dbo_Project.id)}");
             whereClauses.Add($"pt.{nameof(dbo_ProjectTag.TagId)} in ({string.Join(",", search.tags!)})");
         }
 
@@ -85,7 +85,7 @@ public class SqliteDataRepo : IDataRepository
         if (whereClauses.Count > 0)
         {
             sql.AppendLine(" WHERE");
-            sql.Append(string.Join("AND", whereClauses));
+            sql.Append(string.Join(" AND ", whereClauses));
         }
 
         sql.AppendLine($" LIMIT {search.take} OFFSET {search.skip}");
@@ -156,7 +156,8 @@ public class SqliteDataRepo : IDataRepository
             {
                 collectionId = db.Id,
                 collectionName = db.Name,
-                colour = db.Colour
+                colour = db.Colour,
+                type = "tag"
             };
         }
     }
@@ -173,6 +174,7 @@ public class SqliteDataRepo : IDataRepository
                 collectionId = db.Id,
                 collectionName = db.Name,
                 colour = db.Colour,
+                type = "collection"
             };
         }
     }

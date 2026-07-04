@@ -39,7 +39,7 @@ public partial class Sidebar : UserControl
 
     private async Task UpdateSelection(int id, int? subArg = null)
     {
-        ProjectSearch search = new ProjectSearch();
+        homepage!.activeSearch.Reset();
 
         switch (id)
         {
@@ -50,18 +50,18 @@ public partial class Sidebar : UserControl
                 break;
 
             case 3: // Collections
-                search.collections = [subArg!.Value];
+                homepage!.activeSearch.collections = [subArg!.Value];
                 break;
 
             case 4: // Tags
-                search.tags = [subArg!.Value];
+                homepage!.activeSearch.tags = [subArg!.Value];
                 break;
         }
 
         for (int i = 0; i < cont_Entries.Children.Count; i++)
             (cont_Entries.Children[i] as ISidebarControl)?.setSelected = i == id;
 
-        await homepage!.SearchCards(search);
+        await homepage!.SearchCards();
     }
 
     private void TaggingChange(int? projId, string msg)

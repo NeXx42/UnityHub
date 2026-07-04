@@ -19,19 +19,12 @@ public partial class CreateCollectionModal : UserControl, IModal
         btn.Click += (_, __) => Save();
     }
 
-    public bool killable => true;
     public ModalContainer setContainer { set => container = value; }
 
     public Task<CollectionData?> Init()
     {
         saveTask = new TaskCompletionSource<CollectionData?>();
         return saveTask.Task;
-    }
-
-    public Task Kill()
-    {
-        saveTask?.SetCanceled();
-        return Task.CompletedTask;
     }
 
     private void Save()
@@ -42,7 +35,8 @@ public partial class CreateCollectionModal : UserControl, IModal
         saveTask.SetResult(new CollectionData()
         {
             collectionId = -1,
-            collectionName = txt.Text
+            collectionName = txt.Text,
+            type = ""
         });
 
         container?.requestCloserEvent?.Invoke();

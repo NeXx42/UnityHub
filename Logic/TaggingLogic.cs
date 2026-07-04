@@ -127,7 +127,8 @@ public class TaggingLogic : ITaggingLogic
         {
             collectionId = 1,
             collectionName = src.collectionName,
-            colour = collectionColours[colourId]
+            colour = collectionColours[colourId],
+            type = "tag",
         });
 
         _ = await GetTags(true);
@@ -141,7 +142,8 @@ public class TaggingLogic : ITaggingLogic
         {
             collectionId = 1,
             collectionName = src.collectionName,
-            colour = collectionColours[colourId]
+            colour = collectionColours[colourId],
+            type = "collection"
         });
 
         _ = await GetCollections(true);

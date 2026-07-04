@@ -16,7 +16,7 @@ public partial class CollectionItem : UserControl
     public CollectionItem()
     {
         InitializeComponent();
-        DataContext = new CollectionData() { collectionId = 0, collectionName = "test" };
+        DataContext = new CollectionData() { collectionId = 0, collectionName = "temp", type = "temp" };
 
         this.PointerPressed += (_, __) => onClickCallback?.Invoke();
     }

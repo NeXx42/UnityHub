@@ -9,11 +9,12 @@ using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
+using UI.Interfaces;
 using UI.Modals;
 
 namespace UI.Popups;
 
-public partial class Popup_Collection : UserControl
+public partial class Popup_Collection : UserControl, IPopup
 {
     private Action? closer;
     private Func<Task>? drawer;
@@ -70,5 +71,10 @@ public partial class Popup_Collection : UserControl
             await saver(dat);
             await drawer!();
         }
+    }
+
+    public Task Show()
+    {
+        throw new NotImplementedException();
     }
 }
