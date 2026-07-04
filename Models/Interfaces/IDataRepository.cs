@@ -9,8 +9,8 @@ public interface IDataRepository
 
     public Task<(int[], int)> Search(ProjectSearch search);
 
-    public Task<ProjectCard[]> GetCardInfo(IEnumerable<int> ids);
-    public Task<ProjectInfo> GetProjectInfo(int id);
+    public Task<ProjectInfo?> GetProjectInfo(int id);
+    public Task<ProjectInfo[]> GetProjectInfo(IEnumerable<int> ids);
 
     public Task CreateCard(ProjectInfo info);
     public Task CreateCards(IEnumerable<ProjectInfo> cards);

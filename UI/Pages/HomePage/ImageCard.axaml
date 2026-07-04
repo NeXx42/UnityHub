@@ -2,7 +2,7 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.ImageCard" Width="320" Height="260"
-  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectCard" x:Name="root">
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectInfo" x:Name="root">
   <UserControl.Styles>
     <Style Selector="Border#border_Main">
       <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorder}"/>
@@ -60,8 +60,7 @@
 
         <Label Content="{Binding directory}" FontSize="11" Foreground="{DynamicResource TextColourMuted}" Grid.Row="2" Margin="8 0 0 0" VerticalContentAlignment="Top"/>
 
-        <StackPanel Orientation="Horizontal" x:Name="cont_Tags" Grid.Row="3" Margin="8 0 0 0">
-        </StackPanel>
+        <StackPanel Orientation="Horizontal" x:Name="cont_Tags" Grid.Row="3" Margin="8 0 0 0" Spacing="5" />
 
         <Grid Grid.Row="4" Margin="8 0 0 0" VerticalAlignment="Bottom">
           <Label x:Name="lbl_LastAccessed" Content="{Binding #root.LastOpened}" Foreground="{DynamicResource TextColourMuted}" FontSize="10"/>

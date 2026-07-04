@@ -34,6 +34,9 @@ public partial class MoreInfo : UserControl
         info = await DependencyManager.GetService<IProjectLogic>()!.GetProjectInfo(id);
         DataContext = info;
 
+        if (info == null)
+            return;
+
         ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
 
         Task.WaitAll([
@@ -78,6 +81,6 @@ public partial class MoreInfo : UserControl
 
         ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
         await logic.UpdateTag(info.id, data.collectionId, true);
-        await collections.DrawAsync(() => logic.MapTags(info.collections), (ui, _, dat) => ui.Init(dat));
+        await collections.DrawAsync(() => logic.MapCollections(info.collections), (ui, _, dat) => ui.Init(dat));
     }
 }

@@ -41,22 +41,6 @@ public class SqliteDataRepo : IDataRepository
         };
     }
 
-    private ProjectCard MapToCard(dbo_Project dbData)
-    {
-        return new ProjectCard()
-        {
-            id = dbData.id,
-            name = dbData.name ?? "",
-            directory = dbData.directory,
-            version = dbData.version,
-            iconUrl = dbData.iconPath,
-
-            tags = dbData.tags.ToArray(),
-            collections = dbData.collections.ToArray()
-        };
-    }
-
-
     public async Task<(int[], int)> Search(ProjectSearch search)
     {
         string sql = GenerateSearchSQL(search);
@@ -108,8 +92,8 @@ public class SqliteDataRepo : IDataRepository
         return sql.ToString();
     }
 
-    public async Task<ProjectCard[]> GetCardInfo(IEnumerable<int> ids) => await FetchInternal(ids, MapToCard);
-    public async Task<ProjectInfo> GetProjectInfo(int id) => (await FetchInternal([id], MapToInfo)).FirstOrDefault();
+    public async Task<ProjectInfo?> GetProjectInfo(int id) => (await FetchInternal([id], MapToInfo)).FirstOrDefault();
+    public async Task<ProjectInfo[]> GetProjectInfo(IEnumerable<int> ids) => await FetchInternal(ids, MapToInfo);
 
     private async Task<T[]> FetchInternal<T>(IEnumerable<int> ids, Func<dbo_Project, T> mapper)
     {
@@ -172,6 +156,7 @@ public class SqliteDataRepo : IDataRepository
             {
                 collectionId = db.Id,
                 collectionName = db.Name,
+                colour = db.Colour
             };
         }
     }
@@ -187,6 +172,7 @@ public class SqliteDataRepo : IDataRepository
             {
                 collectionId = db.Id,
                 collectionName = db.Name,
+                colour = db.Colour,
             };
         }
     }

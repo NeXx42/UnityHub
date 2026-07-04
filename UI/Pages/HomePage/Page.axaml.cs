@@ -32,7 +32,7 @@ public partial class Page : UserControl
     private ReusableList<ButtonWrapper> pageControls;
 
     private ProjectSearch activeSearch;
-    private ProjectCard[]? cardInfo;
+    private ProjectInfo[]? cardInfo;
 
     public Page()
     {

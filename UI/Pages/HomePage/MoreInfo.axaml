@@ -144,7 +144,7 @@
             </controls:ButtonWrapper.Icon>
           </controls:ButtonWrapper>
         </Grid>
-        <WrapPanel x:Name="cont_Tags" Margin="5 0 0 0" />
+        <WrapPanel x:Name="cont_Tags" Margin="5 0 0 0" ItemSpacing="5" LineSpacing="5"/>
       </StackPanel>
 
       <!-- Collections -->
@@ -160,7 +160,7 @@
             </controls:ButtonWrapper.Icon>
           </controls:ButtonWrapper>
         </Grid>
-        <WrapPanel x:Name="cont_Collections" Margin="5 0 0 0" />
+        <WrapPanel x:Name="cont_Collections" Margin="5 0 0 0" ItemSpacing="5" LineSpacing="5"/>
       </StackPanel>
 
       <StackPanel>

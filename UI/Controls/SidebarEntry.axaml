@@ -13,13 +13,13 @@
       <Setter Property="Fill" Value="{DynamicResource Colour_TextColourMuted}"/>
     </Style>
 
-    <Style Selector=".Selected Border#cont_Border">
+    <Style Selector="Border#cont_Border.Selected">
       <Setter Property="Background" Value="{DynamicResource ButtonBackgroundDark}"/>
     </Style>
-    <Style Selector=".Selected Label#lbl">
+    <Style Selector="#cont_Border.Selected Label#lbl">
       <Setter Property="Foreground" Value="{DynamicResource AccentColourLight}"/>
     </Style>
-    <Style Selector=".Selected Path">
+    <Style Selector="#cont_Border.Selected Path">
       <Setter Property="Fill" Value="{DynamicResource Colour_AccentColourLight}"/>
     </Style>
   </UserControl.Styles>

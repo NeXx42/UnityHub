@@ -38,9 +38,17 @@ public class TaggingLogic : ITaggingLogic
     private Dictionary<int, CollectionData>? cachedTags;
     private Dictionary<int, CollectionData>? cachedCollections;
 
-    public async Task<CollectionData[]> GetCollections()
+    private Action<int?, string>? callbacks;
+
+    public void RegisterCallback(Action<int?, string> callback)
     {
-        if (cachedCollections == null)
+        callbacks += callback;
+    }
+
+    public async Task<CollectionData[]> GetCollections() => await GetCollections(false);
+    public async Task<CollectionData[]> GetCollections(bool forceRecache)
+    {
+        if (cachedCollections == null || forceRecache)
         {
             CollectionData[] cols = await data.GetCollections();
             cachedCollections = new Dictionary<int, CollectionData>(cols.Length);
@@ -52,9 +60,10 @@ public class TaggingLogic : ITaggingLogic
         return cachedCollections!.Values.ToArray();
     }
 
-    public async Task<CollectionData[]> GetTags()
+    public async Task<CollectionData[]> GetTags() => await GetTags(false);
+    public async Task<CollectionData[]> GetTags(bool forceRecache)
     {
-        if (cachedTags == null)
+        if (cachedTags == null || forceRecache)
         {
             CollectionData[] tags = await data.GetTags();
             cachedTags = new Dictionary<int, CollectionData>(tags.Length);
@@ -100,8 +109,16 @@ public class TaggingLogic : ITaggingLogic
         return res.ToArray();
     }
 
-    public async Task UpdateTag(int projId, int tagId, bool to) => await data.ToggleTag(projId, tagId, to);
-    public async Task UpdateCollection(int projId, int colId, bool to) => await data.ToggleCollection(projId, colId, to);
+    public async Task UpdateTag(int projId, int tagId, bool to)
+    {
+        await data.ToggleTag(projId, tagId, to);
+        callbacks?.Invoke(projId, nameof(UpdateTag));
+    }
+    public async Task UpdateCollection(int projId, int colId, bool to)
+    {
+        await data.ToggleCollection(projId, colId, to);
+        callbacks?.Invoke(projId, nameof(UpdateCollection));
+    }
 
     public async Task CreateTag(CollectionData src)
     {
@@ -113,7 +130,8 @@ public class TaggingLogic : ITaggingLogic
             colour = collectionColours[colourId]
         });
 
-        _ = await GetTags();
+        _ = await GetTags(true);
+        callbacks?.Invoke(null, nameof(CreateTag));
     }
 
     public async Task CreateCollection(CollectionData src)
@@ -126,6 +144,7 @@ public class TaggingLogic : ITaggingLogic
             colour = collectionColours[colourId]
         });
 
-        _ = await GetCollections();
+        _ = await GetCollections(true);
+        callbacks?.Invoke(null, nameof(CreateCollection));
     }
 }

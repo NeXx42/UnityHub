@@ -8,8 +8,12 @@ namespace UI.Helpers;
 
 public class ReusableList<T> where T : Control
 {
+    private int currentElementCount;
+
     private Panel parent;
     private List<T> cachedEntries;
+
+    public int getElementCount => currentElementCount;
 
     public delegate void DrawCallback<DATA>(T element, int index, DATA data);
 
@@ -19,9 +23,10 @@ public class ReusableList<T> where T : Control
         cachedEntries = new List<T>();
     }
 
-    public async Task DrawAsync<DATA>(Func<Task<DATA[]>> inp, DrawCallback<DATA> draw)
+    public async Task DrawAsync<DATA>(Func<Task<DATA[]>> inp, DrawCallback<DATA> draw, int? limit = null)
     {
         DATA[] res;
+        currentElementCount = 0;
 
         try
         {
@@ -33,11 +38,16 @@ public class ReusableList<T> where T : Control
             throw new Exception("failed to load data for draw");
         }
 
-        Draw(res, draw);
+        Draw(res, draw, limit);
     }
 
-    public void Draw<DATA>(IEnumerable<DATA> inp, DrawCallback<DATA> draw)
+    public void Draw<DATA>(IEnumerable<DATA> inp, DrawCallback<DATA> draw, int? limit = null)
     {
+        currentElementCount = inp.Count();
+
+        if (limit.HasValue)
+            inp = inp.Take(limit.Value);
+
         for (int i = 0; i < Math.Max(inp.Count(), cachedEntries.Count); i++)
         {
             if (i >= inp.Count())

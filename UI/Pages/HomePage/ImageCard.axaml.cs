@@ -14,7 +14,11 @@ namespace UI.Pages.HomePage;
 
 public partial class ImageCard : UserControl
 {
+    private bool registered = false;
+
     private int? pos;
+    private ProjectInfo? activeCard;
+
     private Func<int, Task>? onSelect;
 
     private ReusableList<CollectionItem> tags;
@@ -29,8 +33,15 @@ public partial class ImageCard : UserControl
         PointerPressed += HandleOnSelect;
     }
 
-    public async Task Draw(ProjectCard info, int pos, Func<int, Task> onClick)
+    public async Task Draw(ProjectInfo info, int pos, Func<int, Task> onClick)
     {
+        if (!registered)
+        {
+            registered = true;
+            DependencyManager.GetService<ITaggingLogic>()!.RegisterCallback(UpdateTagging);
+        }
+
+        this.activeCard = info;
         this.DataContext = info;
 
         this.pos = pos;
@@ -38,10 +49,7 @@ public partial class ImageCard : UserControl
 
         this.LastOpened = "Never";
 
-        await tags.DrawAsync(() => DependencyManager.GetService<ITaggingLogic>()!.MapTags(info.tags), (ui, _, dat) =>
-        {
-            ui.Init(dat);
-        });
+        await DrawTags();
 
         cont_Version.Classes.RemoveRange(0, cont_Version.Classes.Count);
 
@@ -70,5 +78,21 @@ public partial class ImageCard : UserControl
             root.Classes.Add("Selected");
         else
             root.Classes.Remove("Selected");
+    }
+
+    private void UpdateTagging(int? projectId, string msg)
+    {
+        if (!projectId.HasValue || activeCard == null || activeCard.id != projectId)
+            return;
+
+        DrawTags().Wrap();
+    }
+
+    private async Task DrawTags()
+    {
+        await tags.DrawAsync(() => DependencyManager.GetService<ITaggingLogic>()!.MapTags(activeCard!.tags), (ui, _, dat) =>
+        {
+            ui.Init(dat);
+        }, 3);
     }
 }

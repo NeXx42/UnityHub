@@ -8,14 +8,8 @@ namespace Logic;
 
 public class ProjectLogic : IProjectLogic
 {
-    private record struct ProjectCache
-    {
-        public ProjectCard? card;
-        public ProjectInfo? info;
-    }
-
     private IDataRepository data => DependencyManager.GetService<IDataRepository>()!;
-    private Dictionary<int, ProjectCache> cache = new Dictionary<int, ProjectCache>();
+    private Dictionary<int, ProjectInfo?> cache = new Dictionary<int, ProjectInfo?>();
 
     public async Task Migrate()
     {
@@ -43,20 +37,18 @@ public class ProjectLogic : IProjectLogic
         await data.Migrate(iconsToUpdate);
     }
 
-    public async Task<(ProjectCard[], int total)> Search(ProjectSearch search)
+    public async Task<(ProjectInfo[], int total)> Search(ProjectSearch search)
     {
         (int[] results, int total) = await data.Search(search);
 
         List<int> missingCardIds = new List<int>();
-        List<ProjectCard> cards = new List<ProjectCard>();
-
-        ProjectCache infoCache;
+        List<ProjectInfo> cards = new List<ProjectInfo>();
 
         foreach (int card in results)
         {
-            if (cache.TryGetValue(card, out infoCache) && infoCache.card != null)
+            if (cache.TryGetValue(card, out ProjectInfo? cachedItem) && cachedItem != null)
             {
-                cards.Add(infoCache.card);
+                cards.Add(cachedItem);
                 continue;
             }
 
@@ -65,18 +57,11 @@ public class ProjectLogic : IProjectLogic
 
         if (missingCardIds.Count > 0)
         {
-            ProjectCard[] missingCards = await data.GetCardInfo(missingCardIds);
+            ProjectInfo[] missingCards = await data.GetProjectInfo(missingCardIds);
 
-            foreach (ProjectCard card in missingCards)
+            foreach (ProjectInfo card in missingCards)
             {
-                if (!cache.TryGetValue(card.id, out infoCache))
-                    infoCache = new ProjectCache();
-
-                cache[card.id] = infoCache with
-                {
-                    card = card
-                };
-
+                cache[card.id] = card;
                 cards.Add(card);
             }
         }
@@ -84,26 +69,20 @@ public class ProjectLogic : IProjectLogic
         return (cards.ToArray(), total);
     }
 
-    public async Task<ProjectInfo> GetProjectInfo(int id)
+    public async Task<ProjectInfo?> GetProjectInfo(int id)
     {
-        ProjectCache proj = new();
-
-        if (cache.TryGetValue(id, out proj))
+        if (cache.TryGetValue(id, out ProjectInfo? proj))
         {
-            if (proj.info != null)
-                return proj.info;
+            return proj;
         }
 
-        ProjectInfo info = await data.GetProjectInfo(id);
-        cache[id] = proj with
-        {
-            info = info
-        };
+        ProjectInfo? info = await data.GetProjectInfo(id);
+        cache[id] = info;
 
         return info;
     }
 
-    public async Task BrowseTo(int id) => await BrowseTo(await GetProjectInfo(id));
+    public async Task BrowseTo(int id) => await BrowseTo((await GetProjectInfo(id))!);
     public async Task BrowseTo(ProjectInfo info)
     {
         ProcessStartInfo startInfo = new ProcessStartInfo()

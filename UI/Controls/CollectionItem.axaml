@@ -3,7 +3,7 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.CollectionItem" x:Name="root"
   xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:CollectionData">
-  <Border CornerRadius="4" BorderThickness="1" BorderBrush="Red" Background="#6dff0000">
+  <Border CornerRadius="4" BorderThickness="1" BorderBrush="{Binding colour}" Background="{Binding colour}">
     <Label Content="{Binding collectionName}" FontSize="12" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
   </Border>
 </UserControl>

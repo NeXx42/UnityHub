@@ -8,7 +8,7 @@ using UI.Helpers;
 
 namespace UI.Controls;
 
-public partial class SidebarEntry : UserControl
+public partial class SidebarEntry : UserControl, ISidebarControl
 {
     public static readonly StyledProperty<object?> IconProperty = AvaloniaProperty.Register<SidebarEntry, object?>(nameof(Icon));
     public object? Icon
@@ -26,6 +26,16 @@ public partial class SidebarEntry : UserControl
 
     private Action? onSelectCallback;
 
+    public bool setSelected
+    {
+        set
+        {
+            if (value)
+                cont_Border.Classes.Add("Selected");
+            else
+                cont_Border.Classes.Remove("Selected");
+        }
+    }
 
     public SidebarEntry()
     {
@@ -35,6 +45,6 @@ public partial class SidebarEntry : UserControl
 
     public void Init(Func<Task> onSelect)
     {
-        onSelectCallback = onSelect().Wrap;
+        onSelectCallback = onSelect.Wrap;
     }
 }

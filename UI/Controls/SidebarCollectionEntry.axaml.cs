@@ -6,10 +6,11 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Models.Data;
+using UI.Helpers;
 
 namespace UI.Controls;
 
-public partial class SidebarCollectionEntry : UserControl
+public partial class SidebarCollectionEntry : UserControl, ISidebarControl
 {
     public static readonly StyledProperty<object?> IconProperty = AvaloniaProperty.Register<SidebarCollectionEntry, object?>(nameof(Icon));
     public object? Icon
@@ -25,22 +26,20 @@ public partial class SidebarCollectionEntry : UserControl
         set => SetValue(LabelProperty, value);
     }
 
+    // can never select this collection on its own, therefore this is only ever to inform that its / its children have been deselected
+    public bool setSelected { set => UpdateSelection(-1); }
+
+    private ReusableList<SidebarEntry> entries;
 
     public SidebarCollectionEntry()
     {
         InitializeComponent();
+        entries = new ReusableList<SidebarEntry>(container);
     }
 
     public async Task Init(Func<int, Task> onSelect, Func<Task<CollectionData[]>> dataFetch)
     {
-        CollectionData[] data = await dataFetch();
-
-        foreach (CollectionData dat in data)
-        {
-            container.Children.Add(CreateEntry(dat));
-        }
-
-        UserControl CreateEntry(CollectionData dat)
+        await entries.DrawAsync(dataFetch, (ui, pos, dat) =>
         {
             const int radius = 10;
 
@@ -48,17 +47,28 @@ public partial class SidebarCollectionEntry : UserControl
             Path iconPath = new Path
             {
                 Data = new EllipseGeometry(new Rect(0, 0, radius, radius)),
-                Fill = Brushes.Red
+                Fill = new SolidColorBrush(Color.Parse(dat.colour ?? "#fff"))
             };
 
             iconContainer.Child = iconPath;
 
-            SidebarEntry sidebar = new SidebarEntry();
-            sidebar.Init(async () => await onSelect(dat.collectionId));
-            sidebar.Label = dat.collectionName;
-            sidebar.Icon = iconContainer;
+            ui.Init(async () => await OnSelect(pos, dat.collectionId));
+            ui.Label = dat.collectionName;
+            ui.Icon = iconContainer;
+        });
 
-            return sidebar;
+        async Task OnSelect(int pos, int dataId)
+        {
+            await onSelect(dataId);
+            UpdateSelection(pos);
+        }
+    }
+
+    void UpdateSelection(int pos)
+    {
+        for (int i = 0; i < entries.getElementCount; i++)
+        {
+            entries[i].setSelected = i == pos;
         }
     }
 }
