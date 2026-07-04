@@ -14,9 +14,26 @@ using UI.Modals;
 
 namespace UI;
 
+public interface IPage
+{
+    public Task<Control> Show();
+    public Task Close();
+}
+
+public enum PageNames
+{
+    None,
+    Home,
+    Settings
+}
+
 public partial class MainWindow : Window, IUILinker
 {
     public static MainWindow? instance;
+
+    private PageNames activePage = PageNames.None;
+    private Dictionary<PageNames, IPage> pages;
+
     private Stack<ModalContainer> activeModals;
 
     public MainWindow()
@@ -24,11 +41,17 @@ public partial class MainWindow : Window, IUILinker
         InitializeComponent();
 
         DependencyManager.Init(this);
+        pages = new Dictionary<PageNames, IPage>()
+        {
+            { PageNames.Home, page_HomePage },
+            { PageNames.Settings, page_Settings },
+        };
 
         instance = this;
         activeModals = new Stack<ModalContainer>();
 
-        el_Sidebar.Init(page_HomePage).Wrap();
+        RequestPage(PageNames.Home).Wrap();
+
     }
 
     public static T ShowModal<T>(out int pos) where T : UserControl, IModal
@@ -80,5 +103,25 @@ public partial class MainWindow : Window, IUILinker
         await msg.Show(header, paragraph);
 
         await CloseModal(pos);
+    }
+
+    public static async Task RequestPage(PageNames desired)
+    {
+        if (desired == instance!.activePage)
+            return;
+
+        instance.activePage = desired;
+
+        foreach (KeyValuePair<PageNames, IPage> page in instance.pages)
+        {
+            if (page.Key != desired)
+            {
+                await page.Value.Close();
+                continue;
+            }
+
+            Control sidebar = await page.Value.Show();
+            instance.el_Sidebar.Draw(desired, sidebar);
+        }
     }
 }

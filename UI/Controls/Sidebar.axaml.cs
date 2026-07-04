@@ -1,13 +1,5 @@
-using System;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Logic;
-using Models.Data;
-using Models.Interfaces;
-using UI.Helpers;
 
 namespace UI.Controls;
 
@@ -18,74 +10,39 @@ public interface ISidebarControl
 
 public partial class Sidebar : UserControl
 {
-    private Pages.HomePage.Page? homepage;
-
     public Sidebar()
     {
         InitializeComponent();
+
+        btn_Home.RegisterClick(() => MainWindow.RequestPage(PageNames.Home));
+        btn_Settings.RegisterClick(() => MainWindow.RequestPage(PageNames.Settings));
+        btn_Downloads.RegisterClick(() => MainWindow.RequestPage(PageNames.Settings));
     }
 
-    public async Task Init(Pages.HomePage.Page homepage)
+    public async Task Init()
     {
-        this.homepage = homepage;
 
-        DependencyManager.GetService<ITaggingLogic>()!.RegisterCallback(TaggingChange);
-
-        entry_All.Init(() => UpdateSelection(0));
-        entry_Favs.Init(() => UpdateSelection(1));
-        entry_Recent.Init(() => UpdateSelection(2));
-
-        await Task.WhenAll([
-            DrawTags(),
-            DrawCollections(),
-            UpdateSelection(0)
-        ]);
     }
 
-    private async Task UpdateSelection(int id, int? subArg = null)
+    public void Draw(PageNames page, Control sidebar)
     {
-        ProjectSearch search = new ProjectSearch();
+        this.content.Content = sidebar;
 
-        switch (id)
+        UpdateHighlight(btn_Home, page == PageNames.Home);
+        UpdateHighlight(btn_Settings, page == PageNames.Settings);
+
+        void UpdateHighlight(ButtonWrapper wrapper, bool isSelected)
         {
-            case 1: // Favs
-                break;
-
-            case 2: // Recent
-                break;
-
-            case 3: // Collections
-                search.collections = [subArg!.Value];
-                break;
-
-            case 4: // Tags
-                search.tags = [subArg!.Value];
-                break;
-        }
-
-        for (int i = 0; i < cont_Entries.Children.Count; i++)
-            (cont_Entries.Children[i] as ISidebarControl)?.setSelected = i == id;
-
-        await homepage!.SearchCards(search);
-    }
-
-    private void TaggingChange(int? projId, string msg)
-    {
-        if (projId.HasValue)
-            return;
-
-        switch (msg)
-        {
-            case nameof(ITaggingLogic.CreateCollection):
-                DrawCollections().Wrap();
-                break;
-
-            case nameof(ITaggingLogic.CreateTag):
-                DrawTags().Wrap();
-                break;
+            if (isSelected)
+            {
+                wrapper.Classes.Add("Primary");
+                wrapper.Classes.Remove("Transparent");
+            }
+            else
+            {
+                wrapper.Classes.Add("Transparent");
+                wrapper.Classes.Remove("Primary");
+            }
         }
     }
-
-    private async Task DrawTags() => await entry_Tags.Init((cId) => UpdateSelection(4, cId), DependencyManager.GetService<ITaggingLogic>()!.GetTags);
-    private async Task DrawCollections() => await entry_Cols.Init((cId) => UpdateSelection(3, cId), DependencyManager.GetService<ITaggingLogic>()!.GetCollections);
 }

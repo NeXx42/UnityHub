@@ -3,11 +3,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.MainWindow" Title="UnityHub"
     xmlns:controls="clr-namespace:UI.Controls"
-    xmlns:homePage="clr-namespace:UI.Pages.HomePage" Background="{DynamicResource BackgroundColour}">
+    xmlns:homePage="clr-namespace:UI.Pages.HomePage"
+    xmlns:settingsPage="clr-namespace:UI.Pages.Settings" Background="{DynamicResource BackgroundColour}">
     <Grid>
         <Grid ColumnDefinitions="auto *">
             <controls:Sidebar x:Name="el_Sidebar"/>
             <homePage:Page x:Name="page_HomePage" Grid.Column="1"/>
+            <settingsPage:Page x:Name="page_Settings" Grid.Column="1"/>
         </Grid>
 
         <Grid x:Name="cont_Modals"/>

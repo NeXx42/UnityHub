@@ -14,7 +14,7 @@ using UI.Modals;
 
 namespace UI.Pages.HomePage;
 
-public partial class Page : UserControl
+public partial class Page : UserControl, IPage
 {
     private enum NewProjectOptions
     {
@@ -48,6 +48,23 @@ public partial class Page : UserControl
         {
             page = 0
         };
+    }
+
+
+    public async Task<Control> Show()
+    {
+        IsVisible = true;
+
+        Sidebar sidebar = new Sidebar();
+        await sidebar.Init(this);
+
+        return sidebar;
+    }
+
+    public Task Close()
+    {
+        IsVisible = false;
+        return Task.CompletedTask;
     }
 
     public async Task SearchCards(ProjectSearch search)
