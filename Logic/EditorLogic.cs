@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Models;
@@ -9,6 +11,8 @@ namespace Logic;
 
 public class EditorLogic : IEditorLogic
 {
+    public IDataRepository database => DependencyManager.GetService<IDataRepository>()!;
+
     public const string LINK_NAME = "com.nexx.unityhublink";
     private string[]? editorLocations;
 
@@ -47,19 +51,177 @@ public class EditorLogic : IEditorLogic
 
         foreach (string root in await GetEditorLocations())
         {
-            dirs = Directory.GetDirectories(root);
+            dirs = GetEditorInstallerPerDir(root);
 
-            foreach (string dir in dirs)
-            {
-                string versionName = Path.GetFileName(dir)!;
-
-                if (!installs.Contains(versionName))
-                    installs.Add(versionName);
-            }
+            foreach (string version in dirs)
+                if (!installs.Contains(version))
+                    installs.Add(version);
         }
 
         return installs.ToArray();
     }
+
+    public async Task<EditorInstallInfo[]> GetInstalledEditorVersionsMoreInfo(CancellationToken token)
+    {
+        List<EditorInstallInfo> results = new();
+        string[] versions;
+
+        foreach (string root in await GetEditorLocations())
+        {
+            versions = GetEditorInstallerPerDir(root);
+            results.AddRange(versions.Select(r => new EditorInstallInfo()
+            {
+                installLocation = root,
+                versionName = r
+            }));
+        }
+
+        await GetEditorInfoForVersions(results, token);
+        await GetInstalledEditorInfoForVersions(results);
+
+        return results.ToArray();
+    }
+
+
+    private async Task GetEditorInfoForVersions(IEnumerable<EditorInfo> allVersions, CancellationToken cancellationToken)
+    {
+        ConcurrentDictionary<string, EditorInfo> versions = new ConcurrentDictionary<string, EditorInfo>(allVersions.ToDictionary(v => v.versionName, v => v));
+        Dictionary<string, string> versionInfoJson = await database.GetEditorInfo(versions.Keys);
+
+        ConcurrentDictionary<string, string> newVersionInfo = new();
+
+        foreach (KeyValuePair<string, EditorInfo> version in versions)
+        {
+            if (!versionInfoJson.ContainsKey(version.Key))
+                newVersionInfo.AddOrUpdate(version.Key, string.Empty, (_, __) => string.Empty);
+        }
+
+        if (newVersionInfo.Count > 0)
+        {
+            SemaphoreSlim slim = new SemaphoreSlim(10); // rate limit
+            Random r = new Random();
+
+            using (HttpClient http = new HttpClient())
+            {
+                await Parallel.ForEachAsync(newVersionInfo, async (version, token) =>
+                {
+                    // if the request fails 10 time, idk
+                    for (int i = 0; i < 10; i++)
+                    {
+                        if (await SendRequest())
+                            break;
+                    }
+
+                    // returns true if capture what was needed
+                    async Task<bool> SendRequest()
+                    {
+                        try
+                        {
+                            await slim.WaitAsync();
+                            await Task.Delay(r.Next(10, 100));
+
+                            HttpRequestMessage msg = new HttpRequestMessage(HttpMethod.Get, $"https://services.api.unity.com/unity/editor/release/v1/releases?version={version.Key}");
+                            HttpResponseMessage res = await http.SendAsync(msg);
+
+                            if (res.StatusCode == HttpStatusCode.TooManyRequests)
+                                return false;
+
+                            res.EnsureSuccessStatusCode();
+
+                            string json = await res.Content.ReadAsStringAsync();
+
+                            if (string.IsNullOrEmpty(json))
+                                throw new Exception("Failed to get content?");
+
+                            newVersionInfo[version.Key] = json;
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Failed fetch - " + e.Message);
+                        }
+                        finally
+                        {
+                            slim.Release();
+                        }
+
+                        return true;
+                    }
+
+                });
+            }
+
+            await database.SetEditorInfo(newVersionInfo.ToDictionary());
+
+            foreach (KeyValuePair<string, string> i in newVersionInfo)
+                versionInfoJson.Add(i.Key, i.Value);
+        }
+
+        await Parallel.ForEachAsync(versionInfoJson, async (KeyValuePair<string, string> json, CancellationToken token) =>
+        {
+            JsonDocument doc = JsonDocument.Parse(json.Value);
+
+            foreach (JsonElement result in doc.RootElement.GetProperty("results").EnumerateArray())
+            {
+                EditorInfo info = versions[json.Key];
+
+                info.stream = result.GetProperty("stream").GetString();
+
+                if (result.TryGetProperty("label", out JsonElement lbl))
+                    info.label = new EditorInfo.Label
+                    {
+                        description = lbl.GetProperty("description").GetString(),
+                        labelText = lbl.GetProperty("labelText").GetString(),
+                        colour = lbl.GetProperty("color").GetString(),
+                        icon = lbl.GetProperty("icon").GetString(),
+                    };
+
+                if (result.TryGetProperty("downloads", out JsonElement downloads))
+                    info.downloads = downloads.EnumerateArray().Select(download => new EditorInfo.Download
+                    {
+                        url = download.GetProperty("url").GetString(),
+                        type = download.GetProperty("type").GetString(),
+                        platform = download.GetProperty("platform").GetString(),
+                        architecture = download.GetProperty("architecture").GetString(),
+
+                        downloadSize = download.TryGetProperty("downloadSize", out JsonElement downloadSize) ? downloadSize.GetProperty("value").GetUInt64() : 0,
+                        installSize = download.TryGetProperty("installSize", out JsonElement installSize) ? installSize.GetProperty("value").GetUInt64() : 0,
+
+                        integrity = download.GetProperty("integrity").GetString(),
+
+                    }).ToArray();
+
+                break;
+            }
+        });
+    }
+
+    private async Task GetInstalledEditorInfoForVersions(IEnumerable<EditorInstallInfo> installs)
+    {
+        await Parallel.ForEachAsync(installs, async (el, token) =>
+        {
+            string moduleInfo = Path.Combine();
+
+            //if (Directory.Exists())
+
+        });
+    }
+
+
+    private string[] GetEditorInstallerPerDir(string root)
+    {
+        List<string> res = new List<string>();
+        string[] dirs = Directory.GetDirectories(root);
+
+        foreach (string dir in dirs)
+        {
+            string versionName = Path.GetFileName(dir)!;
+            res.Add(versionName);
+        }
+
+        return res.ToArray();
+    }
+
+
 
     public async Task LaunchProject(int id) => await LaunchProject(await DependencyManager.GetService<IProjectLogic>()!.GetProjectInfo(id));
     public async Task LaunchProject(ProjectInfo? info)

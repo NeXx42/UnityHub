@@ -115,4 +115,14 @@ public class MockDataRepo : IDataRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task SetEditorInfo(Dictionary<string, string> versionJson)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Dictionary<string, string>> GetEditorInfo(IEnumerable<string> versions)
+    {
+        throw new NotImplementedException();
+    }
 }

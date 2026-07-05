@@ -3,28 +3,26 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_Editors"
   xmlns:controls="clr-namespace:UI.Controls">
-  <StackPanel Orientation="Vertical">
-    <Label>Install locaions</Label>
-    <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="20" ClipToBounds="True">
-      <Grid RowDefinitions="* 50">
-        <StackPanel x:Name="cont_Locations">
-        </StackPanel>
-
-        <StackPanel Orientation="Horizontal" Grid.Row="1">
-          <controls:ButtonWrapper Label="Add" x:Name="btn_AddLocation"/>
+  <StackPanel Orientation="Vertical" Spacing="20">
+    <StackPanel Spacing="5">
+      <Label FontSize="20">Install Locations</Label>
+      <Grid RowDefinitions="* 5 Auto">
+        <StackPanel x:Name="cont_Locations"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="2">
+          <controls:ButtonWrapper Label="Add" x:Name="btn_AddLocation" Classes="Primary" Width="100"/>
         </StackPanel>
       </Grid>
-    </Border>
+    </StackPanel>
 
-    <Label>Installed Version</Label>
-    <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="20" ClipToBounds="True">
-      <StackPanel x:Name="cont_Versions">
-        <Label>v21</Label>
-        <Label>v21</Label>
-        <Label>v21</Label>
-        <Label>v21</Label>
-      </StackPanel>
-    </Border>
+    <StackPanel Spacing="5">
+      <Label FontSize="20">Installed Version</Label>
+      <Grid RowDefinitions="* 5 Auto">
+        <StackPanel x:Name="cont_Versions" Spacing="5"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5" Grid.Row="2">
+          <controls:ButtonWrapper Label="Install" Classes="Primary" Width="100"/>
+        </StackPanel>
+      </Grid>
+    </StackPanel>
 
   </StackPanel>
 </UserControl>

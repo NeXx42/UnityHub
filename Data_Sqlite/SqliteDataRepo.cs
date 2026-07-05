@@ -312,4 +312,21 @@ public class SqliteDataRepo : IDataRepository
     }
 
     public async Task DeleteConfigValue(string key) => await database!.Delete<dbo_Config>(SQLFilter.Equal(nameof(dbo_Config.key), key));
+
+    public async Task SetEditorInfo(Dictionary<string, string> versionJson)
+    {
+        dbo_UnityInstallInfo[] toAdd = versionJson.Select(v => new dbo_UnityInstallInfo()
+        {
+            version = v.Key,
+            json = v.Value
+        }).ToArray();
+
+        await database!.AddOrUpdate(toAdd, (v) => SQLFilter.Equal(nameof(dbo_UnityInstallInfo.version), v.version));
+    }
+
+    public async Task<Dictionary<string, string>> GetEditorInfo(IEnumerable<string> versions)
+    {
+        dbo_UnityInstallInfo[] data = await database!.GetItems<dbo_UnityInstallInfo>(SQLFilter.In(nameof(dbo_UnityInstallInfo.version), versions));
+        return data.ToDictionary(d => d.version, d => d.json);
+    }
 }

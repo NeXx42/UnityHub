@@ -3,7 +3,13 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.CollectionItem" x:Name="root"
   xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:CollectionData">
-  <Border CornerRadius="4" BorderThickness="1" BorderBrush="{Binding colour}" Background="{Binding colour}">
-    <Label Content="{Binding collectionName}" FontSize="12" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+  <Border CornerRadius="4" BorderThickness="1" BorderBrush="{Binding colour}" Background="{Binding bgColour}">
+    <StackPanel Orientation="Horizontal" Margin="1">
+      <Label Content="{Binding collectionName}" FontSize="12" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Opacity="1" Foreground="{Binding colour}"/>
+
+      <Viewbox IsVisible="{Binding #root.ShowCloseButton}">
+        <Path Fill="{Binding colour}" Data="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" Cursor="Hand" x:Name="btn_Remove"/>
+      </Viewbox>
+    </StackPanel>
   </Border>
 </UserControl>

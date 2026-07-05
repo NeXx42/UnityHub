@@ -26,6 +26,8 @@ public interface IDataRepository
     public Task CreateCollection(CollectionData src);
 
     public Task<string[]> GetProjectVersions();
+    public Task SetEditorInfo(Dictionary<string, string> versionJson);
+    public Task<Dictionary<string, string>> GetEditorInfo(IEnumerable<string> versions);
 
     public Task<string?[]> GetConfigValue(string key);
     public Task SetConfigValue(string key, string? value);

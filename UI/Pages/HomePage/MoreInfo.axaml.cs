@@ -39,9 +39,9 @@ public partial class MoreInfo : UserControl
 
         ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
 
-        Task.WaitAll([
-            tags.DrawAsync(() => logic.MapTags(info.tags), (ui, _, dat) => ui.Init(dat)),
-            collections.DrawAsync(() => logic.MapCollections(info.collections), (ui, _, dat) => ui.Init(dat)),
+        await Task.WhenAll([
+            RedrawTags(logic),
+            RedrawCollections(logic),
         ]);
 
         img.Source = await IconFetcher.GetImage(info.iconUrl);
@@ -69,7 +69,7 @@ public partial class MoreInfo : UserControl
 
         ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
         await logic.UpdateTag(info.id, data.collectionId, true);
-        await tags.DrawAsync(() => logic.MapTags(info.tags), (ui, _, dat) => ui.Init(dat));
+        await RedrawTags(logic);
     }
 
     private async Task AddCollection(CollectionData data)
@@ -81,6 +81,32 @@ public partial class MoreInfo : UserControl
 
         ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
         await logic.UpdateTag(info.id, data.collectionId, true);
-        await collections.DrawAsync(() => logic.MapCollections(info.collections), (ui, _, dat) => ui.Init(dat));
+        await RedrawCollections(logic);
+    }
+
+    private async Task RedrawTags(ITaggingLogic logic)
+    {
+        await tags.DrawAsync(() => logic.MapTags(info?.tags ?? []), (ui, _, dat) => ui.Init(dat, null, () => RemoveCollection(dat)));
+
+        async Task RemoveCollection(CollectionData dat)
+        {
+            info!.tags.Remove(dat.collectionId);
+
+            await logic.UpdateTag(info.id, dat.collectionId, false);
+            await RedrawTags(logic);
+        }
+    }
+
+    private async Task RedrawCollections(ITaggingLogic logic)
+    {
+        await collections.DrawAsync(() => logic.MapCollections(info?.collections ?? []), (ui, _, dat) => ui.Init(dat, null, () => RemoveCollection(dat)));
+
+        async Task RemoveCollection(CollectionData dat)
+        {
+            info!.collections.Remove(dat.collectionId);
+
+            await logic.UpdateCollection(info.id, dat.collectionId, false);
+            await RedrawCollections(logic);
+        }
     }
 }

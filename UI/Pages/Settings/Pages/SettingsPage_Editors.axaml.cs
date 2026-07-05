@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Logic;
+using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
@@ -14,6 +15,8 @@ namespace UI.Pages.Settings.Pages;
 public partial class SettingsPage_Editors : UserControl, ISettingsPage
 {
     private ReusableList<ButtonWrapper> editorLocations;
+    private ReusableList<SettingsPage_Editors_InstalledVersion> editorInstalls;
+
     private List<string>? installLocations;
 
     public SettingsPage_Editors()
@@ -21,6 +24,8 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
         InitializeComponent();
 
         editorLocations = new ReusableList<ButtonWrapper>(cont_Locations);
+        editorInstalls = new ReusableList<SettingsPage_Editors_InstalledVersion>(cont_Versions);
+
         btn_AddLocation.RegisterClick(() => UpdateLocation(null));
     }
 
@@ -29,6 +34,7 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
     public async Task OnOpen()
     {
         await RedrawLocations();
+        RedrawDownloaded().Wrap(); // can be slow, so let it load without blocking this
     }
 
     private async Task UpdateLocation(int? index)
@@ -56,5 +62,11 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
             ui.Label = dat;
             ui.RegisterClick(() => UpdateLocation(pos));
         });
+    }
+
+    private async Task RedrawDownloaded()
+    {
+        EditorInstallInfo[] installs = await DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersionsMoreInfo(System.Threading.CancellationToken.None);
+        editorInstalls.Draw(installs, (ui, _, dat) => ui.Draw(dat));
     }
 }

@@ -5,6 +5,8 @@ namespace Models.Interfaces;
 public interface IEditorLogic
 {
     public Task<string[]> GetInstalledEditorVersions();
+    public Task<EditorInstallInfo[]> GetInstalledEditorVersionsMoreInfo(CancellationToken token);
+
     public Task<bool> IsVersionInstalled(string? version);
     public Task<string?> GetEditorInstall(string? version);
     public Task<string[]> GetEditorLocations(bool recache);

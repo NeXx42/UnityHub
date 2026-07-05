@@ -12,6 +12,7 @@ public class ReusableList<T> where T : Control
 
     private Panel parent;
     private List<T> cachedEntries;
+    private Func<T> factory;
 
     public int getElementCount => currentElementCount;
 
@@ -20,6 +21,16 @@ public class ReusableList<T> where T : Control
     public ReusableList(Panel parent)
     {
         this.parent = parent;
+
+        cachedEntries = new List<T>();
+        factory = () => Activator.CreateInstance<T>();
+    }
+
+    public ReusableList(Panel parent, Func<T> factory)
+    {
+        this.parent = parent;
+        this.factory = factory;
+
         cachedEntries = new List<T>();
     }
 
@@ -82,7 +93,7 @@ public class ReusableList<T> where T : Control
 
     private void CreateEntry()
     {
-        T el = Activator.CreateInstance<T>();
+        T el = factory();
 
         cachedEntries.Add(el);
         parent.Children.Add(el);

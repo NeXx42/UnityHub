@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_Editors_InstalledVersion" x:Name="root">
+  <Border Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="8">
+    <Grid ColumnDefinitions="Auto Auto" Margin="10">
+
+      <Grid RowDefinitions="Auto Auto Auto">
+        <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+          <Label Content="{Binding #root.ProductName}" />
+          <StackPanel x:Name="cont_Tags" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <Label Grid.Row="1" Content="{Binding #root.InstallLocation}" Margin="5 0" Foreground="{DynamicResource TextColourMuted}" FontSize="12"/>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="2" x:Name="cont_Platforms">
+        </StackPanel>
+      </Grid>
+
+      <StackPanel Grid.Column="1">
+      </StackPanel>
+    </Grid>
+  </Border>
+</UserControl>

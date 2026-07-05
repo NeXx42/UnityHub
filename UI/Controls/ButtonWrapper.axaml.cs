@@ -37,7 +37,7 @@ public partial class ButtonWrapper : UserControl
         get => GetValue(PopupContentProperty);
         set => SetValue(PopupContentProperty, value);
     }
-    private IPopup PopupData;
+    private IPopup? PopupData;
 
     public static readonly StyledProperty<bool> IsOpenProperty = AvaloniaProperty.Register<ButtonWrapper, bool>(nameof(IsOpen), defaultValue: false);
     public bool IsOpen

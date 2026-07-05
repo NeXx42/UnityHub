@@ -181,7 +181,7 @@ public partial class Page : UserControl, IPage
             type = "version"
         }));
 
-        activeFilters.Draw(filters, (ui, _, dat) => ui.Init(dat, () => RemoveFilter(dat)));
+        activeFilters.Draw(filters, (ui, _, dat) => ui.Init(dat, () => RemoveFilter(dat), () => RemoveFilter(dat)));
 
         Task RemoveFilter(CollectionData data)
         {
