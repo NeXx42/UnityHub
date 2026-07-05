@@ -100,4 +100,19 @@ public class MockDataRepo : IDataRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<string?[]> GetConfigValue(string key)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SetConfigValue(string key, string? value)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteConfigValue(string key)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -2,6 +2,7 @@ using System.Data.SQLite;
 using System.Text;
 using CSharpSqliteORM;
 using Data_Sqlite.Tables;
+using Logic.db;
 using Models;
 using Models.Data;
 using Models.Interfaces;
@@ -296,4 +297,19 @@ public class SqliteDataRepo : IDataRepository
             return Task.FromResult(reader[nameof(dbo_Project.version)].ToString()!);
         }
     }
+
+    public async Task<string?[]> GetConfigValue(string key) => (await database!.GetItems<dbo_Config>(SQLFilter.Equal(nameof(dbo_Config.key), key)))?.Select(k => k.value).ToArray() ?? [];
+
+    public async Task SetConfigValue(string key, string? value)
+    {
+        dbo_Config config = new dbo_Config()
+        {
+            key = key,
+            value = value
+        };
+
+        await database!.AddOrUpdate(config, SQLFilter.Equal(nameof(dbo_Config.key), key));
+    }
+
+    public async Task DeleteConfigValue(string key) => await database!.Delete<dbo_Config>(SQLFilter.Equal(nameof(dbo_Config.key), key));
 }

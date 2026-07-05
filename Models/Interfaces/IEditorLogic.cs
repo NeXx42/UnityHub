@@ -4,9 +4,10 @@ namespace Models.Interfaces;
 
 public interface IEditorLogic
 {
-    public bool IsVersionInstalled(string? version);
-    public string? GetEditorInstall(string? version);
-    public string[] GetInstalledEditorVersions();
+    public Task<string[]> GetInstalledEditorVersions();
+    public Task<bool> IsVersionInstalled(string? version);
+    public Task<string?> GetEditorInstall(string? version);
+    public Task<string[]> GetEditorLocations(bool recache);
 
     public Task LaunchProject(int id);
     public Task LaunchProject(ProjectInfo info);

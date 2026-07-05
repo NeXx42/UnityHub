@@ -30,9 +30,10 @@ class Program
         {
             await DependencyManager.RegisterService<IDataRepository, SqliteDataRepo>(repo => repo.Setup());
 
+            DependencyManager.RegisterService<IConfigLogic, ConfigLogic>();
             DependencyManager.RegisterService<IEditorLogic, EditorLogic>();
-            await DependencyManager.RegisterService<IProjectLogic, ProjectLogic>(logic => logic.Migrate());
             DependencyManager.RegisterService<ITaggingLogic, TaggingLogic>();
+            await DependencyManager.RegisterService<IProjectLogic, ProjectLogic>(logic => logic.Migrate());
 
             await LoadPlugins();
         }

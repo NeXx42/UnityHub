@@ -101,7 +101,7 @@ public partial class Popup_Filter : UserControl, IPopup
 
     private async Task LoadVersions(Popup_FilterGroup ui, int pos)
     {
-        List<string> individualVersions = DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersions().ToList();
+        List<string> individualVersions = (await DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersions()).ToList();
         individualVersions.AddRange(await DependencyManager.GetService<IProjectLogic>()!.GetProjectVersions());
         individualVersions = individualVersions.Distinct().OrderDescending().ToList();
 
@@ -131,7 +131,7 @@ public partial class Popup_Filter : UserControl, IPopup
                     break;
 
                 case 1:
-                    activeSearch?.versions = DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersions();
+                    activeSearch?.versions = await DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersions();
                     break;
 
                 default:

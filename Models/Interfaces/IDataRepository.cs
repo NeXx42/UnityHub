@@ -1,4 +1,5 @@
 using Models.Data;
+using Models.Enums;
 
 namespace Models.Interfaces;
 
@@ -25,4 +26,8 @@ public interface IDataRepository
     public Task CreateCollection(CollectionData src);
 
     public Task<string[]> GetProjectVersions();
+
+    public Task<string?[]> GetConfigValue(string key);
+    public Task SetConfigValue(string key, string? value);
+    public Task DeleteConfigValue(string key);
 }

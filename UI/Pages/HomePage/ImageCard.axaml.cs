@@ -54,6 +54,8 @@ public partial class ImageCard : UserControl
             DependencyManager.GetService<ITaggingLogic>()!.RegisterCallback(UpdateTagging);
         }
 
+        ToggleSelection(false);
+
         this.activeCard = info;
         this.DataContext = info;
 
@@ -66,7 +68,7 @@ public partial class ImageCard : UserControl
 
         cont_Version.Classes.RemoveRange(0, cont_Version.Classes.Count);
 
-        if (!DependencyManager.GetService<IEditorLogic>()!.IsVersionInstalled(info.version))
+        if (!await DependencyManager.GetService<IEditorLogic>()!.IsVersionInstalled(info.version))
             cont_Version.Classes.Add("Missing");
 
         await plugin.Execute(t => t.Draw(this, info, pos, onClick));

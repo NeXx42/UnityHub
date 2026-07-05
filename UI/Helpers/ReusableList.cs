@@ -43,6 +43,18 @@ public class ReusableList<T> where T : Control
 
     public void Draw<DATA>(IEnumerable<DATA> inp, DrawCallback<DATA> draw, int? limit = null)
     {
+        foreach (var res in DrawInternal(inp, limit))
+            draw(res.Item1, res.Item2, res.Item3);
+    }
+
+    public async Task DrawWhenAll<DATA>(IEnumerable<DATA> inp, Func<T, int, DATA, Task> draw, int? limit = null)
+    {
+        await Task.WhenAll(DrawInternal(inp, limit).Select(r => draw(r.Item1, r.Item2, r.Item3)));
+    }
+
+    private List<(T, int, DATA)> DrawInternal<DATA>(IEnumerable<DATA> inp, int? limit = null)
+    {
+        List<(T ui, int pos, DATA dat)> draws = new();
         currentElementCount = inp.Count();
 
         if (limit.HasValue)
@@ -60,8 +72,12 @@ public class ReusableList<T> where T : Control
                 CreateEntry();
 
             cachedEntries[i].IsVisible = true;
-            draw(cachedEntries[i], i, inp.ElementAt(i));
+
+            int temp = i;
+            draws.Add((cachedEntries[i], temp, inp.ElementAt(i)));
         }
+
+        return draws;
     }
 
     private void CreateEntry()

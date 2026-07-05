@@ -10,21 +10,26 @@ namespace Logic;
 public class EditorLogic : IEditorLogic
 {
     public const string LINK_NAME = "com.nexx.unityhublink";
+    private string[]? editorLocations;
 
-    public static string[] editorLocations = [
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Unity", "Hub", "Editor")
-    ];
+    public async Task<bool> IsVersionInstalled(string? version) => !string.IsNullOrEmpty(await GetEditorInstall(version));
 
-    public bool IsVersionInstalled(string? version) => !string.IsNullOrEmpty(GetEditorInstall(version));
+    public async Task<string[]> GetEditorLocations(bool recache = false)
+    {
+        if (editorLocations == null || recache)
+            editorLocations = await DependencyManager.GetService<IConfigLogic>()!.Get<string[]>(Models.Enums.ConfigEntry.EditorPath, []);
 
-    public string? GetEditorInstall(string? version)
+        return editorLocations;
+    }
+
+    public async Task<string?> GetEditorInstall(string? version)
     {
         if (string.IsNullOrEmpty(version))
             return null;
 
         string path;
 
-        foreach (string root in editorLocations)
+        foreach (string root in await GetEditorLocations())
         {
             path = Path.Combine(root, version);
 
@@ -35,12 +40,12 @@ public class EditorLogic : IEditorLogic
         return null;
     }
 
-    public string[] GetInstalledEditorVersions()
+    public async Task<string[]> GetInstalledEditorVersions()
     {
         HashSet<string> installs = new HashSet<string>();
         string[] dirs;
 
-        foreach (string root in editorLocations)
+        foreach (string root in await GetEditorLocations())
         {
             dirs = Directory.GetDirectories(root);
 
@@ -65,7 +70,7 @@ public class EditorLogic : IEditorLogic
             return;
         }
 
-        if (!IsVersionInstalled(info.version))
+        if (!await IsVersionInstalled(info.version))
         {
             await DependencyManager.ui!.ShowMessageBox("Version not found", $"Failed to launch the project because the unity editor version {info.version} was not found.");
             return;
@@ -78,7 +83,7 @@ public class EditorLogic : IEditorLogic
 
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
-            FileName = GetEditorInstall(info.version!)
+            FileName = await GetEditorInstall(info.version!)
         };
 
         startInfo.ArgumentList.Add("-projectPath");

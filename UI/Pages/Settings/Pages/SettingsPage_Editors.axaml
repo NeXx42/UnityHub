@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_Editors"
+  xmlns:controls="clr-namespace:UI.Controls">
+  <StackPanel Orientation="Vertical">
+    <Label>Install locaions</Label>
+    <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="20" ClipToBounds="True">
+      <Grid RowDefinitions="* 50">
+        <StackPanel x:Name="cont_Locations">
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+          <controls:ButtonWrapper Label="Add" x:Name="btn_AddLocation"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Label>Installed Version</Label>
+    <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="20" ClipToBounds="True">
+      <StackPanel x:Name="cont_Versions">
+        <Label>v21</Label>
+        <Label>v21</Label>
+        <Label>v21</Label>
+        <Label>v21</Label>
+      </StackPanel>
+    </Border>
+
+  </StackPanel>
+</UserControl>
