@@ -75,6 +75,6 @@ public partial class Popup_Collection : UserControl, IPopup
 
     public Task Show()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

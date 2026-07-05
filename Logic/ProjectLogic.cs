@@ -18,7 +18,7 @@ public class ProjectLogic : IProjectLogic
         if (!File.Exists(dirtyFile))
             return;
 
-        List<int> iconsToUpdate = new List<int>();
+        List<ProjectInfo> updates = new List<ProjectInfo>();
         string[] changes = File.ReadAllLines(dirtyFile);
 
         foreach (string change in changes)
@@ -27,14 +27,39 @@ public class ProjectLogic : IProjectLogic
 
             if (pair.Length > 1 && int.TryParse(pair[0], out int projectId))
             {
-                iconsToUpdate.Add(projectId);
+                ProjectInfo? info = await data.GetProjectInfo(projectId);
+
+                if (info == null)
+                    continue;
+
+                DirectoryInfo dirInfo = new DirectoryInfo(info.directory);
+
+                info.size = GetFolderSizeParallel(info.directory);
+                info.created = new DateTimeOffset(dirInfo.CreationTimeUtc).ToUnixTimeSeconds();
+                info.iconUrl = Path.Combine(GlobalConfig.getDataFolder, projectId.ToString(), "icon.png");
+
+                updates.Add(info);
             }
         }
 
         File.Delete(dirtyFile);
 
         // may update more?
-        await data.Migrate(iconsToUpdate);
+        await data.Migrate(updates);
+
+        long GetFolderSizeParallel(string path)
+        {
+            long size = 0;
+
+            Parallel.ForEach(
+                Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories),
+                () => 0L,
+                (file, state, local) => local + new FileInfo(file).Length,
+                local => Interlocked.Add(ref size, local)
+            );
+
+            return size;
+        }
     }
 
     public async Task<(ProjectInfo[], int total)> Search(ProjectSearch search)

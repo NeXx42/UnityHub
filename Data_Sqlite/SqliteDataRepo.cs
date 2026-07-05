@@ -38,7 +38,12 @@ public class SqliteDataRepo : IDataRepository
             renderPipeline = (RenderPipelineTypes?)dbData.pipelineType,
 
             tags = dbData.tags.Distinct().ToHashSet(),
-            collections = dbData.collections.Distinct().ToHashSet()
+            collections = dbData.collections.Distinct().ToHashSet(),
+
+            lastOpened = dbData.lastOpened == 0 ? null : dbData.lastOpened,
+            created = dbData.created == 0 ? null : dbData.created,
+            size = dbData.size == 0 ? null : dbData.size,
+            notes = dbData.notes
         };
     }
 
@@ -221,16 +226,26 @@ public class SqliteDataRepo : IDataRepository
         }
     }
 
-    public async Task Migrate(IEnumerable<int> ids)
+    public async Task Migrate(IEnumerable<ProjectInfo> updates)
     {
-        // temp code
-        dbo_Project[] projs = await database!.GetItems<dbo_Project>(SQLFilter.In(nameof(dbo_Project.id), ids));
+        string[] columnsToUpdate = [
+            nameof(dbo_Project.iconPath),
+            nameof(dbo_Project.created),
+            nameof(dbo_Project.size),
+        ];
 
-        foreach (dbo_Project proj in projs)
-        {
-            proj.iconPath = Path.Combine(GlobalConfig.getDataFolder, proj.id.ToString(), "icon.png");
-            await database.Update(proj, SQLFilter.Equal(nameof(dbo_Project.id), proj.id), nameof(dbo_Project.iconPath));
-        }
+        await database!.Update(updates.Select(u =>
+            new dbo_Project
+            {
+                id = u.id,
+                directory = u.directory,
+                iconPath = u.iconUrl,
+                size = u.size ?? 0,
+                created = u.created ?? 0,
+            }),
+            (u) => SQLFilter.Equal(nameof(dbo_Project.id), u.id),
+            columnsToUpdate
+        );
     }
 
     public async Task ToggleTag(int projId, int tagId, bool to)

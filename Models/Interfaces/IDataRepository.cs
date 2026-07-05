@@ -6,7 +6,7 @@ namespace Models.Interfaces;
 public interface IDataRepository
 {
     public Task Setup();
-    public Task Migrate(IEnumerable<int> ids);
+    public Task Migrate(IEnumerable<ProjectInfo> ids);
 
     public Task<(int[], int)> Search(ProjectSearch search);
 

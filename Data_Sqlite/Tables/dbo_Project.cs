@@ -17,6 +17,11 @@ public class dbo_Project : IDatabase_Table
     public int? packageCount { get; set; }
     public int? pipelineType { get; set; }
 
+    public long size { get; set; }
+    public long lastOpened { get; set; }
+    public long created { get; set; }
+    public string? notes { get; set; }
+
     public List<int> tags = [];
     public List<int> collections = [];
 
@@ -30,5 +35,10 @@ public class dbo_Project : IDatabase_Table
         new Database_Column { columnName = nameof(version), columnType = Database_ColumnType.TEXT, allowNull = true },
         new Database_Column { columnName = nameof(packageCount), columnType = Database_ColumnType.INTEGER, allowNull = true },
         new Database_Column { columnName = nameof(pipelineType), columnType = Database_ColumnType.INTEGER, allowNull = true },
+
+        new Database_Column { columnName = nameof(size), columnType = Database_ColumnType.INTEGER, allowNull = true },
+        new Database_Column { columnName = nameof(lastOpened), columnType = Database_ColumnType.INTEGER, allowNull = true },
+        new Database_Column { columnName = nameof(created), columnType = Database_ColumnType.INTEGER, allowNull = true },
+        new Database_Column { columnName = nameof(notes), columnType = Database_ColumnType.TEXT, allowNull = true },
     ];
 }
