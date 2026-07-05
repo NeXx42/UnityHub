@@ -59,23 +59,37 @@ public class SqliteDataRepo : IDataRepository
 
     private string GenerateSearchSQL(ProjectSearch search)
     {
-        StringBuilder sql = new StringBuilder($"SELECT p.{nameof(dbo_Project.id)} as id, count(*) OVER() as total_count FROM {dbo_Project.tableName} p\n");
+        string projectLocalName = "p";
+        StringBuilder sql = new StringBuilder($"SELECT {projectLocalName}.{nameof(dbo_Project.id)} as id, count(*) OVER() as total_count FROM {dbo_Project.tableName} {projectLocalName}\n");
 
         List<string> leftJoinClauses = new List<string>();
+        List<string> innerJoinClauses = new List<string>();
         List<string> whereClauses = new List<string>();
+        List<string> groupClauses = new List<string>();
+        List<string> havingClauses = new List<string>();
 
         // build filters
 
         if ((search.collections?.Count() ?? 0) > 0)
         {
-            leftJoinClauses.Add($"INNER JOIN {dbo_ProjectCollection.tableName} pc on pc.{nameof(dbo_ProjectCollection.ProjectId)} = p.{nameof(dbo_Project.id)}");
-            whereClauses.Add($"pc.{nameof(dbo_ProjectCollection.CollectionId)} in ({string.Join(",", search.collections!)})");
+            string joinName = "pc";
+            innerJoinClauses.Add($"{dbo_ProjectCollection.tableName} {joinName} on {joinName}.{nameof(dbo_ProjectCollection.ProjectId)} = {projectLocalName}.{nameof(dbo_Project.id)}");
+            whereClauses.Add($"{joinName}.{nameof(dbo_ProjectCollection.CollectionId)} in ({string.Join(",", search.collections!)})");
+
+            groupClauses.Add($"{projectLocalName}.{nameof(dbo_Project.id)}");
+            havingClauses.Add($"COUNT(DISTINCT {joinName}.{nameof(dbo_ProjectCollection.CollectionId)}) = {search.collections!.Count()}");
         }
 
         if ((search.tags?.Count() ?? 0) > 0)
         {
-            leftJoinClauses.Add($"INNER JOIN {dbo_ProjectTag.tableName} pt on pt.{nameof(dbo_ProjectTag.ProjectId)} = p.{nameof(dbo_Project.id)}");
-            whereClauses.Add($"pt.{nameof(dbo_ProjectTag.TagId)} in ({string.Join(",", search.tags!)})");
+            string joinName = "pt";
+            innerJoinClauses.Add($"{dbo_ProjectTag.tableName} {joinName} on {joinName}.{nameof(dbo_ProjectTag.ProjectId)} = {projectLocalName}.{nameof(dbo_Project.id)}");
+            whereClauses.Add($"{joinName}.{nameof(dbo_ProjectTag.TagId)} in ({string.Join(",", search.tags!)})");
+
+            if ((search.collections?.Count() ?? 0) == 0)
+                groupClauses.Add($"{projectLocalName}.{nameof(dbo_Project.id)}");
+
+            havingClauses.Add($"COUNT(DISTINCT {joinName}.{nameof(dbo_ProjectTag.TagId)}) = {search.tags!.Count()}");
         }
 
         if (search.versions.Count() > 0)
@@ -88,13 +102,31 @@ public class SqliteDataRepo : IDataRepository
         if (leftJoinClauses.Count > 0)
         {
             foreach (string join in leftJoinClauses)
-                sql.AppendLine(join);
+                sql.AppendLine($"LEFT JOIN {join}");
+        }
+
+        if (innerJoinClauses.Count > 0)
+        {
+            foreach (string join in innerJoinClauses)
+                sql.AppendLine($"INNER JOIN {join}");
         }
 
         if (whereClauses.Count > 0)
         {
             sql.AppendLine(" WHERE");
             sql.Append(string.Join(" AND ", whereClauses));
+        }
+
+        if (groupClauses.Count > 0)
+        {
+            sql.AppendLine(" GROUP BY ");
+            sql.Append(string.Join(" AND ", groupClauses));
+        }
+
+        if (havingClauses.Count > 0)
+        {
+            sql.AppendLine(" HAVING ");
+            sql.Append(string.Join(" AND ", havingClauses));
         }
 
         sql.AppendLine($" LIMIT {search.take} OFFSET {search.skip}");
