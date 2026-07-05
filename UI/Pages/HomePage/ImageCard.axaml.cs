@@ -9,11 +9,20 @@ using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
+using UI.Interfaces;
 
 namespace UI.Pages.HomePage;
 
+public interface IImageCardPlugin : IFrontendPlugin
+{
+    public void Setup(ImageCard card);
+    public Task Draw(ImageCard card, ProjectInfo info, int pos, Func<int, Task> onClick);
+}
+
 public partial class ImageCard : UserControl
 {
+    public static FrontendPluginHandler<IImageCardPlugin> plugin = new();
+
     private bool registered = false;
 
     private int? pos;
@@ -25,10 +34,14 @@ public partial class ImageCard : UserControl
 
     public string LastOpened { get; set; } = "Never";
 
+    public Grid get_cont_Bottom => cont_Bottom;
+
     public ImageCard()
     {
         InitializeComponent();
+
         tags = new ReusableList<CollectionItem>(cont_Tags);
+        plugin.Execute(t => t.Setup(this));
 
         PointerPressed += HandleOnSelect;
     }
@@ -56,6 +69,7 @@ public partial class ImageCard : UserControl
         if (!DependencyManager.GetService<IEditorLogic>()!.IsVersionInstalled(info.version))
             cont_Version.Classes.Add("Missing");
 
+        await plugin.Execute(t => t.Draw(this, info, pos, onClick));
         await IconFetcher.GetImage(info.iconUrl, UpdateIcon);
     }
 

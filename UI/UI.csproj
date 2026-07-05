@@ -22,4 +22,12 @@
     <ProjectReference Include="..\Data_Mock\Data_Mock.csproj" />
     <ProjectReference Include="..\Data_Sqlite\Data_Sqlite.csproj" />
   </ItemGroup>
+
+  <Target Name="CopyPluginsToOutput" AfterTargets="Build">
+    <ItemGroup>
+      <PluginFiles Include="Plugins\**\*.*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(OutputPath)Plugins\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

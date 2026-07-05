@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia;
 using Data.DataRepos;
@@ -11,6 +15,8 @@ namespace UI;
 
 class Program
 {
+    private static List<IPlugin> loadedPlugins = new List<IPlugin>();
+
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
@@ -27,6 +33,40 @@ class Program
             DependencyManager.RegisterService<IEditorLogic, EditorLogic>();
             await DependencyManager.RegisterService<IProjectLogic, ProjectLogic>(logic => logic.Migrate());
             DependencyManager.RegisterService<ITaggingLogic, TaggingLogic>();
+
+            await LoadPlugins();
+        }
+    }
+
+    private static async Task LoadPlugins()
+    {
+        string root = Path.Combine(AppContext.BaseDirectory, "Plugins");
+
+        if (Directory.Exists(root))
+        {
+            string[] dlls = Directory.GetFiles(root, "*.dll", SearchOption.AllDirectories);
+
+            foreach (string dll in dlls)
+            {
+                Assembly assembly = Assembly.LoadFrom(dll);
+
+                try
+                {
+                    var entryPointType = assembly.GetTypes().FirstOrDefault(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
+
+                    if (entryPointType == null)
+                        continue;
+
+                    IPlugin plugin = (IPlugin)Activator.CreateInstance(entryPointType)!;
+
+                    await plugin.Register();
+                    loadedPlugins.Add(plugin);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Failed to load plugin\n{e.Message}");
+                }
+            }
         }
     }
 
