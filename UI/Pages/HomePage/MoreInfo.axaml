@@ -34,14 +34,14 @@
           <controls:ButtonWrapper x:Name="btn_OpenExplorer" Label="Reveal in Explorer"/>
 
           <Grid ColumnDefinitions="* * * *">
-            <controls:ButtonWrapper Margin="0 0 0 0" Grid.Column="0">
+            <controls:ButtonWrapper Margin="0 0 0 0" Grid.Column="0" x:Name="btn_SourceControl">
               <controls:ButtonWrapper.Icon>
                 <Viewbox Width="18" Height="12">
                   <Path Fill="White" Data="M15.698 7.287 8.712.302a1.03 1.03 0 0 0-1.457 0l-1.45 1.45 1.84 1.84a1.223 1.223 0 0 1 1.55 1.56l1.773 1.774a1.224 1.224 0 0 1 1.267 2.025 1.226 1.226 0 0 1-2.002-1.334L8.58 5.963v4.353a1.226 1.226 0 1 1-1.008-.036V5.887a1.226 1.226 0 0 1-.666-1.608L5.093 2.465l-4.79 4.79a1.03 1.03 0 0 0 0 1.457l6.986 6.986a1.03 1.03 0 0 0 1.457 0l6.953-6.953a1.03 1.03 0 0 0 0-1.457"/>
                 </Viewbox>
               </controls:ButtonWrapper.Icon>
             </controls:ButtonWrapper>
-            <controls:ButtonWrapper Margin="5 0 0 0" Grid.Column="1">
+            <controls:ButtonWrapper Margin="5 0 0 0" Grid.Column="1" x:Name="btn_Shell">
               <controls:ButtonWrapper.Icon>
                 <Viewbox Width="18" Height="18">
                   <Grid>
@@ -51,14 +51,14 @@
                 </Viewbox>
               </controls:ButtonWrapper.Icon>
             </controls:ButtonWrapper>
-            <controls:ButtonWrapper Margin="5 0 0 0" Grid.Column="2">
+            <controls:ButtonWrapper Margin="5 0 0 0" Grid.Column="2" x:Name="btn_Clone">
               <controls:ButtonWrapper.Icon>
                 <Viewbox Width="18" Height="18">
                   <Path Fill="White" Data="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
                 </Viewbox>
               </controls:ButtonWrapper.Icon>
             </controls:ButtonWrapper>
-            <controls:ButtonWrapper Margin="5 0 0 0" Grid.Column="3">
+            <controls:ButtonWrapper Margin="5 0 0 0" Grid.Column="3" x:Name="btn_Delete">
               <controls:ButtonWrapper.Icon>
                 <Viewbox Width="18" Height="18">
                   <Grid>

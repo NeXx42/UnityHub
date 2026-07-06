@@ -130,4 +130,9 @@ public class MockDataRepo : IDataRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task DeleteCard(IEnumerable<int> ids)
+    {
+        throw new NotImplementedException();
+    }
 }

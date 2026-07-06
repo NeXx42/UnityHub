@@ -16,5 +16,5 @@ public interface IEditorLogic
 
     public Task DeriveProjectInfo(ProjectInfo info);
 
-    public Task CreateProject(string name, string path, string version);
+    public Task CreateProject(ProjectCreationInfo info);
 }

@@ -261,6 +261,9 @@ public class EditorLogic : IEditorLogic
 
     public async Task DeriveProjectInfo(ProjectInfo info)
     {
+        info.created ??= new DateTimeOffset().ToUnixTimeSeconds();
+        info.size ??= GetFolderSizeParallel(info.directory);
+
         string versionFile = Path.Combine(info.directory, "ProjectSettings", "ProjectVersion.txt");
 
         if (File.Exists(versionFile))
@@ -296,6 +299,20 @@ public class EditorLogic : IEditorLogic
                     info.renderPipeline = RenderPipelineTypes.Built_In_Render_Pipeline;
             }
         }
+
+        long GetFolderSizeParallel(string path)
+        {
+            long size = 0;
+
+            Parallel.ForEach(
+                Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories),
+                () => 0L,
+                (file, state, local) => local + new FileInfo(file).Length,
+                local => Interlocked.Add(ref size, local)
+            );
+
+            return size;
+        }
     }
 
     private async Task InjectLinker(string targetRoot, int projectId)
@@ -328,29 +345,29 @@ public class EditorLogic : IEditorLogic
         }));
     }
 
-    public async Task CreateProject(string name, string path, string version)
+    public async Task CreateProject(ProjectCreationInfo creation)
     {
-        string projectRoot = Path.Combine(path, name);
-
-        if (Directory.Exists(projectRoot))
+        if (Directory.Exists(creation.info.directory))
         {
-            await DependencyManager.ui!.ShowMessageBox("Project already exists", $"Failed to create project as an existing folder exists at the directory {projectRoot}.");
+            await DependencyManager.ui!.ShowMessageBox("Project already exists", $"Failed to create project as an existing folder exists at the directory {creation.info.directory}.");
             return;
         }
 
-        if (!await IsVersionInstalled(version))
+        if (!await IsVersionInstalled(creation.info.version))
         {
-            await DependencyManager.ui!.ShowMessageBox("Version not found", $"Failed to create the project because the unity editor version {version} was not found.");
+            await DependencyManager.ui!.ShowMessageBox("Version not found", $"Failed to create the project because the unity editor version {creation.info.version} was not found.");
             return;
         }
 
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
-            FileName = await GetEditorInstall(version!)
+            FileName = await GetEditorInstall(creation.info.version!)
         };
 
+        startInfo.ArgumentList.Add("-batchmode");
+        startInfo.ArgumentList.Add("-quit");
         startInfo.ArgumentList.Add("-createProject");
-        startInfo.ArgumentList.Add(projectRoot);
+        startInfo.ArgumentList.Add(creation.info.directory);
 
         Process process = new Process()
         {
@@ -358,5 +375,6 @@ public class EditorLogic : IEditorLogic
         };
 
         process.Start();
+        await process.WaitForExitAsync();
     }
 }

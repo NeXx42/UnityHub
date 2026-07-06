@@ -164,15 +164,7 @@ public class SqliteDataRepo : IDataRepository
     }
 
 
-    public async Task CreateCard(ProjectInfo info)
-    {
-        await database!.InsertItem(new dbo_Project
-        {
-            name = info.name,
-            directory = info.directory
-        });
-    }
-
+    public async Task CreateCard(ProjectInfo info) => await CreateCards([info]);
     public async Task CreateCards(IEnumerable<ProjectInfo> cards)
     {
         dbo_Project[] dbObjs = cards.Select(MapToDatabaseObject).ToArray();
@@ -187,7 +179,10 @@ public class SqliteDataRepo : IDataRepository
 
                 version = info.version,
                 packageCount = info.packages,
-                pipelineType = (int?)info.renderPipeline
+                pipelineType = (int?)info.renderPipeline,
+
+                created = info.created ?? 0,
+                size = info.size ?? 0,
             };
         }
     }
@@ -343,5 +338,12 @@ public class SqliteDataRepo : IDataRepository
     {
         dbo_UnityInstallInfo[] data = await database!.GetItems<dbo_UnityInstallInfo>(SQLFilter.In(nameof(dbo_UnityInstallInfo.version), versions));
         return data.ToDictionary(d => d.version, d => d.json);
+    }
+
+    public async Task DeleteCard(IEnumerable<int> ids)
+    {
+        await database!.Delete<dbo_ProjectTag>(SQLFilter.In(nameof(dbo_ProjectTag.ProjectId), ids));
+        await database!.Delete<dbo_ProjectCollection>(SQLFilter.In(nameof(dbo_ProjectCollection.ProjectId), ids));
+        await database!.Delete<dbo_Project>(SQLFilter.In(nameof(dbo_Project.id), ids));
     }
 }

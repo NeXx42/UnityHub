@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text.Json;
 using Models;
@@ -8,8 +9,15 @@ namespace Logic;
 
 public class ProjectLogic : IProjectLogic
 {
+    private Action<string>? callback;
+
     private IDataRepository data => DependencyManager.GetService<IDataRepository>()!;
     private Dictionary<int, ProjectInfo?> cache = new Dictionary<int, ProjectInfo?>();
+
+    public void RegisterCallback(Action<string> callback)
+    {
+        this.callback += callback;
+    }
 
     public async Task Migrate()
     {
@@ -18,10 +26,12 @@ public class ProjectLogic : IProjectLogic
         if (!File.Exists(dirtyFile))
             return;
 
-        List<ProjectInfo> updates = new List<ProjectInfo>();
+        ConcurrentBag<ProjectInfo> updates = new();
         string[] changes = File.ReadAllLines(dirtyFile);
 
-        foreach (string change in changes)
+        IEditorLogic deriverisionLogic = DependencyManager.GetService<IEditorLogic>()!;
+
+        await Parallel.ForEachAsync(changes, async (change, token) =>
         {
             string[] pair = change.Split(":");
 
@@ -30,36 +40,19 @@ public class ProjectLogic : IProjectLogic
                 ProjectInfo? info = await data.GetProjectInfo(projectId);
 
                 if (info == null)
-                    continue;
+                    return;
 
-                DirectoryInfo dirInfo = new DirectoryInfo(info.directory);
-
-                info.size = GetFolderSizeParallel(info.directory);
-                info.created = new DateTimeOffset(dirInfo.CreationTimeUtc).ToUnixTimeSeconds();
+                await deriverisionLogic.DeriveProjectInfo(info);
                 info.iconUrl = Path.Combine(GlobalConfig.getDataFolder, projectId.ToString(), "icon.png");
 
                 updates.Add(info);
             }
-        }
+        });
 
         File.Delete(dirtyFile);
 
         // may update more?
         await data.Migrate(updates);
-
-        long GetFolderSizeParallel(string path)
-        {
-            long size = 0;
-
-            Parallel.ForEach(
-                Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories),
-                () => 0L,
-                (file, state, local) => local + new FileInfo(file).Length,
-                local => Interlocked.Add(ref size, local)
-            );
-
-            return size;
-        }
     }
 
     public async Task<(ProjectInfo[], int total)> Search(ProjectSearch search)
@@ -126,17 +119,13 @@ public class ProjectLogic : IProjectLogic
         process.Start();
     }
 
-    public async Task<ProjectInfo[]> TryToUpload(string[] folders)
+    public async Task<ProjectInfo[]> VerifyProjectPrimative(IEnumerable<string> folders)
     {
         List<ProjectInfo> potentialCards = new List<ProjectInfo>();
 
         foreach (string folder in folders)
         {
-            if (!ValidateFolder(folder))
-                continue;
-
             DirectoryInfo dirInfo = new DirectoryInfo(folder);
-
             ProjectInfo card = new ProjectInfo()
             {
                 id = -1,
@@ -144,11 +133,21 @@ public class ProjectLogic : IProjectLogic
                 name = dirInfo.Name
             };
 
-            await DependencyManager.GetService<EditorLogic>()!.DeriveProjectInfo(card);
             potentialCards.Add(card);
         }
 
         return potentialCards.ToArray();
+    }
+
+    public async Task<ProjectInfo?> VerifyProjectPrimative(ProjectInfo info)
+    {
+        if (!ValidateFolder(info.directory))
+            return null;
+
+        DirectoryInfo dirInfo = new DirectoryInfo(info.directory);
+
+        await DependencyManager.GetService<IEditorLogic>()!.DeriveProjectInfo(info);
+        return info;
 
         bool ValidateFolder(string folderName)
         {
@@ -162,10 +161,24 @@ public class ProjectLogic : IProjectLogic
         }
     }
 
-    public async Task UploadCardsPrimitive(ProjectInfo[] cards)
+    public async Task UploadCardsPrimitive(IEnumerable<ProjectInfo> cards)
     {
         await data.CreateCards(cards);
+        callback?.Invoke(nameof(UploadCardsPrimitive));
     }
 
     public Task<string[]> GetProjectVersions() => data.GetProjectVersions();
+
+    public async Task DeleteCard(ProjectInfo info)
+    {
+        try
+        {
+            if (Directory.Exists(info.directory))
+                Directory.Delete(info.directory, true);
+
+            await data.DeleteCard([info.id]);
+            callback?.Invoke(nameof(DeleteCard));
+        }
+        catch { }
+    }
 }

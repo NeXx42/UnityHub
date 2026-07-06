@@ -1,16 +1,20 @@
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Logic;
+using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
+using UI.Helpers;
 
 namespace UI.Modals;
 
 public partial class CreateProjectModal : UserControl, IModal
 {
+    private TaskCompletionSource? task;
     private string[] installedVersions = [];
 
     public CreateProjectModal()
@@ -23,7 +27,16 @@ public partial class CreateProjectModal : UserControl, IModal
 
     public ModalContainer setContainer { set => _ = value; }
 
-    public async Task Show()
+    public Task Show()
+    {
+        task?.SetCanceled();
+        task = new TaskCompletionSource();
+
+        Draw().Wrap();
+        return task.Task;
+    }
+
+    private async Task Draw()
     {
         installedVersions = (await DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersions()).OrderByDescending(v => v).ToArray();
         inp_Versions.ItemsSource = installedVersions;
@@ -48,6 +61,30 @@ public partial class CreateProjectModal : UserControl, IModal
         if (string.IsNullOrEmpty(loc) || string.IsNullOrEmpty(projName))
             return;
 
-        await DependencyManager.GetService<IEditorLogic>()!.CreateProject(projName, loc, version);
+        ProjectCreationInfo info = new ProjectCreationInfo()
+        {
+            info = new ProjectInfo()
+            {
+                id = -1,
+                name = projName,
+                version = version,
+                directory = Path.Combine(loc, projName)
+            }
+        };
+
+        IEditorLogic editorLogic = DependencyManager.GetService<IEditorLogic>()!;
+        IProjectLogic projectLogic = DependencyManager.GetService<IProjectLogic>()!;
+
+        await editorLogic.CreateProject(info);
+        ProjectInfo? newInfo = await projectLogic.VerifyProjectPrimative(info.info);
+
+        if (newInfo == null)
+        {
+            await DependencyManager.ui!.ShowMessageBox("Failed to create", "Failed to create project");
+            return;
+        }
+
+        await projectLogic.UploadCardsPrimitive([newInfo]);
+        task?.SetResult();
     }
 }

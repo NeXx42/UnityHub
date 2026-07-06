@@ -60,6 +60,8 @@ public partial class Page : UserControl, IPage
         filter.Init(activeSearch, SearchCards);
 
         btn_Filters.RegisterPopup(filter);
+
+        DependencyManager.GetService<IProjectLogic>().RegisterCallback(ProjectLogicCallback);
     }
 
 
@@ -132,7 +134,7 @@ public partial class Page : UserControl, IPage
 
         async Task AttemptUploadOfDirectories(string[] toUpload)
         {
-            ProjectInfo[] cards = await DependencyManager.GetService<IProjectLogic>()!.TryToUpload(toUpload);
+            ProjectInfo[] cards = await DependencyManager.GetService<IProjectLogic>()!.VerifyProjectPrimative(toUpload);
 
             // show popup to confirm each card (this code would be in there)
             await DependencyManager.GetService<IProjectLogic>()!.UploadCardsPrimitive(cards);
@@ -199,6 +201,17 @@ public partial class Page : UserControl, IPage
             }
 
             return Task.CompletedTask;
+        }
+    }
+
+    private void ProjectLogicCallback(string name)
+    {
+        switch (name)
+        {
+            case nameof(IProjectLogic.DeleteCard):
+            case nameof(IProjectLogic.UploadCardsPrimitive):
+                SearchCards().Wrap();
+                break;
         }
     }
 }

@@ -27,6 +27,8 @@ public partial class MoreInfo : UserControl
 
         btn_OpenProject.RegisterClick(() => DependencyManager.GetService<IEditorLogic>()!.LaunchProject(info!));
         btn_OpenExplorer.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.BrowseTo(info!));
+
+        btn_Delete.RegisterClick(DeleteProject);
     }
 
     public async Task Show(int id)
@@ -108,5 +110,13 @@ public partial class MoreInfo : UserControl
             await logic.UpdateCollection(info.id, dat.collectionId, false);
             await RedrawCollections(logic);
         }
+    }
+
+    private async Task DeleteProject()
+    {
+        if (info == null)
+            return;
+
+        await DependencyManager.GetService<IProjectLogic>()!.DeleteCard(info);
     }
 }
