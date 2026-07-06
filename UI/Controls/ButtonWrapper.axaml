@@ -51,7 +51,7 @@
       </Grid>
     </Border>
 
-    <Popup IsOpen="{Binding #root.IsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=RootPanel}" MinWidth="{Binding ElementName=RootPanel, Path=Bounds.Width}" IsLightDismissEnabled="True">
+    <Popup IsOpen="{Binding #root.IsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=RootPanel}" MinWidth="{Binding ElementName=RootPanel, Path=Bounds.Width}" IsLightDismissEnabled="True" HorizontalAlignment="Right">
       <ContentPresenter Content="{Binding #root.PopupContent}"/>
     </Popup>
   </Panel>

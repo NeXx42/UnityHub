@@ -34,6 +34,7 @@ public partial class Page : UserControl, IPage
     private ReusableList<ButtonWrapper> pageControls;
     private ReusableList<CollectionItem> activeFilters;
 
+    private string? lastTextFilter;
     private ProjectInfo[]? cardInfo;
 
     public ProjectSearch activeSearch { private set; get; }
@@ -60,8 +61,9 @@ public partial class Page : UserControl, IPage
         filter.Init(activeSearch, SearchCards);
 
         btn_Filters.RegisterPopup(filter);
+        inp_Text.TextChanged += (_, __) => UpdateTextFilter().Wrap();
 
-        DependencyManager.GetService<IProjectLogic>().RegisterCallback(ProjectLogicCallback);
+        DependencyManager.GetService<IProjectLogic>()!.RegisterCallback(ProjectLogicCallback);
     }
 
 
@@ -213,5 +215,18 @@ public partial class Page : UserControl, IPage
                 SearchCards().Wrap();
                 break;
         }
+    }
+
+    private async Task UpdateTextFilter()
+    {
+        string txt = inp_Text.Text ?? "";
+
+        if (txt.Equals(lastTextFilter, StringComparison.CurrentCulture))
+            return;
+
+        lastTextFilter = txt;
+        activeSearch.text = lastTextFilter;
+
+        await SearchCards();
     }
 }

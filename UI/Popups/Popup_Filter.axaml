@@ -3,7 +3,7 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="600" x:Class="UI.Popups.Popup_Filter"
   xmlns:controls="clr-namespace:UI.Controls">
-  <Border x:Name="root" Background="{DynamicResource BackgroundColour}" Width="250" Height="400">
+  <Border x:Name="root" Background="{DynamicResource BackgroundColour}" Width="250" Height="400" CornerRadius="8" ClipToBounds="True" BorderThickness="1" BorderBrush="{DynamicResource ButtonBackground}">
     <ScrollViewer>
       <StackPanel x:Name="cont" />
     </ScrollViewer>

@@ -9,7 +9,7 @@
       <!-- Searching -->
       <StackPanel Orientation="Vertical" Spacing="15">
         <Grid Height="40">
-          <TextBox HorizontalAlignment="Left" CornerRadius="8" Width="250" Background="{DynamicResource ButtonBackground}" Foreground="{DynamicResource TextColourMuted}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" PlaceholderText="Search projects" VerticalContentAlignment="Center"/>
+          <TextBox x:Name="inp_Text" HorizontalAlignment="Left" CornerRadius="8" Width="250" Background="{DynamicResource ButtonBackground}" Foreground="{DynamicResource TextColourMuted}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" PlaceholderText="Search projects" VerticalContentAlignment="Center"/>
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
             <Button VerticalAlignment="Stretch" Content="Refresh"/>
             <Button VerticalAlignment="Stretch" Content="Sort: Last Opened"/>

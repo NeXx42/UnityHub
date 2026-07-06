@@ -12,7 +12,7 @@ public enum RenderPipelineTypes
     Built_In_Render_Pipeline
 }
 
-public class ProjectInfo : INotifyPropertyChanged
+public class ProjectInfo
 {
     public required int id;
 
@@ -58,11 +58,4 @@ public class ProjectInfo : INotifyPropertyChanged
 
     public HashSet<int> tags { get; set; } = [];
     public HashSet<int> collections { get; set; } = [];
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    public void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }

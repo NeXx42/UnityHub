@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -11,7 +12,7 @@ using UI.Helpers;
 
 namespace UI.Popups;
 
-public partial class Popup_FilterGroup : UserControl
+public partial class Popup_FilterGroup : UserControl, INotifyPropertyChanged
 {
     public string Header { get; set; } = "test";
 
@@ -30,6 +31,8 @@ public partial class Popup_FilterGroup : UserControl
             cont_Container.IsVisible = value;
         }
     }
+
+    public new event PropertyChangedEventHandler? PropertyChanged;
 
     public Popup_FilterGroup()
     {
@@ -77,6 +80,7 @@ public partial class Popup_FilterGroup : UserControl
             });
         }
 
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         return this;
     }
 

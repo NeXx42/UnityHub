@@ -103,6 +103,11 @@ public class SqliteDataRepo : IDataRepository
             whereClauses.Add($"p.{nameof(dbo_Project.version)} in ({string.Join(",", search.versions.Select(v => $"'{v}'"))})");
         }
 
+        if (!string.IsNullOrEmpty(search.text))
+        {
+            whereClauses.Add($"p.{nameof(dbo_Project.name)} like '{search.text}%'");
+        }
+
         // writing
 
         if (leftJoinClauses.Count > 0)
