@@ -17,7 +17,7 @@ public partial class ButtonWrapper : UserControl
         set => SetValue(IconProperty, value);
     }
 
-    public static readonly StyledProperty<string> LabelProperty = AvaloniaProperty.Register<ButtonWrapper, string>(nameof(Label));
+    public static readonly StyledProperty<string> LabelProperty = AvaloniaProperty.Register<ButtonWrapper, string>(nameof(Label), "");
     public string Label
     {
         get => GetValue(LabelProperty);

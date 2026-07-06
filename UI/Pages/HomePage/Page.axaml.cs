@@ -102,7 +102,8 @@ public partial class Page : UserControl, IPage
 
     private async Task CreateNewProject()
     {
-        MainWindow.ShowModal<CreateProjectModal>(out _);
+        CreateProjectModal proj = MainWindow.ShowModal<CreateProjectModal>(out _);
+        await proj.Show();
     }
 
     private async Task SelectNewProjectOption(int id)

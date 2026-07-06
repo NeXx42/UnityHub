@@ -327,4 +327,36 @@ public class EditorLogic : IEditorLogic
             WriteIndented = true
         }));
     }
+
+    public async Task CreateProject(string name, string path, string version)
+    {
+        string projectRoot = Path.Combine(path, name);
+
+        if (Directory.Exists(projectRoot))
+        {
+            await DependencyManager.ui!.ShowMessageBox("Project already exists", $"Failed to create project as an existing folder exists at the directory {projectRoot}.");
+            return;
+        }
+
+        if (!await IsVersionInstalled(version))
+        {
+            await DependencyManager.ui!.ShowMessageBox("Version not found", $"Failed to create the project because the unity editor version {version} was not found.");
+            return;
+        }
+
+        ProcessStartInfo startInfo = new ProcessStartInfo()
+        {
+            FileName = await GetEditorInstall(version!)
+        };
+
+        startInfo.ArgumentList.Add("-createProject");
+        startInfo.ArgumentList.Add(projectRoot);
+
+        Process process = new Process()
+        {
+            StartInfo = startInfo
+        };
+
+        process.Start();
+    }
 }

@@ -46,7 +46,7 @@
   <Panel x:Name="RootPanel" HorizontalAlignment="Stretch">
     <Border x:Name="btn" CornerRadius="{Binding #root.CornerRadius}" Cursor="Hand">
       <Grid IsHitTestVisible="False">
-        <Label IsHitTestVisible="False" Content="{Binding #root.Label}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+        <TextBlock IsHitTestVisible="False" Text="{Binding #root.Label}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <ContentPresenter IsHitTestVisible="False" Content="{Binding #root.Icon}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
       </Grid>
     </Border>

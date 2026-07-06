@@ -1,7 +1,51 @@
 <UserControl xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.CreateProjectModal" Width="200" Height="200">
-  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}">
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080" x:Class="UI.Modals.CreateProjectModal" Width="1000" Height="700"
+  xmlns:controls="clr-namespace:UI.Controls">
+  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="20">
+    <Grid Margin="10" ColumnDefinitions="* Auto">
+      <Grid>
+        <StackPanel x:Name="cont_Packages">
+        </StackPanel>
+      </Grid>
+
+      <Border BorderBrush="{DynamicResource ButtonBorder}" BorderThickness="1 0 0 0" Grid.Column="1" Width="400">
+        <Grid RowDefinitions="* 100" Margin="10">
+          <StackPanel Spacing="10">
+            <StackPanel Orientation="Vertical" Spacing="5">
+              <Label>Project Name</Label>
+              <TextBox Background="{DynamicResource ButtonBackground}" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="8" MinHeight="30" x:Name="inp_Name"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Spacing="5">
+              <Label>Project Location</Label>
+              <Grid ColumnDefinitions="* 5 Auto" Height="30">
+                <TextBox Background="{DynamicResource ButtonBackground}" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="8" VerticalAlignment="Stretch" MinHeight="0" x:Name="inp_Location"/>
+                <controls:ButtonWrapper Grid.Column="2" Label="Browse" x:Name="btn_Browse"/>
+              </Grid>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Spacing="5">
+              <Label>Pipeline</Label>
+              <ComboBox SelectedIndex="0" HorizontalAlignment="Stretch" Background="{DynamicResource ButtonBackground}" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="8" MinHeight="30" Padding="10 0 0 0">
+                <ComboBoxItem Content="Universal Render Pipeline"/>
+                <ComboBoxItem Content="High Defintion Render Pipeline"/>
+                <ComboBoxItem Content="Built-In Render Pipeline"/>
+              </ComboBox>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Spacing="5">
+              <Label>Version</Label>
+              <ComboBox SelectedIndex="0" HorizontalAlignment="Stretch" Background="{DynamicResource ButtonBackground}" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="8" MinHeight="30" Padding="10 0 0 0" x:Name="inp_Versions" />
+            </StackPanel>
+          </StackPanel>
+
+          <Grid Grid.Row="1">
+            <controls:ButtonWrapper Grid.Column="2" Label="Create" VerticalAlignment="Bottom" Classes="Primary" x:Name="btn_Create"/>
+          </Grid>
+        </Grid>
+      </Border>
+    </Grid>
   </Border>
 </UserControl>
