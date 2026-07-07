@@ -1,6 +1,15 @@
 <UserControl xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_General">
-  Welcome to Avalonia!
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_General"
+  xmlns:controls="clr-namespace:UI.Controls">
+  <StackPanel Orientation="Vertical" Spacing="20">
+    <StackPanel Spacing="5">
+      <Label FontSize="20">Projects</Label>
+      <Grid ColumnDefinitions="* 5 200">
+        <Label>Derive missing metadata</Label>
+        <controls:ButtonWrapper Label="Derive" x:Name="btn_Projects_DeriveMissingMetadata" Classes="Primary" Grid.Column="2"/>
+      </Grid>
+    </StackPanel>
+  </StackPanel>
 </UserControl>

@@ -184,12 +184,17 @@ public class SqliteDataRepo : IDataRepository
 
             case Models.Enums.ProjectOrder.LastOpenedAsc:
             case Models.Enums.ProjectOrder.LastOpenedDesc:
-                sql.Append(nameof(dbo_Project.name));
+                sql.Append(nameof(dbo_Project.lastOpened));
                 break;
 
             case Models.Enums.ProjectOrder.CreatedAsc:
             case Models.Enums.ProjectOrder.CreatedDesc:
-                sql.Append(nameof(dbo_Project.name));
+                sql.Append(nameof(dbo_Project.created));
+                break;
+
+            case Models.Enums.ProjectOrder.SizeAsc:
+            case Models.Enums.ProjectOrder.SizeDesc:
+                sql.Append(nameof(dbo_Project.size));
                 break;
         }
 
@@ -198,11 +203,14 @@ public class SqliteDataRepo : IDataRepository
             case Models.Enums.ProjectOrder.NameDesc:
             case Models.Enums.ProjectOrder.LastOpenedDesc:
             case Models.Enums.ProjectOrder.CreatedDesc:
+            case Models.Enums.ProjectOrder.SizeDesc:
                 sql.Append(" DESC ");
                 break;
         }
 
-        sql.AppendLine($" LIMIT {search.take} OFFSET {search.skip}");
+        if (search.take > 0)
+            sql.AppendLine($" LIMIT {search.take} OFFSET {search.skip}");
+
         return sql.ToString();
     }
 

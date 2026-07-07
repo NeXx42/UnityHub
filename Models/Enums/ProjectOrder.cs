@@ -7,5 +7,7 @@ public enum ProjectOrder
     LastOpenedAsc,
     LastOpenedDesc,
     CreatedAsc,
-    CreatedDesc
+    CreatedDesc,
+    SizeAsc,
+    SizeDesc,
 }

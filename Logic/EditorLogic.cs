@@ -308,16 +308,37 @@ public class EditorLogic : IEditorLogic
 
         long GetFolderSizeParallel(string path)
         {
-            long size = 0;
+            long total = 0;
 
-            Parallel.ForEach(
-                Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories),
-                () => 0L,
-                (file, state, local) => local + new FileInfo(file).Length,
-                local => Interlocked.Add(ref size, local)
-            );
+            void Walk(DirectoryInfo dir)
+            {
+                long localSize = 0;
+                var subDirs = new List<DirectoryInfo>();
 
-            return size;
+                try
+                {
+                    foreach (var entry in dir.EnumerateFileSystemInfos())
+                    {
+                        if (entry.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                            continue;
+
+                        if (entry is FileInfo fi)
+                            localSize += fi.Length;
+                        else if (entry is DirectoryInfo di)
+                            subDirs.Add(di);
+                    }
+                }
+                catch (UnauthorizedAccessException) { return; }
+                catch (IOException) { return; }
+
+                Interlocked.Add(ref total, localSize);
+
+                if (subDirs.Count > 0)
+                    Parallel.ForEach(subDirs, Walk);
+            }
+
+            Walk(new DirectoryInfo(path));
+            return total;
         }
     }
 

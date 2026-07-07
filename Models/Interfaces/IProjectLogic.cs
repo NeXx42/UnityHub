@@ -19,6 +19,8 @@ public interface IProjectLogic
 
     public Task UploadCardsPrimitive(IEnumerable<ProjectInfo> cards);
 
-    public Task UpdateFavourite(ProjectInfo info, bool to);
+    public Task UpdateProperties(ProjectInfo info, IEnumerable<string> props);
+    public Task UpdateProperties(IEnumerable<ProjectInfo> elements, IEnumerable<string> props);
+
     public Task DeleteCard(ProjectInfo info);
 }

@@ -186,9 +186,6 @@ public class ProjectLogic : IProjectLogic
         catch { }
     }
 
-    public async Task UpdateFavourite(ProjectInfo info, bool to)
-    {
-        info.favourited = to;
-        await data!.UpdateProjectProperties(info, [nameof(ProjectInfo.favourited)]);
-    }
+    public Task UpdateProperties(ProjectInfo info, IEnumerable<string> props) => data!.UpdateProjectProperties(info, props);
+    public Task UpdateProperties(IEnumerable<ProjectInfo> elements, IEnumerable<string> props) => data!.UpdateProjectProperties(elements, props);
 }

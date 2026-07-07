@@ -120,7 +120,9 @@ public partial class ImageCard : UserControl
 
         args.Handled = true;
 
-        DependencyManager.GetService<IProjectLogic>()!.UpdateFavourite(activeCard, !activeCard.favourited).Wrap();
+        activeCard.favourited = !activeCard.favourited;
+        DependencyManager.GetService<IProjectLogic>()!.UpdateProperties(activeCard, [nameof(ProjectInfo.favourited)]).Wrap();
+
         UpdateFavStatus();
     }
 
