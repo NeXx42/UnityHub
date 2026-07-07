@@ -135,4 +135,19 @@ public class MockDataRepo : IDataRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task UpdateLastOpened(ProjectInfo info)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateProjectProperties(ProjectInfo info, IEnumerable<string> properties)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateProjectProperties(IEnumerable<ProjectInfo> updates, IEnumerable<string> properties)
+    {
+        throw new NotImplementedException();
+    }
 }

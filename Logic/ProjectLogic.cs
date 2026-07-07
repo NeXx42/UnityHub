@@ -52,7 +52,11 @@ public class ProjectLogic : IProjectLogic
         File.Delete(dirtyFile);
 
         // may update more?
-        await data.Migrate(updates);
+        await data.UpdateProjectProperties(updates, [
+            nameof(ProjectInfo.iconUrl),
+            nameof(ProjectInfo.created),
+            nameof(ProjectInfo.size),
+        ]);
     }
 
     public async Task<(ProjectInfo[], int total)> Search(ProjectSearch search)
@@ -180,5 +184,11 @@ public class ProjectLogic : IProjectLogic
             callback?.Invoke(nameof(DeleteCard));
         }
         catch { }
+    }
+
+    public async Task UpdateFavourite(ProjectInfo info, bool to)
+    {
+        info.favourited = to;
+        await data!.UpdateProjectProperties(info, [nameof(ProjectInfo.favourited)]);
     }
 }

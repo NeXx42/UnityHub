@@ -3,31 +3,31 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.Page"
   xmlns:local="clr-namespace:UI.Pages.HomePage"
-  xmlns:controls="clr-namespace:UI.Controls">
+  xmlns:controls="clr-namespace:UI.Controls" x:Name="root">
   <Grid ColumnDefinitions="* Auto">
     <Grid RowDefinitions="Auto * Auto" Margin="15">
       <!-- Searching -->
       <StackPanel Orientation="Vertical" Spacing="15">
-        <Grid Height="40">
-          <TextBox x:Name="inp_Text" HorizontalAlignment="Left" CornerRadius="8" Width="250" Background="{DynamicResource ButtonBackground}" Foreground="{DynamicResource TextColourMuted}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" PlaceholderText="Search projects" VerticalContentAlignment="Center"/>
-          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
-            <Button VerticalAlignment="Stretch" Content="Refresh"/>
-            <Button VerticalAlignment="Stretch" Content="Sort: Last Opened"/>
+        <Grid Height="40" ColumnDefinitions="* 5 Auto">
+          <TextBox x:Name="inp_Text" HorizontalAlignment="Left" Width="300" CornerRadius="8" Background="{DynamicResource ButtonBackground}" Foreground="{DynamicResource TextColourMuted}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" PlaceholderText="Search projects" VerticalContentAlignment="Center"/>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5" Grid.Column="2">
+            <controls:ButtonWrapper HorizontalAlignment="Right" Label="Sort" x:Name="btn_Sort" />
+            <controls:ButtonWrapper HorizontalAlignment="Right" Label="Filters" x:Name="btn_Filters" />
             <controls:DropDownButton VerticalAlignment="Stretch" x:Name="btn_NewProject" ButtonLabel="New Project"/>
           </StackPanel>
         </Grid>
 
         <Grid>
-          <StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <Label Content="{Binding #root.TotalProjectCountTxt}"/>
             <WrapPanel x:Name="cont_Filters" ItemSpacing="5" LineSpacing="5"/>
           </StackPanel>
 
-          <controls:ButtonWrapper HorizontalAlignment="Right" Label="Filters" x:Name="btn_Filters"/>
         </Grid>
       </StackPanel>
 
 
-      <ScrollViewer Grid.Row="1" Margin="0 5">
+      <ScrollViewer Grid.Row="1" Margin="0 15">
         <WrapPanel x:Name="grid_Content" ItemSpacing="10" LineSpacing="10" HorizontalAlignment="Center" />
       </ScrollViewer>
 

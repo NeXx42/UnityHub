@@ -44,9 +44,12 @@ public partial class Sidebar : UserControl
         switch (id)
         {
             case 1: // Favs
+                homepage!.activeSearch.requiredFavs = true;
                 break;
 
             case 2: // Recent
+                homepage!.activeSearch.requiredOpened = true;
+                homepage!.activeSearch.order = Models.Enums.ProjectOrder.LastOpenedDesc;
                 break;
 
             case 3: // Collections

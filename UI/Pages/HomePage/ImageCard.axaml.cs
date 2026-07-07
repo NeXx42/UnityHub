@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Logic;
+using Microsoft.VisualBasic;
 using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
@@ -32,13 +33,13 @@ public partial class ImageCard : UserControl
 
     private ReusableList<CollectionItem> tags;
 
-    public string LastOpened { get; set; } = "Never";
-
     public Grid get_cont_Bottom => cont_Bottom;
 
     public ImageCard()
     {
         InitializeComponent();
+
+        btn_ToggleFav.PointerPressed += ToggleFav;
 
         tags = new ReusableList<CollectionItem>(cont_Tags);
         plugin.Execute(t => t.Setup(this));
@@ -62,8 +63,7 @@ public partial class ImageCard : UserControl
         this.pos = pos;
         this.onSelect = onClick;
 
-        this.LastOpened = "Never";
-
+        UpdateFavStatus();
         await DrawTags();
 
         cont_Version.Classes.RemoveRange(0, cont_Version.Classes.Count);
@@ -111,5 +111,22 @@ public partial class ImageCard : UserControl
         {
             ui.Init(dat);
         }, 3);
+    }
+
+    private void ToggleFav(object? _, PointerEventArgs args)
+    {
+        if (activeCard == null)
+            return;
+
+        args.Handled = true;
+
+        DependencyManager.GetService<IProjectLogic>()!.UpdateFavourite(activeCard, !activeCard.favourited).Wrap();
+        UpdateFavStatus();
+    }
+
+    private void UpdateFavStatus()
+    {
+        icon_ToggleFavToOff.IsVisible = activeCard!.favourited;
+        icon_ToggleFavToOn.IsVisible = !activeCard!.favourited;
     }
 }

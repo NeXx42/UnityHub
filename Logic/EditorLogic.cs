@@ -12,9 +12,10 @@ namespace Logic;
 public class EditorLogic : IEditorLogic
 {
     public IDataRepository database => DependencyManager.GetService<IDataRepository>()!;
-
     public const string LINK_NAME = "com.nexx.unityhublink";
+
     private string[]? editorLocations;
+    private Dictionary<int, ActiveInstances> activeInstances = new Dictionary<int, ActiveInstances>();
 
     public async Task<bool> IsVersionInstalled(string? version) => !string.IsNullOrEmpty(await GetEditorInstall(version));
 
@@ -221,7 +222,7 @@ public class EditorLogic : IEditorLogic
         return res.ToArray();
     }
 
-
+    public bool IsProjectRunning(int id) => activeInstances.ContainsKey(id);
 
     public async Task LaunchProject(int id) => await LaunchProject(await DependencyManager.GetService<IProjectLogic>()!.GetProjectInfo(id));
     public async Task LaunchProject(ProjectInfo? info)
@@ -229,6 +230,12 @@ public class EditorLogic : IEditorLogic
         if (info == null)
         {
             await DependencyManager.ui!.ShowMessageBox("Project is invalid", "Failed to launch the project because the id didn't correspond with a known entry.");
+            return;
+        }
+
+        if (IsProjectRunning(info.id))
+        {
+            await DependencyManager.ui!.ShowMessageBox("Already running", "Failed to launch the project because the project is already open.");
             return;
         }
 
@@ -243,6 +250,9 @@ public class EditorLogic : IEditorLogic
             await InjectLinker(info.directory, info.id);
         }
 
+        info.lastOpened = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        await database!.UpdateProjectProperties(info, [nameof(ProjectInfo.lastOpened)]);
+
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
             FileName = await GetEditorInstall(info.version!)
@@ -251,17 +261,13 @@ public class EditorLogic : IEditorLogic
         startInfo.ArgumentList.Add("-projectPath");
         startInfo.ArgumentList.Add(info.directory);
 
-        Process process = new Process()
-        {
-            StartInfo = startInfo
-        };
-
-        process.Start();
+        ActiveInstances instance = new ActiveInstances(startInfo);
+        activeInstances.Add(info.id, instance);
     }
 
     public async Task DeriveProjectInfo(ProjectInfo info)
     {
-        info.created ??= new DateTimeOffset().ToUnixTimeSeconds();
+        info.created ??= DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         info.size ??= GetFolderSizeParallel(info.directory);
 
         string versionFile = Path.Combine(info.directory, "ProjectSettings", "ProjectVersion.txt");
@@ -376,5 +382,20 @@ public class EditorLogic : IEditorLogic
 
         process.Start();
         await process.WaitForExitAsync();
+    }
+
+    public struct ActiveInstances
+    {
+        private Process activeProcess;
+
+        public ActiveInstances(ProcessStartInfo info)
+        {
+            activeProcess = new Process() { StartInfo = info };
+        }
+
+        public void Start()
+        {
+            activeProcess.Start();
+        }
     }
 }

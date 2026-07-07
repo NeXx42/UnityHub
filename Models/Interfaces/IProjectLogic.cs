@@ -18,5 +18,7 @@ public interface IProjectLogic
     public Task<ProjectInfo?> VerifyProjectPrimative(ProjectInfo info);
 
     public Task UploadCardsPrimitive(IEnumerable<ProjectInfo> cards);
+
+    public Task UpdateFavourite(ProjectInfo info, bool to);
     public Task DeleteCard(ProjectInfo info);
 }

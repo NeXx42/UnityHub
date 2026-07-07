@@ -1,3 +1,5 @@
+using Models.Enums;
+
 namespace Models.Data;
 
 public class ProjectSearch
@@ -10,6 +12,10 @@ public class ProjectSearch
 
     public int page;
     public int take;
+    public bool requiredOpened;
+    public bool requiredFavs;
+
+    public ProjectOrder order;
 
     public int skip => page * take;
 
@@ -21,5 +27,9 @@ public class ProjectSearch
         tags = [];
         versions = [];
         collections = [];
+
+        requiredOpened = false;
+        requiredFavs = false;
+        order = ProjectOrder.LastOpenedDesc;
     }
 }

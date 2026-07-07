@@ -43,7 +43,34 @@ public class SqliteDataRepo : IDataRepository
             lastOpened = dbData.lastOpened == 0 ? null : dbData.lastOpened,
             created = dbData.created == 0 ? null : dbData.created,
             size = dbData.size == 0 ? null : dbData.size,
-            notes = dbData.notes
+            notes = dbData.notes,
+
+            favourited = dbData.favourited
+        };
+    }
+
+    private dbo_Project MapToDto(ProjectInfo info)
+    {
+        return new dbo_Project()
+        {
+            id = info.id,
+            name = info.name ?? "",
+            directory = info.directory,
+            iconPath = info.iconUrl,
+
+            version = info.version,
+            packageCount = info.packages,
+            pipelineType = (int?)info.renderPipeline,
+
+            tags = info.tags.ToList(),
+            collections = info.collections.ToList(),
+
+            lastOpened = info.lastOpened ?? 0,
+            created = info.created ?? 0,
+            size = info.size ?? 0,
+            notes = info.notes,
+
+            favourited = info.favourited
         };
     }
 
@@ -108,6 +135,12 @@ public class SqliteDataRepo : IDataRepository
             whereClauses.Add($"p.{nameof(dbo_Project.name)} like '{search.text}%'");
         }
 
+        if (search.requiredOpened)
+            whereClauses.Add($"p.{nameof(dbo_Project.lastOpened)} is not null");
+
+        if (search.requiredFavs)
+            whereClauses.Add($"p.{nameof(dbo_Project.favourited)} = 1");
+
         // writing
 
         if (leftJoinClauses.Count > 0)
@@ -138,6 +171,35 @@ public class SqliteDataRepo : IDataRepository
         {
             sql.AppendLine(" HAVING ");
             sql.Append(string.Join(" AND ", havingClauses));
+        }
+
+        sql.AppendLine(" ORDER BY ");
+
+        switch (search.order)
+        {
+            case Models.Enums.ProjectOrder.NameAsc:
+            case Models.Enums.ProjectOrder.NameDesc:
+                sql.Append(nameof(dbo_Project.name));
+                break;
+
+            case Models.Enums.ProjectOrder.LastOpenedAsc:
+            case Models.Enums.ProjectOrder.LastOpenedDesc:
+                sql.Append(nameof(dbo_Project.name));
+                break;
+
+            case Models.Enums.ProjectOrder.CreatedAsc:
+            case Models.Enums.ProjectOrder.CreatedDesc:
+                sql.Append(nameof(dbo_Project.name));
+                break;
+        }
+
+        switch (search.order)
+        {
+            case Models.Enums.ProjectOrder.NameDesc:
+            case Models.Enums.ProjectOrder.LastOpenedDesc:
+            case Models.Enums.ProjectOrder.CreatedDesc:
+                sql.Append(" DESC ");
+                break;
         }
 
         sql.AppendLine($" LIMIT {search.take} OFFSET {search.skip}");
@@ -172,24 +234,8 @@ public class SqliteDataRepo : IDataRepository
     public async Task CreateCard(ProjectInfo info) => await CreateCards([info]);
     public async Task CreateCards(IEnumerable<ProjectInfo> cards)
     {
-        dbo_Project[] dbObjs = cards.Select(MapToDatabaseObject).ToArray();
+        dbo_Project[] dbObjs = cards.Select(MapToDto).ToArray();
         await database!.InsertItem(dbObjs);
-
-        dbo_Project MapToDatabaseObject(ProjectInfo info)
-        {
-            return new dbo_Project
-            {
-                name = info.name,
-                directory = info.directory,
-
-                version = info.version,
-                packageCount = info.packages,
-                pipelineType = (int?)info.renderPipeline,
-
-                created = info.created ?? 0,
-                size = info.size ?? 0,
-            };
-        }
     }
 
     public async Task<CollectionData[]> GetTags()
@@ -224,28 +270,6 @@ public class SqliteDataRepo : IDataRepository
                 type = "collection"
             };
         }
-    }
-
-    public async Task Migrate(IEnumerable<ProjectInfo> updates)
-    {
-        string[] columnsToUpdate = [
-            nameof(dbo_Project.iconPath),
-            nameof(dbo_Project.created),
-            nameof(dbo_Project.size),
-        ];
-
-        await database!.Update(updates.Select(u =>
-            new dbo_Project
-            {
-                id = u.id,
-                directory = u.directory,
-                iconPath = u.iconUrl,
-                size = u.size ?? 0,
-                created = u.created ?? 0,
-            }),
-            (u) => SQLFilter.Equal(nameof(dbo_Project.id), u.id),
-            columnsToUpdate
-        );
     }
 
     public async Task ToggleTag(int projId, int tagId, bool to)
@@ -350,5 +374,36 @@ public class SqliteDataRepo : IDataRepository
         await database!.Delete<dbo_ProjectTag>(SQLFilter.In(nameof(dbo_ProjectTag.ProjectId), ids));
         await database!.Delete<dbo_ProjectCollection>(SQLFilter.In(nameof(dbo_ProjectCollection.ProjectId), ids));
         await database!.Delete<dbo_Project>(SQLFilter.In(nameof(dbo_Project.id), ids));
+    }
+
+    public async Task UpdateProjectProperties(ProjectInfo info, IEnumerable<string> properties)
+        => await UpdateProjectProperties([info], properties);
+
+    public async Task UpdateProjectProperties(IEnumerable<ProjectInfo> updates, IEnumerable<string> properties)
+    {
+        Dictionary<string, string> columnMappings = new()
+        {
+            { nameof(ProjectInfo.id), nameof(dbo_Project.id) },
+
+            { nameof(ProjectInfo.name), nameof(dbo_Project.name) },
+            { nameof(ProjectInfo.directory), nameof(dbo_Project.directory) },
+            { nameof(ProjectInfo.iconUrl), nameof(dbo_Project.iconPath) },
+
+            { nameof(ProjectInfo.version), nameof(dbo_Project.version) },
+            { nameof(ProjectInfo.packages), nameof(dbo_Project.packageCount) },
+            { nameof(ProjectInfo.renderPipeline), nameof(dbo_Project.pipelineType) },
+
+            { nameof(ProjectInfo.size), nameof(dbo_Project.size) },
+            { nameof(ProjectInfo.lastOpened), nameof(dbo_Project.lastOpened) },
+            { nameof(ProjectInfo.created), nameof(dbo_Project.created) },
+            { nameof(ProjectInfo.notes), nameof(dbo_Project.notes) },
+
+            { nameof(ProjectInfo.favourited), nameof(dbo_Project.favourited) },
+
+            { nameof(ProjectInfo.tags), nameof(dbo_Project.tags) },
+            { nameof(ProjectInfo.collections), nameof(dbo_Project.collections) },
+        };
+
+        await database!.Update(updates.Select(MapToDto), (u) => SQLFilter.Equal(nameof(dbo_Project.id), u.id), [.. properties.Select(p => columnMappings[p])]);
     }
 }

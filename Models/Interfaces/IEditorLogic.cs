@@ -11,6 +11,7 @@ public interface IEditorLogic
     public Task<string?> GetEditorInstall(string? version);
     public Task<string[]> GetEditorLocations(bool recache);
 
+    public bool IsProjectRunning(int id);
     public Task LaunchProject(int id);
     public Task LaunchProject(ProjectInfo info);
 

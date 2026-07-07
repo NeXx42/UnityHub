@@ -53,8 +53,8 @@ public class ProjectInfo
     public string getCreatedTxt => created.HasValue ? DateTimeOffset.FromUnixTimeSeconds(created.Value).ToString() : "Never";
 
     public string? notes { get; set; }
-
     public int? packages { get; set; }
+    public bool favourited { get; set; }
 
     public HashSet<int> tags { get; set; } = [];
     public HashSet<int> collections { get; set; } = [];

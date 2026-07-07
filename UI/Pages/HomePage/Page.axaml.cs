@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ using UI.Popups;
 
 namespace UI.Pages.HomePage;
 
-public partial class Page : UserControl, IPage
+public partial class Page : UserControl, IPage, INotifyPropertyChanged
 {
     private enum NewProjectOptions
     {
@@ -34,11 +35,15 @@ public partial class Page : UserControl, IPage
     private ReusableList<ButtonWrapper> pageControls;
     private ReusableList<CollectionItem> activeFilters;
 
+    public int projectCount;
     private string? lastTextFilter;
     private ProjectInfo[]? cardInfo;
 
+
+    public string TotalProjectCountTxt => $"{projectCount} Project{(projectCount > 1 ? "s" : "")}";
     public ProjectSearch activeSearch { private set; get; }
 
+    public new event PropertyChangedEventHandler? PropertyChanged;
 
     public Page()
     {
@@ -85,8 +90,10 @@ public partial class Page : UserControl, IPage
 
     public async Task SearchCards()
     {
-        (cardInfo, int totalCards) = await DependencyManager.GetService<IProjectLogic>()!.Search(activeSearch);
-        maxPages = (int)Math.Ceiling(totalCards / (float)ItemsPerPage);
+        (cardInfo, projectCount) = await DependencyManager.GetService<IProjectLogic>()!.Search(activeSearch);
+        maxPages = (int)Math.Ceiling(projectCount / (float)ItemsPerPage);
+
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalProjectCountTxt)));
 
         await cards.DrawWhenAll(cardInfo, (c, i, dat) => c.Draw(dat, i, SelectCard));
         await RedrawFilterList();
