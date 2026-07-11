@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using Models;
 using Models.Data;
 using Models.Interfaces;
@@ -83,6 +84,10 @@ public class EditorLogic : IEditorLogic
         return results.ToArray();
     }
 
+    public async Task<EditorInfo[]> GetEditorDownloads()
+    {
+        return await GetEditorInfoFromApi("stream=LTS");
+    }
 
     private async Task GetEditorInfoForVersions(IEnumerable<EditorInfo> allVersions, CancellationToken cancellationToken)
     {
@@ -157,13 +162,62 @@ public class EditorLogic : IEditorLogic
                 versionInfoJson.Add(i.Key, i.Value);
         }
 
-        await Parallel.ForEachAsync(versionInfoJson, async (KeyValuePair<string, string> json, CancellationToken token) =>
+        await ParseEditorResponse(versionInfoJson.Values, versions);
+    }
+
+    private async Task<EditorInfo[]> GetEditorInfoFromApi(string filter)
+    {
+        try
         {
-            JsonDocument doc = JsonDocument.Parse(json.Value);
+            using (HttpClient http = new HttpClient())
+            {
+                HttpRequestMessage msg = new HttpRequestMessage(HttpMethod.Get, $"https://services.api.unity.com/unity/editor/release/v1/releases?{filter}");
+                HttpResponseMessage res = await http.SendAsync(msg);
+
+                if (res.StatusCode == HttpStatusCode.TooManyRequests)
+                    return [];
+
+                res.EnsureSuccessStatusCode();
+
+                string json = await res.Content.ReadAsStringAsync();
+
+                if (string.IsNullOrEmpty(json))
+                    throw new Exception("Failed to get content?");
+
+                ConcurrentDictionary<string, EditorInfo> data = new ConcurrentDictionary<string, EditorInfo>();
+                await ParseEditorResponse([json], data);
+
+                return data.Values.ToArray();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed fetch - " + e.Message);
+        }
+
+        return [];
+    }
+
+    private async Task ParseEditorResponse(IEnumerable<string> data, ConcurrentDictionary<string, EditorInfo> versions)
+    {
+        await Parallel.ForEachAsync(data, async (string json, CancellationToken token) =>
+        {
+            JsonDocument doc = JsonDocument.Parse(json);
 
             foreach (JsonElement result in doc.RootElement.GetProperty("results").EnumerateArray())
             {
-                EditorInfo info = versions[json.Key];
+                string version = result.GetProperty("version").GetString()!;
+
+                versions.TryGetValue(version, out EditorInfo? info);
+
+                if (info == null)
+                {
+                    info = new EditorInfo()
+                    {
+                        versionName = version
+                    };
+                    versions[version] = info;
+                }
 
                 info.stream = result.GetProperty("stream").GetString();
 
@@ -190,8 +244,6 @@ public class EditorLogic : IEditorLogic
                         integrity = download.GetProperty("integrity").GetString(),
 
                     }).ToArray();
-
-                break;
             }
         });
     }
@@ -403,6 +455,112 @@ public class EditorLogic : IEditorLogic
 
         process.Start();
         await process.WaitForExitAsync();
+    }
+
+    public async Task InstallEditor(EditorInfo version, int download, string path)
+    {
+        if (await IsVersionInstalled(version.versionName))
+        {
+            await DependencyManager.ui!.ShowMessageBox("Install already exists", $"Failed to install version {version.versionName} because it is already installed.");
+            return;
+        }
+
+        string savePath = Path.Combine(path, version.versionName);
+        string extractPath = $"{savePath}.{version.downloads[download].type!.ToLower()}";
+
+        using (HttpClient http = new HttpClient())
+        {
+            HttpResponseMessage res = await http.GetAsync(version.downloads[download].url, HttpCompletionOption.ResponseHeadersRead);
+
+            res.EnsureSuccessStatusCode();
+
+            await using Stream stream = await res.Content.ReadAsStreamAsync();
+            await using FileStream file = File.Create(extractPath);
+
+            await stream.CopyToAsync(file);
+            await Extract(extractPath, savePath);
+            await Extract(savePath, savePath);
+
+            File.Delete(Path.Combine(savePath, version.versionName));
+            File.Delete(extractPath);
+        }
+    }
+
+    private async Task Extract(string path, string result)
+    {
+        ProcessStartInfo info = new ProcessStartInfo();
+        info.FileName = "7z";
+
+        info.RedirectStandardError = true;
+        info.RedirectStandardOutput = true;
+        info.UseShellExecute = false;
+        info.CreateNoWindow = true;
+
+        info.ArgumentList.Add("x");
+        info.ArgumentList.Add(path);
+
+        info.ArgumentList.Add($"-o{result}");
+
+        info.ArgumentList.Add("-y");
+        info.ArgumentList.Add("-bsp1");
+
+        Process p = new Process();
+        p.StartInfo = info;
+
+        p.Start();
+        await ReadProgressOfExtraction(p, CancellationToken.None);
+
+        if (p.ExitCode != 0)
+        {
+            throw new Exception(await p.StandardError.ReadToEndAsync());
+        }
+    }
+
+    private static Task ReadProgressOfExtraction(Process p, CancellationToken cancellationToken)
+    {
+        int charNumber;
+        const int newLineCharNumber = '\b';
+
+        string line = string.Empty;
+
+        TaskCompletionSource task = new TaskCompletionSource();
+
+        Task.Run(() =>
+        {
+            while (!p.HasExited)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    p.Kill();
+                    return;
+                }
+
+                while ((charNumber = p.StandardOutput.Read()) != -1)
+                {
+                    if (charNumber == newLineCharNumber)
+                    {
+                        string percentageText = line.Replace(" ", "");
+                        Match match = Regex.Match(percentageText, @"^(\d+)%");
+
+                        if (match.Success)
+                        {
+                            int percentage = int.Parse(match.Groups[1].Value);
+                            //progress.Report(percentage);
+                        }
+
+                        line = string.Empty;
+                    }
+                    else
+                    {
+                        line += (char)charNumber;
+                    }
+                }
+            }
+
+            task.SetResult();
+        });
+
+        return task.Task;
     }
 
     public struct ActiveInstances

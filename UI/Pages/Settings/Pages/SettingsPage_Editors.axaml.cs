@@ -9,6 +9,7 @@ using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
+using UI.Modals;
 
 namespace UI.Pages.Settings.Pages;
 
@@ -27,6 +28,7 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
         editorInstalls = new ReusableList<SettingsPage_Editors_InstalledVersion>(cont_Versions);
 
         btn_AddLocation.RegisterClick(() => UpdateLocation(null));
+        btn_InstallVersion.RegisterClick(InstallNewEditor);
     }
 
     public UserControl getControl => this;
@@ -68,5 +70,11 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
     {
         EditorInstallInfo[] installs = await DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersionsMoreInfo(System.Threading.CancellationToken.None);
         editorInstalls.Draw(installs, (ui, _, dat) => ui.Draw(dat));
+    }
+
+    private async Task InstallNewEditor()
+    {
+        EditorInstallerModal modal = MainWindow.ShowModal<EditorInstallerModal>(out _);
+        await modal.Open();
     }
 }

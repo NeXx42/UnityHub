@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.EditorInstallerModal"
+  xmlns:controls="clr-namespace:UI.Controls">
+  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="20">
+    <Grid RowDefinitions="Auto Auto *" Margin="10">
+      <StackPanel Orientation="Horizontal">
+        <Label>LTS</Label>
+        <Label>Beta</Label>
+        <Label>Alpha</Label>
+        <Label>Archive</Label>
+      </StackPanel>
+
+      <Border Grid.Row="1" Margin="0 10" HorizontalAlignment="Stretch" Background="{DynamicResource ButtonBorder}" Height="1"/>
+
+      <controls:LoadingBoundary x:Name="loadingBoundary" Grid.Row="2">
+        <StackPanel x:Name="entries" />
+      </controls:LoadingBoundary>
+    </Grid>
+  </Border>
+</UserControl>

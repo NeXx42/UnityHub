@@ -2,32 +2,32 @@ namespace Models.Data;
 
 public class EditorInfo
 {
-    public required string versionName;
+    public required string versionName { get; set; }
 
-    public DateTime releaseDate;
-    public Download[] downloads = [];
+    public DateTime releaseDate { get; set; }
+    public Download[] downloads { get; set; } = [];
 
-    public string? stream;
-    public Label? label;
+    public string? stream { get; set; }
+    public Label? label { get; set; }
 
     public struct Label
     {
-        public string? description;
-        public string? labelText;
-        public string? colour;
-        public string? icon;
+        public string? description { get; set; }
+        public string? labelText { get; set; }
+        public string? colour { get; set; }
+        public string? icon { get; set; }
     }
 
     public struct Download
     {
-        public string? url;
-        public string? type;
-        public string? platform;
-        public string? architecture;
+        public string? url { get; set; }
+        public string? type { get; set; }
+        public string? platform { get; set; }
+        public string? architecture { get; set; }
 
-        public ulong downloadSize;
-        public ulong installSize;
+        public ulong downloadSize { get; set; }
+        public ulong installSize { get; set; }
 
-        public string? integrity;
+        public string? integrity { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -6,8 +7,10 @@ using UI.Controls;
 
 namespace UI.Modals;
 
-public partial class MessageBox : UserControl, IModal
+public partial class MessageBox : UserControl, IModal, INotifyPropertyChanged
 {
+    public new event PropertyChangedEventHandler? PropertyChanged;
+
     private TaskCompletionSource? task;
 
     public string? Header { get; set; } = "";
@@ -28,6 +31,7 @@ public partial class MessageBox : UserControl, IModal
         this.Header = header;
         this.Paragraph = paragraph;
 
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         return task.Task;
     }
 }
