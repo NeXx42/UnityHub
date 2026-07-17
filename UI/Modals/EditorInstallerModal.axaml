@@ -3,19 +3,25 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.EditorInstallerModal"
   xmlns:controls="clr-namespace:UI.Controls">
-  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="20">
+  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="20" MinWidth="700" MinHeight="500">
     <Grid RowDefinitions="Auto Auto *" Margin="10">
-      <StackPanel Orientation="Horizontal">
-        <Label>LTS</Label>
-        <Label>Beta</Label>
-        <Label>Alpha</Label>
-        <Label>Archive</Label>
-      </StackPanel>
-
+      <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Spacing="5" x:Name="cont_Types"/>
       <Border Grid.Row="1" Margin="0 10" HorizontalAlignment="Stretch" Background="{DynamicResource ButtonBorder}" Height="1"/>
 
       <controls:LoadingBoundary x:Name="loadingBoundary" Grid.Row="2">
-        <StackPanel x:Name="entries" />
+        <Grid RowDefinitions="Auto * Auto">
+          <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Right">
+            <TextBox VerticalAlignment="Center" Width="200" x:Name="inp_VersionFilter" CornerRadius="8" BorderBrush="{DynamicResource ButtonBorder}" Watermark="Search"/>
+            <controls:ButtonWrapper Label="Search" x:Name="btn_Search" />
+          </StackPanel>
+          <ScrollViewer Grid.Row="1">
+            <StackPanel x:Name="entries" Margin="0 10 0 0" />
+          </ScrollViewer>
+          <StackPanel Orientation="Horizontal" Grid.Row="2" Spacing="5" HorizontalAlignment="Right">
+            <controls:ButtonWrapper Label="Previous" x:Name="btn_PrevPage" />
+            <controls:ButtonWrapper Label="Next" x:Name="btn_NextPage" />
+          </StackPanel>
+        </Grid>
       </controls:LoadingBoundary>
     </Grid>
   </Border>

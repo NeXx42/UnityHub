@@ -8,5 +8,5 @@ public class CollectionData
     public required string collectionName { get; set; }
     public string? colour { get; set; }
 
-    public string? bgColour => string.IsNullOrEmpty(colour) ? null : $"#55{colour.Replace("#", "")}";
+    public string? bgColour => string.IsNullOrEmpty(colour) ? null : $"#{0x28:X2}{colour.Substring(1)}";
 }

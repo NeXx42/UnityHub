@@ -58,4 +58,11 @@ public class ProjectInfo
 
     public HashSet<int> tags { get; set; } = [];
     public HashSet<int> collections { get; set; } = [];
+
+    public static ProjectInfo Test => new ProjectInfo()
+    {
+        name = "Test",
+        directory = "test",
+        id = 0,
+    };
 }

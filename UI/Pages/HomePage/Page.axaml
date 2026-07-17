@@ -27,9 +27,7 @@
       </StackPanel>
 
 
-      <ScrollViewer Grid.Row="1" Margin="0 15">
-        <WrapPanel x:Name="grid_Content" ItemSpacing="10" LineSpacing="10" HorizontalAlignment="Center" />
-      </ScrollViewer>
+      <ScrollViewer Grid.Row="1" Margin="0 15" x:Name="grid_Content" />
 
       <StackPanel Grid.Row="2" x:Name="cont_PageControls" Height="30" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center"/>
     </Grid>

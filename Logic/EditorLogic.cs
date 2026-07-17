@@ -6,6 +6,7 @@ using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Models;
 using Models.Data;
+using Models.Enums;
 using Models.Interfaces;
 
 namespace Logic;
@@ -84,9 +85,24 @@ public class EditorLogic : IEditorLogic
         return results.ToArray();
     }
 
-    public async Task<EditorInfo[]> GetEditorDownloads()
+    public async Task<(EditorInfo[], int)> GetEditorDownloads(EditorFilterType filterType, string? filter, int page, int pageSize)
     {
-        return await GetEditorInfoFromApi("stream=LTS");
+        List<string> filters = ["order=RELEASE_DATE_DESC", $"limit={pageSize}", $"offset={page * pageSize}"];
+
+        switch (filterType)
+        {
+            case EditorFilterType.LTS: filters.Add("stream=LTS"); break;
+            case EditorFilterType.Alpha: filters.Add("stream=ALPHA"); break;
+            case EditorFilterType.Beta: filters.Add("stream=BETA"); break;
+            case EditorFilterType.Tech: filters.Add("stream=TECH"); break;
+
+            default:
+                if (!string.IsNullOrEmpty(filter))
+                    filters.Add($"version={filter}");
+                break;
+        }
+
+        return await GetEditorInfoFromApi(filters);
     }
 
     private async Task GetEditorInfoForVersions(IEnumerable<EditorInfo> allVersions, CancellationToken cancellationToken)
@@ -165,17 +181,18 @@ public class EditorLogic : IEditorLogic
         await ParseEditorResponse(versionInfoJson.Values, versions);
     }
 
-    private async Task<EditorInfo[]> GetEditorInfoFromApi(string filter)
+    private async Task<(EditorInfo[], int)> GetEditorInfoFromApi(params IEnumerable<string> filters)
     {
         try
         {
             using (HttpClient http = new HttpClient())
             {
-                HttpRequestMessage msg = new HttpRequestMessage(HttpMethod.Get, $"https://services.api.unity.com/unity/editor/release/v1/releases?{filter}");
+                string url = $"https://services.api.unity.com/unity/editor/release/v1/releases?{string.Join("&", filters)}";
+                HttpRequestMessage msg = new HttpRequestMessage(HttpMethod.Get, url);
                 HttpResponseMessage res = await http.SendAsync(msg);
 
                 if (res.StatusCode == HttpStatusCode.TooManyRequests)
-                    return [];
+                    return ([], 0);
 
                 res.EnsureSuccessStatusCode();
 
@@ -185,9 +202,9 @@ public class EditorLogic : IEditorLogic
                     throw new Exception("Failed to get content?");
 
                 ConcurrentDictionary<string, EditorInfo> data = new ConcurrentDictionary<string, EditorInfo>();
-                await ParseEditorResponse([json], data);
+                int totalResults = await ParseEditorResponse([json], data);
 
-                return data.Values.ToArray();
+                return (data.Values.ToArray(), totalResults);
             }
         }
         catch (Exception e)
@@ -195,14 +212,17 @@ public class EditorLogic : IEditorLogic
             Console.WriteLine("Failed fetch - " + e.Message);
         }
 
-        return [];
+        return ([], 0);
     }
 
-    private async Task ParseEditorResponse(IEnumerable<string> data, ConcurrentDictionary<string, EditorInfo> versions)
+    private async Task<int> ParseEditorResponse(IEnumerable<string> data, ConcurrentDictionary<string, EditorInfo> versions)
     {
+        int totalResults = 0;
+
         await Parallel.ForEachAsync(data, async (string json, CancellationToken token) =>
         {
             JsonDocument doc = JsonDocument.Parse(json);
+            totalResults = doc.RootElement.GetProperty("total").GetInt32();
 
             foreach (JsonElement result in doc.RootElement.GetProperty("results").EnumerateArray())
             {
@@ -231,21 +251,29 @@ public class EditorLogic : IEditorLogic
                     };
 
                 if (result.TryGetProperty("downloads", out JsonElement downloads))
-                    info.downloads = downloads.EnumerateArray().Select(download => new EditorInfo.Download
+                {
+                    try
                     {
-                        url = download.GetProperty("url").GetString(),
-                        type = download.GetProperty("type").GetString(),
-                        platform = download.GetProperty("platform").GetString(),
-                        architecture = download.GetProperty("architecture").GetString(),
+                        info.downloads = downloads.EnumerateArray().Select(download => new EditorInfo.Download
+                        {
+                            url = download.GetProperty("url").GetString(),
+                            type = download.GetProperty("type").GetString(),
+                            platform = download.GetProperty("platform").GetString(),
+                            architecture = download.GetProperty("architecture").GetString(),
 
-                        downloadSize = download.TryGetProperty("downloadSize", out JsonElement downloadSize) ? downloadSize.GetProperty("value").GetUInt64() : 0,
-                        installSize = download.TryGetProperty("installSize", out JsonElement installSize) ? installSize.GetProperty("value").GetUInt64() : 0,
+                            downloadSize = download.TryGetProperty("downloadSize", out JsonElement downloadSize) ? downloadSize.GetProperty("value").GetUInt64() : 0,
+                            installSize = download.TryGetProperty("installSize", out JsonElement installSize) ? installSize.GetProperty("value").GetUInt64() : 0,
 
-                        integrity = download.GetProperty("integrity").GetString(),
+                            integrity = download.GetProperty("integrity").GetString(),
 
-                    }).ToArray();
+                        }).ToArray();
+                    }
+                    catch { }
+                }
             }
         });
+
+        return totalResults;
     }
 
     private async Task GetInstalledEditorInfoForVersions(IEnumerable<EditorInstallInfo> installs)
@@ -313,8 +341,15 @@ public class EditorLogic : IEditorLogic
         startInfo.ArgumentList.Add("-projectPath");
         startInfo.ArgumentList.Add(info.directory);
 
-        ActiveInstances instance = new ActiveInstances(startInfo);
+        ActiveInstances instance = new ActiveInstances(info.id, startInfo, OnQuitEditor);
         activeInstances.Add(info.id, instance);
+
+        instance.Start();
+    }
+
+    private void OnQuitEditor(int id)
+    {
+        activeInstances.Remove(id);
     }
 
     public async Task DeriveProjectInfo(ProjectInfo info)
@@ -565,11 +600,15 @@ public class EditorLogic : IEditorLogic
 
     public struct ActiveInstances
     {
+        private int id;
         private Process activeProcess;
 
-        public ActiveInstances(ProcessStartInfo info)
+        public ActiveInstances(int id, ProcessStartInfo info, Action<int> onExit)
         {
+            this.id = id;
+
             activeProcess = new Process() { StartInfo = info };
+            activeProcess.Exited += (_, __) => onExit(id);
         }
 
         public void Start()

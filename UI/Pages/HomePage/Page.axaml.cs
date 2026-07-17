@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Logic;
@@ -31,7 +32,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
     private int? currentSelectedCard;
     private Popup_Filter? filter;
 
-    private ReusableList<ImageCard> cards;
+    private IContentDisplay contentDisplayer;
     private ReusableList<ButtonWrapper> pageControls;
     private ReusableList<CollectionItem> activeFilters;
 
@@ -49,7 +50,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
     {
         InitializeComponent();
 
-        cards = new ReusableList<ImageCard>(grid_Content);
+        contentDisplayer = new ContentDisplay_List(grid_Content);
         activeFilters = new ReusableList<CollectionItem>(cont_Filters);
         pageControls = new ReusableList<ButtonWrapper>(cont_PageControls);
 
@@ -95,18 +96,15 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalProjectCountTxt)));
 
-        await cards.DrawWhenAll(cardInfo, (c, i, dat) => c.Draw(dat, i, SelectCard));
+        await contentDisplayer.Draw(cardInfo, SelectCard);
         await RedrawFilterList();
         RedrawPageControls();
     }
 
     private async Task SelectCard(int cardPos)
     {
-        if (currentSelectedCard.HasValue)
-            cards[currentSelectedCard.Value].ToggleSelection(false);
-
         currentSelectedCard = cardPos;
-        cards[currentSelectedCard.Value].ToggleSelection(true);
+        contentDisplayer.UpdateSelection(cardPos);
 
         await control_MoreInfo.Show(cardInfo![cardPos].id);
     }
@@ -235,5 +233,85 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         activeSearch.text = lastTextFilter;
 
         await SearchCards();
+    }
+
+    interface IContentDisplay
+    {
+        public Task Draw(ProjectInfo[] cards, Func<int, Task> onSelect);
+        public void UpdateSelection(int to);
+    }
+
+    abstract class ContentDisplay_Base<T> : IContentDisplay where T : UserControl
+    {
+        protected ReusableList<T> cards;
+
+        public ContentDisplay_Base(ScrollViewer scroller)
+        {
+            Panel container = GetWrapper();
+
+            scroller.Content = container;
+            cards = new ReusableList<T>(container);
+        }
+
+
+        public abstract Task Draw(ProjectInfo[] cardInfo, Func<int, Task> onSelect);
+
+
+        public void UpdateSelection(int to)
+        {
+            for (int i = 0; i < cards.getElementCount; i++)
+                ToggleElementSelection(cards[i], i == to);
+        }
+
+        protected abstract Panel GetWrapper();
+        protected abstract void ToggleElementSelection(T element, bool to);
+    }
+
+    class ContentDisplay_Grid : ContentDisplay_Base<ImageCard>
+    {
+        public ContentDisplay_Grid(ScrollViewer scroller) : base(scroller)
+        {
+
+        }
+
+        protected override Panel GetWrapper()
+        {
+            WrapPanel container = new WrapPanel();
+            container.ItemSpacing = 5;
+            container.LineSpacing = 5;
+
+            return container;
+        }
+
+        public override async Task Draw(ProjectInfo[] cardInfo, Func<int, Task> onSelect)
+        {
+            await cards.DrawWhenAll(cardInfo, (c, i, dat) => c.Draw(dat, i, onSelect));
+        }
+
+        protected override void ToggleElementSelection(ImageCard element, bool to) => element.ToggleSelection(to);
+    }
+
+    class ContentDisplay_List : ContentDisplay_Base<ListCard>
+    {
+        public ContentDisplay_List(ScrollViewer scroller) : base(scroller)
+        {
+
+        }
+
+        protected override Panel GetWrapper()
+        {
+            StackPanel container = new StackPanel();
+            container.Spacing = 5;
+            container.Orientation = Avalonia.Layout.Orientation.Vertical;
+
+            return container;
+        }
+
+        public override async Task Draw(ProjectInfo[] cardInfo, Func<int, Task> onSelect)
+        {
+            await cards.DrawWhenAll(cardInfo, (c, i, dat) => c.Draw(dat, i, onSelect));
+        }
+
+        protected override void ToggleElementSelection(ListCard element, bool to) => element.ToggleSelection(to);
     }
 }
