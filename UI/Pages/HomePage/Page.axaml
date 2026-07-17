@@ -1,33 +1,38 @@
 <UserControl xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.Page"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080" x:Class="UI.Pages.HomePage.Page"
   xmlns:local="clr-namespace:UI.Pages.HomePage"
   xmlns:controls="clr-namespace:UI.Controls" x:Name="root">
   <Grid ColumnDefinitions="* Auto">
     <Grid RowDefinitions="Auto * Auto" Margin="15">
       <!-- Searching -->
       <StackPanel Orientation="Vertical" Spacing="15">
-        <Grid Height="40" ColumnDefinitions="* 5 Auto">
+        <Grid Height="35" ColumnDefinitions="* 5 Auto">
           <TextBox x:Name="inp_Text" HorizontalAlignment="Left" Width="300" CornerRadius="8" Background="{DynamicResource ButtonBackground}" Foreground="{DynamicResource TextColourMuted}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" PlaceholderText="Search projects" VerticalContentAlignment="Center"/>
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5" Grid.Column="2">
-            <controls:ButtonWrapper HorizontalAlignment="Right" Label="Sort" x:Name="btn_Sort" />
-            <controls:ButtonWrapper HorizontalAlignment="Right" Label="Filters" x:Name="btn_Filters" />
+            <controls:ButtonWrapper HorizontalAlignment="Right" Width="100" Label="Sort" x:Name="btn_Sort" />
+            <controls:ButtonWrapper HorizontalAlignment="Right" Width="100" Label="Filters" x:Name="btn_Filters" />
             <controls:DropDownButton VerticalAlignment="Stretch" x:Name="btn_NewProject" ButtonLabel="New Project"/>
           </StackPanel>
         </Grid>
 
-        <Grid>
+        <Grid ColumnDefinitions="* Auto" Height="35">
           <StackPanel Orientation="Horizontal">
-            <Label Content="{Binding #root.TotalProjectCountTxt}"/>
+            <Label Content="{Binding #root.TotalProjectCountTxt}" FontSize="18"/>
             <WrapPanel x:Name="cont_Filters" ItemSpacing="5" LineSpacing="5"/>
           </StackPanel>
 
+          <Border Grid.Column="1" Background="{DynamicResource ButtonBackground}" CornerRadius="8" BorderBrush="{DynamicResource ButtonBorder}" BorderThickness="1">
+            <StackPanel Orientation="Horizontal" x:Name="cont_Layouts"/>
+          </Border>
         </Grid>
       </StackPanel>
 
 
-      <ScrollViewer Grid.Row="1" Margin="0 15" x:Name="grid_Content" />
+      <ScrollViewer Grid.Row="1">
+        <Grid x:Name="grid_Content" Margin="0 15"/>
+      </ScrollViewer>
 
       <StackPanel Grid.Row="2" x:Name="cont_PageControls" Height="30" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center"/>
     </Grid>

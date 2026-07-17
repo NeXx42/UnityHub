@@ -17,7 +17,7 @@
     </Style>
 
     <Style Selector="Border#border_Main:pointerover">
-      <Setter Property="RenderTransform" Value="translateY(-2px)"/>
+      <Setter Property="RenderTransform" Value="translateX(2px)"/>
     </Style>
   </UserControl.Styles>
 

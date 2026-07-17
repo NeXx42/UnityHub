@@ -12,13 +12,22 @@ using Models.Helpers;
 using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
+using UI.Interfaces;
 using UI.Modals;
+using UI.Pages.HomePage.ContentDisplays;
 using UI.Popups;
 
 namespace UI.Pages.HomePage;
 
+public interface IPlugin_HomePage : IFrontendPlugin
+{
+    public void RegisterLayout(List<(ButtonWrapper, Type)> displays);
+}
+
 public partial class Page : UserControl, IPage, INotifyPropertyChanged
 {
+    public static FrontendPluginHandler<IPlugin_HomePage> plugins = new();
+
     private enum NewProjectOptions
     {
         Add_Existing,
@@ -32,7 +41,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
     private int? currentSelectedCard;
     private Popup_Filter? filter;
 
-    private IContentDisplay contentDisplayer;
+    private List<IHomePageLayout> contentDisplayers;
     private ReusableList<ButtonWrapper> pageControls;
     private ReusableList<CollectionItem> activeFilters;
 
@@ -40,9 +49,11 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
     private string? lastTextFilter;
     private ProjectInfo[]? cardInfo;
 
-
     public string TotalProjectCountTxt => $"{projectCount} Project{(projectCount > 1 ? "s" : "")}";
     public ProjectSearch activeSearch { private set; get; }
+
+    private int selectedContentDisplayer = 0;
+    public IHomePageLayout getCurrentContentDisplay => contentDisplayers[selectedContentDisplayer];
 
     public new event PropertyChangedEventHandler? PropertyChanged;
 
@@ -50,7 +61,41 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
     {
         InitializeComponent();
 
-        contentDisplayer = new ContentDisplay_List(grid_Content);
+        if (Design.IsDesignMode)
+            return;
+
+        List<(ButtonWrapper, Type)> layouts = new()
+        {
+            (CreateLayoutButton("Grid"), typeof(HomePageLayout_Grid)),
+            (CreateLayoutButton("List"), typeof(HomePageLayout_List)),
+        };
+        plugins.Execute(p => p.RegisterLayout(layouts));
+        contentDisplayers = new List<IHomePageLayout>();
+
+        ButtonWrapper CreateLayoutButton(string name)
+        {
+            ButtonWrapper btn = new ButtonWrapper();
+            btn.Label = name;
+
+            return btn;
+        }
+
+        foreach (var layout in layouts)
+        {
+            if (layout.Item2.IsAssignableTo(typeof(IHomePageLayout)))
+            {
+                int layoutId = contentDisplayers.Count;
+                layout.Item1.RegisterClick(() => UpdateLayout(layoutId));
+
+                cont_Layouts.Children.Add(layout.Item1);
+
+                IHomePageLayout layoutControl = (IHomePageLayout)Activator.CreateInstance(layout.Item2, grid_Content)!;
+                contentDisplayers.Add(layoutControl);
+            }
+        }
+
+        UpdateLayout(0).Wrap();
+
         activeFilters = new ReusableList<CollectionItem>(cont_Filters);
         pageControls = new ReusableList<ButtonWrapper>(cont_PageControls);
 
@@ -69,7 +114,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         btn_Filters.RegisterPopup(filter);
         inp_Text.TextChanged += (_, __) => UpdateTextFilter().Wrap();
 
-        DependencyManager.GetService<IProjectLogic>()!.RegisterCallback(ProjectLogicCallback);
+        DependencyManager.GetService<IProjectLogic>()?.RegisterCallback(ProjectLogicCallback);
     }
 
 
@@ -96,7 +141,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalProjectCountTxt)));
 
-        await contentDisplayer.Draw(cardInfo, SelectCard);
+        await getCurrentContentDisplay.Draw(cardInfo, SelectCard);
         await RedrawFilterList();
         RedrawPageControls();
     }
@@ -104,7 +149,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
     private async Task SelectCard(int cardPos)
     {
         currentSelectedCard = cardPos;
-        contentDisplayer.UpdateSelection(cardPos);
+        getCurrentContentDisplay.UpdateSelection(cardPos);
 
         await control_MoreInfo.Show(cardInfo![cardPos].id);
     }
@@ -235,83 +280,12 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         await SearchCards();
     }
 
-    interface IContentDisplay
+    private async Task UpdateLayout(int to)
     {
-        public Task Draw(ProjectInfo[] cards, Func<int, Task> onSelect);
-        public void UpdateSelection(int to);
-    }
+        getCurrentContentDisplay.ToggleVisibility(false);
+        selectedContentDisplayer = to;
+        getCurrentContentDisplay.ToggleVisibility(true);
 
-    abstract class ContentDisplay_Base<T> : IContentDisplay where T : UserControl
-    {
-        protected ReusableList<T> cards;
-
-        public ContentDisplay_Base(ScrollViewer scroller)
-        {
-            Panel container = GetWrapper();
-
-            scroller.Content = container;
-            cards = new ReusableList<T>(container);
-        }
-
-
-        public abstract Task Draw(ProjectInfo[] cardInfo, Func<int, Task> onSelect);
-
-
-        public void UpdateSelection(int to)
-        {
-            for (int i = 0; i < cards.getElementCount; i++)
-                ToggleElementSelection(cards[i], i == to);
-        }
-
-        protected abstract Panel GetWrapper();
-        protected abstract void ToggleElementSelection(T element, bool to);
-    }
-
-    class ContentDisplay_Grid : ContentDisplay_Base<ImageCard>
-    {
-        public ContentDisplay_Grid(ScrollViewer scroller) : base(scroller)
-        {
-
-        }
-
-        protected override Panel GetWrapper()
-        {
-            WrapPanel container = new WrapPanel();
-            container.ItemSpacing = 5;
-            container.LineSpacing = 5;
-
-            return container;
-        }
-
-        public override async Task Draw(ProjectInfo[] cardInfo, Func<int, Task> onSelect)
-        {
-            await cards.DrawWhenAll(cardInfo, (c, i, dat) => c.Draw(dat, i, onSelect));
-        }
-
-        protected override void ToggleElementSelection(ImageCard element, bool to) => element.ToggleSelection(to);
-    }
-
-    class ContentDisplay_List : ContentDisplay_Base<ListCard>
-    {
-        public ContentDisplay_List(ScrollViewer scroller) : base(scroller)
-        {
-
-        }
-
-        protected override Panel GetWrapper()
-        {
-            StackPanel container = new StackPanel();
-            container.Spacing = 5;
-            container.Orientation = Avalonia.Layout.Orientation.Vertical;
-
-            return container;
-        }
-
-        public override async Task Draw(ProjectInfo[] cardInfo, Func<int, Task> onSelect)
-        {
-            await cards.DrawWhenAll(cardInfo, (c, i, dat) => c.Draw(dat, i, onSelect));
-        }
-
-        protected override void ToggleElementSelection(ListCard element, bool to) => element.ToggleSelection(to);
+        await getCurrentContentDisplay.Draw(cardInfo ?? [], SelectCard);
     }
 }
