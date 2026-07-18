@@ -22,6 +22,7 @@ public partial class MessageBox : UserControl, IModal, INotifyPropertyChanged
         btn_ok.RegisterClick(() => task?.SetResult());
     }
 
+    public bool canDismiss => true;
     public ModalContainer setContainer { set => _ = value; }
 
     public Task Show(string header, string paragraph)

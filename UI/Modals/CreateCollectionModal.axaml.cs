@@ -19,6 +19,7 @@ public partial class CreateCollectionModal : UserControl, IModal
         btn.Click += (_, __) => Save();
     }
 
+    public bool canDismiss => true;
     public ModalContainer setContainer { set => container = value; }
 
     public Task<CollectionData?> Init()

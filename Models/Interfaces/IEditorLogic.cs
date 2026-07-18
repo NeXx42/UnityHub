@@ -21,5 +21,5 @@ public interface IEditorLogic
 
     public Task DeriveProjectInfo(ProjectInfo info);
 
-    public Task CreateProject(ProjectCreationInfo info);
+    public Task<bool> CreateProject(ProjectCreationInfo info);
 }

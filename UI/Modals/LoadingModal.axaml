@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.LoadingModal"
+  xmlns:controls="clr-namespace:UI.Controls" x:Name="root">
+  <Border Background="{DynamicResource BackgroundColourLight}" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}" CornerRadius="20" MinWidth="250">
+    <Grid RowDefinitions="Auto * Auto" Margin="10">
+      <Label Content="{Binding #root.header}" Grid.Row="0" HorizontalAlignment="Center"/>
+      <TextBlock Text="{Binding #root.msg}" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 5"/>
+      <ProgressBar x:Name="inp_Progress" Grid.Row="2"/>
+    </Grid>
+  </Border>
+</UserControl>

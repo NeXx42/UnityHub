@@ -24,10 +24,11 @@ public partial class ModalContainer : UserControl
 
     public T ShowModal<T>(int pos, Func<int, Task> requestClosure) where T : UserControl, IModal
     {
-        requestCloserEvent = () => requestClosure(pos).Wrap();
-
         T control = Activator.CreateInstance<T>();
         control.setContainer = this;
+
+        if (control.canDismiss)
+            requestCloserEvent = () => requestClosure(pos).Wrap();
 
         activeModal = control;
         activeControl = control;

@@ -45,6 +45,7 @@ public partial class EditorInstallerModal : UserControl, IModal
         btn_NextPage.RegisterClick(() => UpdatePage(1));
     }
 
+    public bool canDismiss => true;
     public ModalContainer setContainer { set => _ = value; }
 
     public Task Open()

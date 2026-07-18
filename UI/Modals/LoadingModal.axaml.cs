@@ -1,0 +1,58 @@
+using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+using Models.Data;
+using UI.Controls;
+
+namespace UI.Modals;
+
+public partial class LoadingModal : UserControl, IModal, INotifyPropertyChanged
+{
+    public new event PropertyChangedEventHandler? PropertyChanged;
+
+    public string header { get; set; } = "";
+    public string msg { get; set; } = "";
+
+    public LoadingModal()
+    {
+        InitializeComponent();
+    }
+
+    public bool canDismiss => false;
+    public ModalContainer setContainer { set => _ = value; }
+
+    public async Task<Exception?> LoadProgressive(string header, params LoadRequest[] reqs)
+    {
+        this.header = header;
+        this.msg = string.Empty;
+
+        inp_Progress.Minimum = 0;
+        inp_Progress.Maximum = reqs.Length - 1;
+        inp_Progress.Value = 0;
+
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
+        CancellationTokenSource token = new CancellationTokenSource();
+
+        foreach (var task in reqs)
+        {
+            msg = task.msg;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(msg)));
+
+            try
+            {
+                await task.Run(token.Token);
+                inp_Progress.Value++;
+            }
+            catch (Exception e)
+            {
+                return e;
+            }
+        }
+
+        return null;
+    }
+}

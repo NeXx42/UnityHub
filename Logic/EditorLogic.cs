@@ -461,39 +461,58 @@ public class EditorLogic : IEditorLogic
         await File.WriteAllTextAsync(handoverFile, projectId.ToString());
     }
 
-    public async Task CreateProject(ProjectCreationInfo creation)
+    public async Task<bool> CreateProject(ProjectCreationInfo creation)
     {
         if (Directory.Exists(creation.info.directory))
         {
             await DependencyManager.ui!.ShowMessageBox("Project already exists", $"Failed to create project as an existing folder exists at the directory {creation.info.directory}.");
-            return;
+            return false;
         }
 
         if (!await IsVersionInstalled(creation.info.version))
         {
             await DependencyManager.ui!.ShowMessageBox("Version not found", $"Failed to create the project because the unity editor version {creation.info.version} was not found.");
-            return;
+            return false;
         }
 
-        ProcessStartInfo startInfo = new ProcessStartInfo()
+        Exception? e = await DependencyManager.ui!.LoadProgressive("Creating", [
+            new LoadRequest("Creating Project", StartProcess),
+            new LoadRequest("Creating Packages", InjectPackages),
+        ]);
+
+        if (e != null)
         {
-            FileName = await GetEditorInstall(creation.info.version!)
-        };
+            await DependencyManager.ui!.ShowMessageBox("Error while creating project", $"Failed to create project due to the following error\n{e.Message}.");
+            return false;
+        }
 
-        startInfo.ArgumentList.Add("-batchmode");
-        startInfo.ArgumentList.Add("-quit");
-        startInfo.ArgumentList.Add("-createProject");
-        startInfo.ArgumentList.Add(creation.info.directory);
+        return true;
 
-        Process process = new Process()
+        async Task StartProcess(CancellationToken token)
         {
-            StartInfo = startInfo
-        };
+            ProcessStartInfo startInfo = new ProcessStartInfo()
+            {
+                FileName = await GetEditorInstall(creation.info.version!)
+            };
 
-        process.Start();
-        await process.WaitForExitAsync();
+            startInfo.ArgumentList.Add("-batchmode");
+            startInfo.ArgumentList.Add("-quit");
+            startInfo.ArgumentList.Add("-createProject");
+            startInfo.ArgumentList.Add(creation.info.directory);
 
-        await InjectPackagesIntoProject(creation.info.directory, creation.packages);
+            Process process = new Process()
+            {
+                StartInfo = startInfo
+            };
+
+            process.Start();
+            await process.WaitForExitAsync();
+        }
+
+        async Task InjectPackages(CancellationToken token)
+        {
+            await InjectPackagesIntoProject(creation.info.directory, creation.packages);
+        }
     }
 
     public async Task InstallEditor(EditorInfo version, int download, string path)

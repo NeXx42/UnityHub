@@ -24,6 +24,7 @@ public partial class EditorModuleInstallerModal : UserControl, IModal
         btn_Install.RegisterClick(Install);
     }
 
+    public bool canDismiss => true;
     public ModalContainer setContainer { set => _ = value; }
 
     public Task Show(EditorInfo info)

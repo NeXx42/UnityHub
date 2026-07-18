@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Logic;
+using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
@@ -123,5 +125,14 @@ public partial class MainWindow : Window, IUILinker
             Control sidebar = await page.Value.Show();
             instance.el_Sidebar.Draw(desired, sidebar);
         }
+    }
+
+    public async Task<Exception?> LoadProgressive(string header, params LoadRequest[] reqs)
+    {
+        LoadingModal msg = ShowModal<LoadingModal>(out int pos);
+        Exception? error = await msg.LoadProgressive(header, reqs);
+
+        await CloseModal(pos);
+        return error;
     }
 }

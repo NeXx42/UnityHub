@@ -32,6 +32,7 @@ public partial class CreateProjectModal : UserControl, IModal
         packageList = new ReusableList<CreateProjectModal_Package>(cont_Packages);
     }
 
+    public bool canDismiss => true;
     public ModalContainer setContainer { set => _ = value; }
 
     public Task Show()
@@ -87,7 +88,11 @@ public partial class CreateProjectModal : UserControl, IModal
         IEditorLogic editorLogic = DependencyManager.GetService<IEditorLogic>()!;
         IProjectLogic projectLogic = DependencyManager.GetService<IProjectLogic>()!;
 
-        await editorLogic.CreateProject(info);
+        if (!await editorLogic.CreateProject(info))
+        {
+            return;
+        }
+
         ProjectInfo? newInfo = await projectLogic.VerifyProjectPrimative(info.info);
 
         if (newInfo == null)

@@ -7,4 +7,5 @@ namespace UI.Modals;
 public interface IModal
 {
     public ModalContainer setContainer { set; }
+    public bool canDismiss { get; }
 }
