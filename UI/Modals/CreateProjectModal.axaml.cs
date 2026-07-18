@@ -1,9 +1,8 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Logic;
 using Models.Data;
 using Models.Interfaces;
@@ -15,7 +14,10 @@ namespace UI.Modals;
 public partial class CreateProjectModal : UserControl, IModal
 {
     private TaskCompletionSource? task;
-    private string[] installedVersions = [];
+    private EditorInstallInfo[] installedVersions = [];
+
+    private Dictionary<string, string> selectedPackages = new();
+    private ReusableList<CreateProjectModal_Package> packageList;
 
     public CreateProjectModal()
     {
@@ -23,6 +25,11 @@ public partial class CreateProjectModal : UserControl, IModal
 
         btn_Browse.RegisterClick(UpdateLocation);
         btn_Create.RegisterClick(CreateProject);
+
+        inp_Pipeline.SelectionChanged += (_, __) => UpdateSelectedPipeline();
+        inp_Versions.SelectionChanged += (_, __) => UpdateSelectedVersion().Wrap();
+
+        packageList = new ReusableList<CreateProjectModal_Package>(cont_Packages);
     }
 
     public ModalContainer setContainer { set => _ = value; }
@@ -38,8 +45,12 @@ public partial class CreateProjectModal : UserControl, IModal
 
     private async Task Draw()
     {
-        installedVersions = (await DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersions()).OrderByDescending(v => v).ToArray();
-        inp_Versions.ItemsSource = installedVersions;
+        installedVersions = (await DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersionsMoreInfo(System.Threading.CancellationToken.None)).OrderByDescending(v => v.versionName).ToArray();
+
+        inp_Versions.ItemsSource = installedVersions.Select(v => v.versionName);
+        inp_Versions.SelectedIndex = 0;
+
+        await UpdateSelectedVersion();
     }
 
     private async Task UpdateLocation()
@@ -56,18 +67,19 @@ public partial class CreateProjectModal : UserControl, IModal
     {
         string? projName = inp_Name.Text;
         string? loc = inp_Location.Text;
-        string version = installedVersions[inp_Versions.SelectedIndex];
+        EditorInstallInfo version = installedVersions[inp_Versions.SelectedIndex];
 
         if (string.IsNullOrEmpty(loc) || string.IsNullOrEmpty(projName))
             return;
 
         ProjectCreationInfo info = new ProjectCreationInfo()
         {
+            packages = selectedPackages,
             info = new ProjectInfo()
             {
                 id = -1,
                 name = projName,
-                version = version,
+                version = version.versionName,
                 directory = Path.Combine(loc, projName)
             }
         };
@@ -86,5 +98,61 @@ public partial class CreateProjectModal : UserControl, IModal
 
         await projectLogic.UploadCardsPrimitive([newInfo]);
         task?.SetResult();
+    }
+
+    private async Task UpdateSelectedVersion()
+    {
+        if (inp_Versions.SelectedIndex < 0 || inp_Versions.SelectedIndex >= installedVersions.Length)
+            return;
+
+        EditorInstallInfo version = installedVersions[inp_Versions.SelectedIndex];
+
+        packageList.Draw(version.builtInPackages.OrderByDescending(p => p.displayName), (ui, _, dat) =>
+        {
+            ui.Draw(dat);
+        });
+
+        UpdateSelectedPipeline();
+    }
+
+    private void UpdateSelectedPipeline()
+    {
+        EditorInstallInfo version = installedVersions[inp_Versions.SelectedIndex];
+        selectedPackages.Clear();
+
+        switch (inp_Pipeline.SelectedIndex)
+        {
+            case 0: // urp
+                GetPackageAndDependencies("com.unity.render-pipelines.universal", ref selectedPackages);
+                break;
+
+            case 1: // hdrp
+                GetPackageAndDependencies("com.unity.render-pipelines.high-definition", ref selectedPackages);
+                break;
+
+            default: // built in
+                break;
+        }
+
+        for (int i = 0; i < packageList.getElementCount; i++)
+            packageList[i].UpdateInPackageList(ref selectedPackages);
+
+        void GetPackageAndDependencies(string rootPkg, ref Dictionary<string, string> intoCollection)
+        {
+            var pipelinePkg = version.builtInPackages.FirstOrDefault(v => v.name.Equals(rootPkg));
+
+            if (!string.IsNullOrEmpty(pipelinePkg.name))
+            {
+                intoCollection = new Dictionary<string, string>()
+                {
+                    {pipelinePkg.name, pipelinePkg.version}
+                };
+
+                if (pipelinePkg.dependencies != null)
+                    foreach (var dep in pipelinePkg.dependencies)
+                        intoCollection.Add(dep.Key, dep.Value);
+            }
+
+        }
     }
 }

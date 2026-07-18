@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
+using System.Reflection.Emit;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
@@ -280,10 +281,30 @@ public class EditorLogic : IEditorLogic
     {
         await Parallel.ForEachAsync(installs, async (el, token) =>
         {
-            string moduleInfo = Path.Combine();
+            string moduleInfo = Path.Combine(el.installLocation, el.versionName, "Editor", "Data", "Resources", "PackageManager", "BuiltInPackages");
 
-            //if (Directory.Exists())
+            if (!Directory.Exists(moduleInfo))
+                return;
 
+            string[] packages = Directory.GetDirectories(moduleInfo);
+            List<EditorInstallInfo.BuiltInPackage> packageMetadata = new(packages.Length);
+
+            foreach (string package in packages)
+            {
+                string packageInfo = Path.Combine(package, "package.json");
+
+                if (File.Exists(packageInfo))
+                {
+                    using (StreamReader reader = new StreamReader(packageInfo))
+                    {
+                        string json = await reader.ReadToEndAsync();
+                        EditorInstallInfo.BuiltInPackage pkg = JsonSerializer.Deserialize<EditorInstallInfo.BuiltInPackage>(json);
+                        packageMetadata.Add(pkg);
+                    }
+                }
+            }
+
+            el.builtInPackages = packageMetadata.ToArray();
         });
     }
 
@@ -327,7 +348,8 @@ public class EditorLogic : IEditorLogic
 
         if (true)
         {
-            await InjectLinker(info.directory, info.id);
+            await CreateHandover(info.id);
+            await InjectPackagesIntoProject(info.directory, new Dictionary<string, string>() { { LINK_NAME, "file:/home/matth/Documents/Projects/UnityHub/com.nexx.unityhublink" } });
         }
 
         info.lastOpened = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -429,34 +451,14 @@ public class EditorLogic : IEditorLogic
         }
     }
 
-    private async Task InjectLinker(string targetRoot, int projectId)
+    private async Task CreateHandover(int projectId)
     {
-        string manifestFile = Path.Combine(targetRoot, "Packages", "manifest.json");
-
-        if (!File.Exists(manifestFile))
-        {
-            Console.WriteLine("Failed to find manifest file? invalid project");
-            return;
-        }
-
         string handoverFile = Path.Combine(GlobalConfig.getDataFolder, "LastActiveProject");
 
         if (File.Exists(Path.Combine(handoverFile)))
             File.Delete(handoverFile);
 
         await File.WriteAllTextAsync(handoverFile, projectId.ToString());
-
-        string json = await File.ReadAllTextAsync(manifestFile);
-
-        JsonNode root = JsonNode.Parse(json)!;
-        JsonObject dependencies = root["dependencies"]!.AsObject();
-
-        dependencies[LINK_NAME] = "file:/home/matth/Documents/Projects/UnityHub/com.nexx.unityhublink";
-
-        await File.WriteAllTextAsync(manifestFile, root.ToJsonString(new System.Text.Json.JsonSerializerOptions
-        {
-            WriteIndented = true
-        }));
     }
 
     public async Task CreateProject(ProjectCreationInfo creation)
@@ -490,6 +492,8 @@ public class EditorLogic : IEditorLogic
 
         process.Start();
         await process.WaitForExitAsync();
+
+        await InjectPackagesIntoProject(creation.info.directory, creation.packages);
     }
 
     public async Task InstallEditor(EditorInfo version, int download, string path)
@@ -596,6 +600,30 @@ public class EditorLogic : IEditorLogic
         });
 
         return task.Task;
+    }
+
+    private async Task InjectPackagesIntoProject(string projectRoot, Dictionary<string, string> packages)
+    {
+        string manifestFile = Path.Combine(projectRoot, "Packages", "manifest.json");
+
+        if (!File.Exists(manifestFile))
+        {
+            Console.WriteLine("Failed to find manifest file? invalid project");
+            return;
+        }
+
+        string json = await File.ReadAllTextAsync(manifestFile);
+
+        JsonNode root = JsonNode.Parse(json)!;
+        JsonObject dependencies = root["dependencies"]!.AsObject();
+
+        foreach (KeyValuePair<string, string> pkg in packages)
+            dependencies[pkg.Key] = pkg.Value;
+
+        await File.WriteAllTextAsync(manifestFile, root.ToJsonString(new JsonSerializerOptions
+        {
+            WriteIndented = true
+        }));
     }
 
     public struct ActiveInstances

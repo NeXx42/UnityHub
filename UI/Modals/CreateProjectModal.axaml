@@ -5,9 +5,12 @@
   xmlns:controls="clr-namespace:UI.Controls">
   <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="20">
     <Grid Margin="10" ColumnDefinitions="* Auto">
-      <Grid>
-        <StackPanel x:Name="cont_Packages">
-        </StackPanel>
+      <Grid RowDefinitions="* Auto">
+        <ScrollViewer >
+          <StackPanel x:Name="cont_Packages">
+          </StackPanel>
+        </ScrollViewer>
+        <TextBox Grid.Row="1"/>
       </Grid>
 
       <Border BorderBrush="{DynamicResource ButtonBorder}" BorderThickness="1 0 0 0" Grid.Column="1" Width="400">
@@ -28,7 +31,7 @@
 
             <StackPanel Orientation="Vertical" Spacing="5">
               <Label>Pipeline</Label>
-              <ComboBox SelectedIndex="0" HorizontalAlignment="Stretch" Background="{DynamicResource ButtonBackground}" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="8" MinHeight="30" Padding="10 0 0 0">
+              <ComboBox x:Name="inp_Pipeline" SelectedIndex="0" HorizontalAlignment="Stretch" Background="{DynamicResource ButtonBackground}" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="8" MinHeight="30" Padding="10 0 0 0">
                 <ComboBoxItem Content="Universal Render Pipeline"/>
                 <ComboBoxItem Content="High Defintion Render Pipeline"/>
                 <ComboBoxItem Content="Built-In Render Pipeline"/>
