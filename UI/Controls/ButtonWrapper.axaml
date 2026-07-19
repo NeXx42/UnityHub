@@ -45,10 +45,10 @@
 
   <Panel x:Name="RootPanel" HorizontalAlignment="Stretch">
     <Border x:Name="btn" CornerRadius="{Binding #root.CornerRadius}" Cursor="Hand">
-      <Grid IsHitTestVisible="False">
+      <StackPanel IsHitTestVisible="False" Spacing="5" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="{Binding #root.HorizontalContentAlignment}">
+        <ContentPresenter IsHitTestVisible="False" IsVisible="{Binding #root.HasIcon}" Content="{Binding #root.Icon}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
         <TextBlock IsHitTestVisible="False" Text="{Binding #root.Label}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <ContentPresenter IsHitTestVisible="False" Content="{Binding #root.Icon}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-      </Grid>
+      </StackPanel>
     </Border>
 
     <Popup IsOpen="{Binding #root.IsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=RootPanel}" MinWidth="{Binding ElementName=RootPanel, Path=Bounds.Width}" IsLightDismissEnabled="True" HorizontalAlignment="Right">

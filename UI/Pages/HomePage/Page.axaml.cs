@@ -21,7 +21,7 @@ namespace UI.Pages.HomePage;
 
 public interface IPlugin_HomePage : IFrontendPlugin
 {
-    public void RegisterLayout(List<(ButtonWrapper, Type)> displays);
+    public void RegisterLayout(List<Type> displays);
 }
 
 public partial class Page : UserControl, IPage, INotifyPropertyChanged
@@ -64,33 +64,26 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         if (Design.IsDesignMode)
             return;
 
-        List<(ButtonWrapper, Type)> layouts = new()
+        List<Type> layouts = new()
         {
-            (CreateLayoutButton("Grid"), typeof(HomePageLayout_Grid)),
-            (CreateLayoutButton("List"), typeof(HomePageLayout_List)),
+            typeof(HomePageLayout_Grid),
+            typeof(HomePageLayout_List),
         };
         plugins.Execute(p => p.RegisterLayout(layouts));
         contentDisplayers = new List<IHomePageLayout>();
 
-        ButtonWrapper CreateLayoutButton(string name)
-        {
-            ButtonWrapper btn = new ButtonWrapper();
-            btn.Label = name;
-
-            return btn;
-        }
-
         foreach (var layout in layouts)
         {
-            if (layout.Item2.IsAssignableTo(typeof(IHomePageLayout)))
+            if (layout.IsAssignableTo(typeof(IHomePageLayout)))
             {
                 int layoutId = contentDisplayers.Count;
-                layout.Item1.RegisterClick(() => UpdateLayout(layoutId));
 
-                cont_Layouts.Children.Add(layout.Item1);
-
-                IHomePageLayout layoutControl = (IHomePageLayout)Activator.CreateInstance(layout.Item2, grid_Content)!;
+                IHomePageLayout layoutControl = (IHomePageLayout)Activator.CreateInstance(layout, grid_Content)!;
                 contentDisplayers.Add(layoutControl);
+
+                ButtonWrapper btn = layoutControl.CreateButton();
+                btn.RegisterClick(() => UpdateLayout(layoutId));
+                cont_Layouts.Children.Add(btn);
             }
         }
 

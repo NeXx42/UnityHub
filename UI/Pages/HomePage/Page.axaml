@@ -11,8 +11,22 @@
         <Grid Height="35" ColumnDefinitions="* 5 Auto">
           <TextBox x:Name="inp_Text" HorizontalAlignment="Left" Width="300" CornerRadius="8" Background="{DynamicResource ButtonBackground}" Foreground="{DynamicResource TextColourMuted}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" PlaceholderText="Search projects" VerticalContentAlignment="Center"/>
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5" Grid.Column="2">
-            <controls:ButtonWrapper HorizontalAlignment="Right" Width="100" Label="Sort" x:Name="btn_Sort" />
-            <controls:ButtonWrapper HorizontalAlignment="Right" Width="100" Label="Filters" x:Name="btn_Filters" />
+            <controls:ButtonWrapper HorizontalAlignment="Right" Width="100" Label="Sort" x:Name="btn_Sort">
+              <controls:ButtonWrapper.Icon>
+                <Viewbox Height="16">
+                  <Path Fill="White" Data="M2 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
+                </Viewbox>
+              </controls:ButtonWrapper.Icon>
+            </controls:ButtonWrapper>
+
+            <controls:ButtonWrapper HorizontalAlignment="Right" Width="100" Label="Filters" x:Name="btn_Filters">
+              <controls:ButtonWrapper.Icon>
+                <Viewbox Height="16">
+                  <Path Fill="White" Data="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z"/>
+                </Viewbox>
+              </controls:ButtonWrapper.Icon>
+            </controls:ButtonWrapper>
+
             <controls:DropDownButton VerticalAlignment="Stretch" x:Name="btn_NewProject" ButtonLabel="New Project"/>
           </StackPanel>
         </Grid>

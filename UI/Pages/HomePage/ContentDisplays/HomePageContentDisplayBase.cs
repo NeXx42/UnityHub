@@ -2,12 +2,15 @@ using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Models.Data;
+using UI.Controls;
 using UI.Helpers;
 
 namespace UI.Pages.HomePage.ContentDisplays;
 
 public interface IHomePageLayout
 {
+    public ButtonWrapper CreateButton();
+
     public void ToggleVisibility(bool to);
     public Task Draw(ProjectInfo[] cards, Func<int, Task> onSelect);
     public void UpdateSelection(int to);
@@ -15,6 +18,8 @@ public interface IHomePageLayout
 
 public abstract class HomePageLayoutBase<T> : IHomePageLayout where T : UserControl
 {
+    protected ButtonWrapper? selectionButton;
+
     protected Panel container;
     protected ReusableList<T> cards;
 
@@ -32,12 +37,25 @@ public abstract class HomePageLayoutBase<T> : IHomePageLayout where T : UserCont
     public void ToggleVisibility(bool to)
     {
         container.IsVisible = to;
+
+        if (to)
+            selectionButton!.Classes.Add("Primary");
+        else
+            selectionButton!.Classes.Remove("Primary");
     }
 
     public void UpdateSelection(int to)
     {
         for (int i = 0; i < cards.getElementCount; i++)
             ToggleElementSelection(cards[i], i == to);
+    }
+
+    public virtual ButtonWrapper CreateButton()
+    {
+        selectionButton = new ButtonWrapper();
+        selectionButton.Label = "Layout";
+
+        return selectionButton;
     }
 
     protected abstract Panel GetWrapper();
