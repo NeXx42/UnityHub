@@ -1,12 +1,10 @@
-name: Release
+name: Build & Test
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version'
-        required: true
-
+  push:
+    branches:
+      - main
+      
 jobs:
   build:
     runs-on: ubuntu-22.04
