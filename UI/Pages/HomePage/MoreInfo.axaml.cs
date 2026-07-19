@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -32,6 +33,10 @@ public partial class MoreInfo : UserControl
         btn_OpenExplorer.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.BrowseTo(info!));
 
         btn_Delete.RegisterClick(DeleteProject);
+
+        Popup_GenericList versionList = new Popup_GenericList();
+        versionList.Draw(GetEditorVersions, SelectNewEditorVersion);
+        inp_Version.RegisterPopup(versionList);
     }
 
     public async Task Show(int id)
@@ -52,15 +57,13 @@ public partial class MoreInfo : UserControl
         img.Source = await IconFetcher.GetImage(info.iconUrl);
 
         btn_AddTag.RegisterPopup(await new Popup_Collection().Init(
-                logic.GetTags,
-                AddTag,
-                logic.CreateTag,
-                () => btn_AddTag.IsOpen = false)
+            logic.GetTags,
+            AddTag,
+            () => btn_AddTag.IsOpen = false)
         );
         btn_AddCollection.RegisterPopup(await new Popup_Collection().Init(
             logic.GetCollections,
             ChangeCollection,
-            null, // needs to be done somewhere in the settings
             () => btn_AddCollection.IsOpen = false)
         );
     }
@@ -135,5 +138,20 @@ public partial class MoreInfo : UserControl
                 await DependencyManager.ui!.LoadProgressive("Deriving", DependencyManager.GetService<IProjectLogic>()!.DeriveProjectInfo(info!, true));
                 break;
         }
+    }
+
+    private async Task<string[]> GetEditorVersions()
+    {
+        string[] versions = (await DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersions()).OrderDescending().ToArray();
+        return versions;
+    }
+
+    private async Task SelectNewEditorVersion(int _, string val)
+    {
+        if (info == null)
+            return;
+
+        IProjectLogic logic = DependencyManager.GetService<IProjectLogic>()!;
+        await logic.TrySwitchVersion(info, val);
     }
 }

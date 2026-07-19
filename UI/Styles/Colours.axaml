@@ -22,6 +22,9 @@
   <Color x:Key="Colour_ButtonBackground">#1C2127</Color>
   <SolidColorBrush x:Key="ButtonBackground" Color="{DynamicResource Colour_ButtonBackground}" />
 
+  <Color x:Key="Colour_ButtonBackgroundTransparent">#001C2127</Color>
+  <SolidColorBrush x:Key="ButtonBackgroundTransparent" Color="{DynamicResource Colour_ButtonBackgroundTransparent}" />
+
   <Color x:Key="Colour_ButtonBackgroundDark">#1a1c29</Color>
   <SolidColorBrush x:Key="ButtonBackgroundDark" Color="{DynamicResource Colour_ButtonBackgroundDark}" />
 

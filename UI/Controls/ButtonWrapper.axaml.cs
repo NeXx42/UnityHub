@@ -57,6 +57,13 @@ public partial class ButtonWrapper : UserControl
         set => SetValue(IsOpenProperty, value);
     }
 
+    public static readonly StyledProperty<bool> HasPopupProperty = AvaloniaProperty.Register<ButtonWrapper, bool>(nameof(HasPopup), defaultValue: false);
+    public bool HasPopup
+    {
+        get => GetValue(HasPopupProperty);
+        set => SetValue(HasPopupProperty, value);
+    }
+
     public static new readonly StyledProperty<HorizontalAlignment> HorizontalContentAlignmentProperty = AvaloniaProperty.Register<ButtonWrapper, HorizontalAlignment>(nameof(HorizontalContentAlignment), HorizontalAlignment.Left);
     public new HorizontalAlignment HorizontalContentAlignment
     {
@@ -78,6 +85,8 @@ public partial class ButtonWrapper : UserControl
     {
         PopupContent = null;
         onClick = callback;
+
+        HasPopup = false;
     }
 
     public void RegisterPopup<T>() where T : UserControl, IPopup
@@ -88,11 +97,16 @@ public partial class ButtonWrapper : UserControl
         PopupContent = popup;
         PopupData = popup;
 
-        onClick = () =>
+        HasPopup = true;
+
+        onClick = () => HandlePopup().Wrap();
+
+        async Task HandlePopup()
         {
             IsOpen = true;
-            popup.Show().Wrap();
-        };
+            await popup.Show();
+            IsOpen = false;
+        }
     }
 
     public void RegisterClick(Func<Task> callback)

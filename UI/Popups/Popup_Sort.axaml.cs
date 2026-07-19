@@ -13,6 +13,7 @@ namespace UI.Popups;
 public partial class Popup_Sort : UserControl, IPopup
 {
     private int selectedOption = 0;
+    private TaskCompletionSource? openTask;
 
     private Action<int>? onUpdateAction;
     private ReusableList<ButtonWrapper> options;
@@ -46,6 +47,8 @@ public partial class Popup_Sort : UserControl, IPopup
 
     private void SelectOption(int pos)
     {
+        openTask?.SetResult();
+
         selectedOption = pos;
         onUpdateAction?.Invoke(pos);
 
@@ -60,6 +63,7 @@ public partial class Popup_Sort : UserControl, IPopup
 
     public Task Show()
     {
-        return Task.CompletedTask;
+        openTask = new TaskCompletionSource();
+        return openTask.Task;
     }
 }

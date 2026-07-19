@@ -25,4 +25,5 @@ public interface IProjectLogic
     public Task UpdateProperties(IEnumerable<ProjectInfo> elements, IEnumerable<string> props);
 
     public Task DeleteCard(ProjectInfo info);
+    public Task<bool> TrySwitchVersion(ProjectInfo info, string to);
 }

@@ -15,6 +15,7 @@ namespace UI.Popups;
 
 public partial class Popup_Filter : UserControl, IPopup
 {
+    private TaskCompletionSource? openTask;
     private ReusableList<Popup_FilterGroup> filters;
 
     private ProjectSearch? activeSearch;
@@ -44,8 +45,11 @@ public partial class Popup_Filter : UserControl, IPopup
         this.activeSearch = activeFilter;
     }
 
-    public async Task Show()
+    public Task Show()
     {
+        openTask?.SetCanceled();
+        openTask = new TaskCompletionSource();
+
         Func<Popup_FilterGroup, int, Task>[] groups = [
             LoadTags,
             LoadCollections,
@@ -53,6 +57,7 @@ public partial class Popup_Filter : UserControl, IPopup
         ];
 
         filters.Draw(groups, (ui, pos, caller) => caller(ui, pos).Wrap());
+        return openTask.Task;
     }
 
     private async Task LoadTags(Popup_FilterGroup ui, int pos)

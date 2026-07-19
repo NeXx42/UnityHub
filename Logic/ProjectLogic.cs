@@ -299,4 +299,34 @@ public class ProjectLogic : IProjectLogic
             }
         }
     }
+
+    public async Task<bool> TrySwitchVersion(ProjectInfo info, string to)
+    {
+        if (info.version?.Equals(to) ?? false)
+            return false;
+
+        if (await DependencyManager.ui!.ShowConfirmationBox(
+            "Convert version",
+            $"Are you sure you want to update the version to {to}?",
+            new ConfirmationButton()
+            {
+                label = "Cancel"
+            },
+            new ConfirmationButton()
+            {
+                label = "Change",
+                className = "Primary"
+            }
+        ) != 1)
+            return false;
+
+        info.version = to;
+
+        IEditorLogic editor = DependencyManager.GetService<IEditorLogic>()!;
+
+        await editor.LaunchProject(info);
+        await UpdateProperties(info, [nameof(ProjectInfo.version)]);
+
+        return true;
+    }
 }

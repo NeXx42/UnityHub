@@ -7,7 +7,7 @@
 
     <Grid ColumnDefinitions="* 1 Auto">
       <local:ButtonWrapper x:Name="btn" Label="{Binding ButtonLabel}" CornerRadius="8 0 0 8" Classes="Primary"/>
-      <ToggleButton IsChecked="{Binding IsOpen, Mode=TwoWay}" Background="{DynamicResource AccentColour}" CornerRadius="0 8 8 0" VerticalAlignment="Stretch" Grid.Column="2">
+      <ToggleButton IsChecked="{Binding IsOpen, Mode=TwoWay}" Background="{DynamicResource AccentColour}" CornerRadius="0 8 8 0" VerticalAlignment="Stretch" Grid.Column="2" Cursor="Hand">
         <Path Data="M 0 0 L 6 6 L 12 0" Stroke="White" StrokeThickness="2" StrokeLineCap="Round" HorizontalAlignment="Center" VerticalAlignment="Center" />
       </ToggleButton>
     </Grid>
