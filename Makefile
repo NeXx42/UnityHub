@@ -13,6 +13,8 @@ build:
 		-o ${OUTPUT_DIR}/UnityHub
 
 build-appimage:	
+	chmod +x ./Build/AppImageData/AppRun
+
 	mkdir -p ${OUTPUT_DIR}/UnityHub.AppDir/usr/bin
 	mkdir -p ${OUTPUT_DIR}/UnityHub.AppDir/usr/share/icons/hicolor/256x256/apps/
 	
