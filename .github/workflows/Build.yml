@@ -1,16 +1,15 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: true
 
 jobs:
   build:
     runs-on: ubuntu-22.04
-
-    env:
-      OUTPUT_DIR: ./Build/Output/
 
     steps:
       - name: Checkout code
@@ -28,16 +27,3 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
-
-      - name: Download appimagetool
-        run: |
-          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage \
-            -O appimagetool
-          chmod +x appimagetool
-          sudo mv appimagetool /usr/local/bin/appimagetool
-          
-      - name: Build
-        run: make build
-        
-      - name: Build Appimage
-        run: make build-appimage

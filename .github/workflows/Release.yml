@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Build:
+    runs-on: ubuntu-22.04
+
+    env:
+      OUTPUT_DIR: ./Build/Output/
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libfuse2 \
+          
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+          
+      - name: Build
+        run: make build
+          
+      - name: Download appimagetool
+        run: |
+            wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage \
+            -O appimagetool
+            chmod +x appimagetool
+            sudo mv appimagetool /usr/local/bin/appimagetool
+        
+      - name: Build Appimage
+        run: make build-appimage
+        
+        
+        
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: UnityHub-AppImage
+          path: ${{ env.OUTPUT_DIR }}/UnityHub.appimage
+          
+  Release:
+    needs: Build
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+        
+    steps:
+      - name: Download AppImage artifact
+        uses: actions/download-artifact@v4
+        with:
+            name: UnityHub-AppImage
+            path: ./output
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+            tag_name: ${{ github.event.inputs.version }}
+            name: v${{ github.event.inputs.version }}
+            files: |
+              ./output/UnityHub.appimage
