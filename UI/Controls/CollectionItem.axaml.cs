@@ -18,12 +18,12 @@ public partial class CollectionItem : UserControl, INotifyPropertyChanged
     private Action? onClickCallback;
     private Action? onRemoveCallback;
 
-    public CollectionData? collection;
+    public TagData? collection;
 
     public CollectionItem()
     {
         InitializeComponent();
-        DataContext = new CollectionData() { collectionId = 0, collectionName = "temp", type = "temp" };
+        DataContext = new TagData() { collectionId = 0, collectionName = "temp" };
 
         btn_Remove.PointerPressed += (_, e) =>
         {
@@ -34,7 +34,7 @@ public partial class CollectionItem : UserControl, INotifyPropertyChanged
         this.PointerPressed += (_, __) => onClickCallback?.Invoke();
     }
 
-    public void Init(CollectionData collection, Func<Task>? onClick = null, Func<Task>? onRemove = null)
+    public void Init(TagData collection, Func<Task>? onClick = null, Func<Task>? onRemove = null)
     {
         DataContext = collection;
         onClickCallback = onClick.Wrap;

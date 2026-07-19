@@ -18,7 +18,7 @@ public partial class Popup_Collection : UserControl, IPopup
 {
     private Action? closer;
     private Func<Task>? drawer;
-    private Func<CollectionData, Task>? saver;
+    private Func<TagData, Task>? saver;
 
     private ReusableList<CollectionItem> items;
 
@@ -32,7 +32,7 @@ public partial class Popup_Collection : UserControl, IPopup
         btn_Add.RegisterClick(CreateCollection);
     }
 
-    public async Task<Popup_Collection> Init(Func<Task<CollectionData[]>> fetchTask, Func<CollectionData, Task> onSelectEntry, Func<CollectionData, Task> addCollection, Action closer)
+    public async Task<Popup_Collection> Init<T>(Func<Task<T[]>> fetchTask, Func<T, Task> onSelectEntry, Func<TagData, Task> addCollection, Action closer) where T : TagData
     {
         drawer = Draw;
         saver = addCollection;
@@ -62,7 +62,7 @@ public partial class Popup_Collection : UserControl, IPopup
         this.closer?.Invoke();
 
         CreateCollectionModal creator = MainWindow.ShowModal<CreateCollectionModal>(out int pos);
-        CollectionData? dat = await creator.Init();
+        TagData? dat = await creator.Init();
 
         await MainWindow.CloseModal(pos);
 

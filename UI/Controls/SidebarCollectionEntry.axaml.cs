@@ -37,7 +37,7 @@ public partial class SidebarCollectionEntry : UserControl, ISidebarControl
         entries = new ReusableList<SidebarEntry>(container);
     }
 
-    public async Task Init(Func<int, Task> onSelect, Func<Task<CollectionData[]>> dataFetch)
+    public async Task Init<T>(Func<int, Task> onSelect, Func<Task<T[]>> dataFetch) where T : TagData
     {
         await entries.DrawAsync(dataFetch, (ui, pos, dat) =>
         {

@@ -5,6 +5,7 @@ using Data_Sqlite.Tables;
 using Logic.db;
 using Models;
 using Models.Data;
+using Models.Enums;
 using Models.Interfaces;
 
 namespace Data_Sqlite;
@@ -38,7 +39,7 @@ public class SqliteDataRepo : IDataRepository
             renderPipeline = (RenderPipelineTypes?)dbData.pipelineType,
 
             tags = dbData.tags.Distinct().ToHashSet(),
-            collections = dbData.collections.Distinct().ToHashSet(),
+            collectionId = dbData.collectionId,
 
             lastOpened = dbData.lastOpened == 0 ? null : dbData.lastOpened,
             created = dbData.created == 0 ? null : dbData.created,
@@ -63,14 +64,14 @@ public class SqliteDataRepo : IDataRepository
             pipelineType = (int?)info.renderPipeline,
 
             tags = info.tags.ToList(),
-            collections = info.collections.ToList(),
 
             lastOpened = info.lastOpened ?? 0,
             created = info.created ?? 0,
             size = info.size ?? 0,
             notes = info.notes,
 
-            favourited = info.favourited
+            favourited = info.favourited,
+            collectionId = info.collectionId
         };
     }
 
@@ -105,12 +106,7 @@ public class SqliteDataRepo : IDataRepository
 
         if ((search.collections?.Count() ?? 0) > 0)
         {
-            string joinName = "pc";
-            innerJoinClauses.Add($"{dbo_ProjectCollection.tableName} {joinName} on {joinName}.{nameof(dbo_ProjectCollection.ProjectId)} = {projectLocalName}.{nameof(dbo_Project.id)}");
-            whereClauses.Add($"{joinName}.{nameof(dbo_ProjectCollection.CollectionId)} in ({string.Join(",", search.collections!)})");
-
-            groupClauses.Add($"{projectLocalName}.{nameof(dbo_Project.id)}");
-            havingClauses.Add($"COUNT(DISTINCT {joinName}.{nameof(dbo_ProjectCollection.CollectionId)}) = {search.collections!.Count()}");
+            whereClauses.Add($"{projectLocalName}.{nameof(dbo_Project.collectionId)} in ({string.Join(",", search.collections!)})");
         }
 
         if ((search.tags?.Count() ?? 0) > 0)
@@ -220,14 +216,7 @@ public class SqliteDataRepo : IDataRepository
     private async Task<T[]> FetchInternal<T>(IEnumerable<int> ids, Func<dbo_Project, T> mapper)
     {
         Dictionary<int, dbo_Project> projects = (await database!.GetItems<dbo_Project>(SQLFilter.In(nameof(dbo_Project.id), ids))).ToDictionary(p => p.id, p => p);
-        dbo_ProjectCollection[] collections = await database!.GetItems<dbo_ProjectCollection>(SQLFilter.In(nameof(dbo_ProjectCollection.ProjectId), ids));
         dbo_ProjectTag[] tags = await database!.GetItems<dbo_ProjectTag>(SQLFilter.In(nameof(dbo_ProjectTag.ProjectId), ids));
-
-        foreach (dbo_ProjectCollection col in collections)
-        {
-            if (projects.TryGetValue(col.ProjectId, out dbo_Project? proj) && proj != null)
-                proj.collections.Add(col.CollectionId);
-        }
 
         foreach (dbo_ProjectTag tag in tags)
         {
@@ -246,19 +235,18 @@ public class SqliteDataRepo : IDataRepository
         await database!.InsertItem(dbObjs);
     }
 
-    public async Task<CollectionData[]> GetTags()
+    public async Task<TagData[]> GetTags()
     {
         dbo_Tag[] tags = await database!.GetItems<dbo_Tag>();
         return tags.Select(Map).ToArray();
 
-        CollectionData Map(dbo_Tag db)
+        TagData Map(dbo_Tag db)
         {
-            return new CollectionData()
+            return new TagData()
             {
                 collectionId = db.Id,
                 collectionName = db.Name,
                 colour = db.Colour,
-                type = "tag"
             };
         }
     }
@@ -275,7 +263,7 @@ public class SqliteDataRepo : IDataRepository
                 collectionId = db.Id,
                 collectionName = db.Name,
                 colour = db.Colour,
-                type = "collection"
+                handlingType = (CollectionHandlingTypes)db.HandlingType
             };
         }
     }
@@ -298,25 +286,19 @@ public class SqliteDataRepo : IDataRepository
         }
     }
 
-    public async Task ToggleCollection(int projId, int colId, bool to)
+    public async Task SetCollection(int projId, int colId)
     {
-        if (to)
+        await database!.Update(new dbo_Project()
         {
-            dbo_ProjectCollection tag = new dbo_ProjectCollection()
-            {
-                ProjectId = projId,
-                CollectionId = colId
-            };
+            id = projId,
+            collectionId = colId,
+            directory = string.Empty,
+            favourited = false
 
-            await database!.AddOrUpdate(tag, SQLFilter.Equal(nameof(dbo_ProjectCollection.ProjectId), projId).Equal(nameof(dbo_ProjectCollection.CollectionId), colId));
-        }
-        else
-        {
-            await database!.Delete<dbo_ProjectCollection>(SQLFilter.Equal(nameof(dbo_ProjectCollection.ProjectId), projId).Equal(nameof(dbo_ProjectCollection.CollectionId), colId));
-        }
+        }, SQLFilter.Equal(nameof(dbo_Project.id), projId), [nameof(dbo_Project.collectionId)]);
     }
 
-    public async Task CreateTag(CollectionData src)
+    public async Task CreateTag(TagData src)
     {
         await database!.InsertItem(new dbo_Tag
         {
@@ -380,7 +362,6 @@ public class SqliteDataRepo : IDataRepository
     public async Task DeleteCard(IEnumerable<int> ids)
     {
         await database!.Delete<dbo_ProjectTag>(SQLFilter.In(nameof(dbo_ProjectTag.ProjectId), ids));
-        await database!.Delete<dbo_ProjectCollection>(SQLFilter.In(nameof(dbo_ProjectCollection.ProjectId), ids));
         await database!.Delete<dbo_Project>(SQLFilter.In(nameof(dbo_Project.id), ids));
     }
 
@@ -409,7 +390,7 @@ public class SqliteDataRepo : IDataRepository
             { nameof(ProjectInfo.favourited), nameof(dbo_Project.favourited) },
 
             { nameof(ProjectInfo.tags), nameof(dbo_Project.tags) },
-            { nameof(ProjectInfo.collections), nameof(dbo_Project.collections) },
+            { nameof(ProjectInfo.collectionId), nameof(dbo_Project.collectionId) },
         };
 
         await database!.Update(updates.Select(MapToDto), (u) => SQLFilter.Equal(nameof(dbo_Project.id), u.id), [.. properties.Select(p => columnMappings[p])]);

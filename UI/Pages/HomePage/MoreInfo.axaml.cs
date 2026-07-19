@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -26,6 +27,8 @@ public partial class MoreInfo : UserControl
         collections = new ReusableList<CollectionItem>(cont_Collections);
 
         btn_OpenProject.RegisterClick(() => DependencyManager.GetService<IEditorLogic>()!.LaunchProject(info!));
+        btn_OpenProject.RegisterOptions(["Rederive Metadata", "Upload Icon"], OnLaunchOptionSelect);
+
         btn_OpenExplorer.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.BrowseTo(info!));
 
         btn_Delete.RegisterClick(DeleteProject);
@@ -56,13 +59,13 @@ public partial class MoreInfo : UserControl
         );
         btn_AddCollection.RegisterPopup(await new Popup_Collection().Init(
             logic.GetCollections,
-            AddCollection,
-            logic.CreateCollection,
+            ChangeCollection,
+            null, // needs to be done somewhere in the settings
             () => btn_AddCollection.IsOpen = false)
         );
     }
 
-    private async Task AddTag(CollectionData data)
+    private async Task AddTag(TagData data)
     {
         if (info == null || info.tags.Contains(data.collectionId))
             return;
@@ -74,23 +77,22 @@ public partial class MoreInfo : UserControl
         await RedrawTags(logic);
     }
 
-    private async Task AddCollection(CollectionData data)
+    private async Task ChangeCollection(TagData data)
     {
-        if (info == null || info.collections.Contains(data.collectionId))
+        if (info == null)
             return;
 
-        info.collections.Add(data.collectionId);
-
         ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
-        await logic.UpdateTag(info.id, data.collectionId, true);
-        await RedrawCollections(logic);
+
+        if (await logic.TryToChangeCollection(info, data.collectionId))
+            await RedrawCollections(logic);
     }
 
     private async Task RedrawTags(ITaggingLogic logic)
     {
         await tags.DrawAsync(() => logic.MapTags(info?.tags ?? []), (ui, _, dat) => ui.Init(dat, null, () => RemoveCollection(dat)));
 
-        async Task RemoveCollection(CollectionData dat)
+        async Task RemoveCollection(TagData dat)
         {
             info!.tags.Remove(dat.collectionId);
 
@@ -101,15 +103,7 @@ public partial class MoreInfo : UserControl
 
     private async Task RedrawCollections(ITaggingLogic logic)
     {
-        await collections.DrawAsync(() => logic.MapCollections(info?.collections ?? []), (ui, _, dat) => ui.Init(dat, null, () => RemoveCollection(dat)));
-
-        async Task RemoveCollection(CollectionData dat)
-        {
-            info!.collections.Remove(dat.collectionId);
-
-            await logic.UpdateCollection(info.id, dat.collectionId, false);
-            await RedrawCollections(logic);
-        }
+        await collections.DrawAsync(() => logic.MapCollections([info!.collectionId]), (ui, _, dat) => ui.Init(dat, null));
     }
 
     private async Task DeleteProject()
@@ -131,5 +125,15 @@ public partial class MoreInfo : UserControl
             return;
 
         await DependencyManager.GetService<IProjectLogic>()!.DeleteCard(info);
+    }
+
+    private async Task OnLaunchOptionSelect(int id)
+    {
+        switch (id)
+        {
+            case 0: // rederive
+                await DependencyManager.ui!.LoadProgressive("Deriving", DependencyManager.GetService<IProjectLogic>()!.DeriveProjectInfo(info!, true));
+                break;
+        }
     }
 }

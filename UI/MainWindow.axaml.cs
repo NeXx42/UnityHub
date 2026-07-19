@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -139,6 +136,11 @@ public partial class MainWindow : Window, IUILinker
 
     public async Task<Exception?> LoadProgressive(string header, params IEnumerable<LoadRequest> tasks)
     {
+        await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+        {
+
+        });
+
         LoadingModal msg = ShowModal<LoadingModal>(out int pos);
         Exception? error = await msg.LoadProgressive(header, tasks);
 

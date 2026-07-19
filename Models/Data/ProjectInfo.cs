@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using Models.Enums;
 using Models.Helpers;
 
 namespace Models.Data;
@@ -57,12 +58,13 @@ public class ProjectInfo
     public bool favourited { get; set; }
 
     public HashSet<int> tags { get; set; } = [];
-    public HashSet<int> collections { get; set; } = [];
+    public required int collectionId { get; set; }
 
     public static ProjectInfo Test => new ProjectInfo()
     {
         name = "Test",
         directory = "test",
         id = 0,
+        collectionId = (int)DefaultCollectionIds.InDevelopment
     };
 }

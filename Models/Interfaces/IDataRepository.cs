@@ -19,13 +19,13 @@ public interface IDataRepository
     public Task CreateCards(IEnumerable<ProjectInfo> cards);
     public Task DeleteCard(IEnumerable<int> ids);
 
-    public Task<CollectionData[]> GetTags();
+    public Task<TagData[]> GetTags();
     public Task<CollectionData[]> GetCollections();
 
     public Task ToggleTag(int projId, int tagId, bool to);
-    public Task ToggleCollection(int projId, int colId, bool to);
+    public Task SetCollection(int projId, int colId);
 
-    public Task CreateTag(CollectionData src);
+    public Task CreateTag(TagData src);
     public Task CreateCollection(CollectionData src);
 
     public Task<string[]> GetProjectVersions();

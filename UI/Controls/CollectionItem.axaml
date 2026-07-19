@@ -2,8 +2,8 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.CollectionItem" x:Name="root"
-  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:CollectionData">
-  <Border CornerRadius="4" BorderThickness="1" BorderBrush="{Binding colour}" Background="{Binding bgColour}">
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:TagData">
+  <Border CornerRadius="4" BorderThickness="0" BorderBrush="{Binding colour}" Background="{Binding bgColour}">
     <StackPanel Orientation="Horizontal" Margin="1">
       <Label Content="{Binding collectionName}" FontSize="12" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Opacity="1" Foreground="{Binding colour}"/>
 

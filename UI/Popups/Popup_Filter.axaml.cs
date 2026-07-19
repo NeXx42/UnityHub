@@ -57,7 +57,7 @@ public partial class Popup_Filter : UserControl, IPopup
 
     private async Task LoadTags(Popup_FilterGroup ui, int pos)
     {
-        CollectionData[] tags = await DependencyManager.GetService<ITaggingLogic>()!.GetTags();
+        TagData[] tags = await DependencyManager.GetService<ITaggingLogic>()!.GetTags();
         List<int> selectedOptions = new List<int>();
 
         if (activeSearch?.tags != null)

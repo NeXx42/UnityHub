@@ -1,11 +1,14 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Logic;
 using Models.Data;
+using Models.Helpers;
 using Models.Interfaces;
 
 namespace UI.Pages.Settings.Pages;
@@ -30,27 +33,27 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
     private async Task DeriveMissingMetadata()
     {
         IProjectLogic projectLogic = DependencyManager.GetService<IProjectLogic>()!;
-        IEditorLogic editorLogic = DependencyManager.GetService<IEditorLogic>()!;
 
         (ProjectInfo[] projects, _) = await projectLogic.Search(new ProjectSearch() { page = 0, take = 0 });
-        Stopwatch timeoutLimiter = new Stopwatch();
+        await DependencyManager.ui!.LoadProgressive("Deriving", projects.Select(Work));
 
-        foreach (ProjectInfo project in projects)
+        LoadRequest Work(ProjectInfo project)
         {
-            timeoutLimiter.Start();
+            return new LoadRequest(project.name, Interal);
 
-            try
+            async Task Interal(CancellationToken token)
             {
-                Console.WriteLine("Starting - " + project.name);
-                await editorLogic.DeriveProjectInfo(project);
-                Console.WriteLine("Done - " + project.name);
+                try
+                {
+                    Console.WriteLine("Starting - " + project.name);
+                    await projectLogic.DeriveProjectInfo(project, false).WhenAllProgressive(token);
+                    Console.WriteLine("Done - " + project.name);
+                }
+                catch
+                {
+                    Console.WriteLine("Failed to derive");
+                }
             }
-            catch
-            {
-                Console.WriteLine("Failed to derive");
-            }
-
-            timeoutLimiter.Reset();
         }
 
         await projectLogic.UpdateProperties(projects, [

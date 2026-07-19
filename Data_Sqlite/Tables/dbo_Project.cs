@@ -1,5 +1,6 @@
 using CSharpSqliteORM.Structure;
 using Models.Data;
+using Models.Enums;
 
 namespace Data_Sqlite.Tables;
 
@@ -22,10 +23,10 @@ public class dbo_Project : IDatabase_Table
     public long created { get; set; }
     public string? notes { get; set; }
 
+    public required int collectionId { get; set; }
     public required bool favourited { get; set; }
 
     public List<int> tags = [];
-    public List<int> collections = [];
 
     public static Database_Column[] getColumns => [
         new Database_Column { columnName = nameof(id), columnType = Database_ColumnType.INTEGER, isPrimaryKey = true, autoIncrement = true, allowNull = false },
@@ -43,6 +44,7 @@ public class dbo_Project : IDatabase_Table
         new Database_Column { columnName = nameof(created), columnType = Database_ColumnType.INTEGER, allowNull = true },
         new Database_Column { columnName = nameof(notes), columnType = Database_ColumnType.TEXT, allowNull = true },
 
+        new Database_Column { columnName = nameof(collectionId), columnType = Database_ColumnType.INTEGER, allowNull = false, defaultValue = ((int)DefaultCollectionIds.InDevelopment).ToString() },
         new Database_Column { columnName = nameof(favourited), columnType = Database_ColumnType.BIT, allowNull = false, defaultValue = "0" },
     ];
 }

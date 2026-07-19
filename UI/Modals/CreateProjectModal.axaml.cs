@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Logic;
 using Models.Data;
+using Models.Enums;
 using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
@@ -81,7 +82,8 @@ public partial class CreateProjectModal : UserControl, IModal
                 id = -1,
                 name = projName,
                 version = version.versionName,
-                directory = Path.Combine(loc, projName)
+                directory = Path.Combine(loc, projName),
+                collectionId = (int)DefaultCollectionIds.InDevelopment
             }
         };
 

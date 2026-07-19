@@ -10,18 +10,18 @@ public interface ITaggingLogic
     /// <param name="callback"></param>
     public void RegisterCallback(Action<int?, string> callback);
 
-    public Task<CollectionData[]> GetTags();
-    public Task<CollectionData[]> GetTags(bool forceRecache);
+    public Task<TagData[]> GetTags();
+    public Task<TagData[]> GetTags(bool forceRecache);
 
     public Task<CollectionData[]> GetCollections();
     public Task<CollectionData[]> GetCollections(bool forceRecache);
 
-    public Task<CollectionData[]> MapTags(IEnumerable<int> from);
+    public Task<TagData[]> MapTags(IEnumerable<int> from);
     public Task<CollectionData[]> MapCollections(IEnumerable<int> from);
 
     public Task UpdateTag(int projId, int tagId, bool to);
-    public Task UpdateCollection(int projId, int colId, bool to);
+    public Task<bool> TryToChangeCollection(ProjectInfo project, int colId);
 
-    public Task CreateTag(CollectionData data);
+    public Task CreateTag(TagData data);
     public Task CreateCollection(CollectionData data);
 }

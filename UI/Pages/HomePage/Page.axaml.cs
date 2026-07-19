@@ -228,30 +228,36 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
     {
         ITaggingLogic tagService = DependencyManager.GetService<ITaggingLogic>()!;
 
-        List<CollectionData> filters = new List<CollectionData>();
+        List<TagData> filters = new List<TagData>();
         filters.AddRange(await tagService.MapCollections(activeSearch.collections ?? []));
         filters.AddRange(await tagService.MapTags(activeSearch.tags ?? []));
-        filters.AddRange(activeSearch.versions.Select(v => new CollectionData()
+        filters.AddRange(activeSearch.versions.Select(v => new SearchFilterCollectionStandIn()
         {
             collectionId = -1,
             collectionName = v,
-            type = "version"
+            customType = "version"
         }));
 
         activeFilters.Draw(filters, (ui, _, dat) => ui.Init(dat, () => RemoveFilter(dat), () => RemoveFilter(dat)));
 
-        Task RemoveFilter(CollectionData data)
+        Task RemoveFilter(TagData data)
         {
-            switch (data.type.ToLower())
+            if (data is CollectionData)
             {
-                case "version":
-                    break;
 
-                case "tag":
-                    break;
+            }
+            else if (data is SearchFilterCollectionStandIn standIn)
+            {
+                switch (standIn.customType)
+                {
+                    case "version":
 
-                case "collection":
-                    break;
+                        break;
+                }
+            }
+            else
+            {
+
             }
 
             return Task.CompletedTask;
@@ -297,5 +303,10 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         getCurrentContentDisplay.ToggleVisibility(true);
 
         await getCurrentContentDisplay.Draw(cardInfo ?? [], SelectCard);
+    }
+
+    class SearchFilterCollectionStandIn : TagData
+    {
+        public string customType = "";
     }
 }

@@ -1,4 +1,5 @@
 using Models.Data;
+using Models.Enums;
 using Models.Interfaces;
 
 namespace Data.DataRepos;
@@ -30,6 +31,7 @@ public class MockDataRepo : IDataRepository
                 name = name,
                 directory = dir,
                 iconUrl = icon,
+                collectionId = (int)DefaultCollectionIds.InDevelopment
             };
         }
     }
@@ -61,7 +63,7 @@ public class MockDataRepo : IDataRepository
         throw new NotImplementedException();
     }
 
-    public Task<CollectionData[]> GetTags()
+    public Task<TagData[]> GetTags()
     {
         throw new NotImplementedException();
     }
@@ -86,7 +88,7 @@ public class MockDataRepo : IDataRepository
         throw new NotImplementedException();
     }
 
-    public Task CreateTag(CollectionData src)
+    public Task CreateTag(TagData src)
     {
         throw new NotImplementedException();
     }
@@ -147,6 +149,11 @@ public class MockDataRepo : IDataRepository
     }
 
     public Task UpdateProjectProperties(IEnumerable<ProjectInfo> updates, IEnumerable<string> properties)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SetCollection(int projId, int colId)
     {
         throw new NotImplementedException();
     }

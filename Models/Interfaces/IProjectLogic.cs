@@ -17,6 +17,8 @@ public interface IProjectLogic
     public Task<ProjectInfo[]> VerifyProjectPrimative(IEnumerable<string> folders);
     public Task<ProjectInfo?> VerifyProjectPrimative(ProjectInfo info);
 
+    public LoadRequest[] DeriveProjectInfo(ProjectInfo info, bool recache);
+
     public Task UploadCardsPrimitive(IEnumerable<ProjectInfo> cards);
 
     public Task UpdateProperties(ProjectInfo info, IEnumerable<string> props);

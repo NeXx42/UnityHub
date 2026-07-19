@@ -107,7 +107,10 @@ public partial class ImageCard : UserControl
 
     private async Task DrawTags()
     {
-        await tags.DrawAsync(() => DependencyManager.GetService<ITaggingLogic>()!.MapTags(activeCard!.tags), (ui, _, dat) =>
+        ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
+
+        TagData[] data = [.. await logic.MapCollections([activeCard!.collectionId]), .. await logic.MapTags(activeCard!.tags)];
+        tags.Draw(data, (ui, _, dat) =>
         {
             ui.Init(dat);
         }, 3);

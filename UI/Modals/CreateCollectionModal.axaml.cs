@@ -11,7 +11,7 @@ namespace UI.Modals;
 public partial class CreateCollectionModal : UserControl, IModal
 {
     private ModalContainer? container;
-    private TaskCompletionSource<CollectionData?>? saveTask;
+    private TaskCompletionSource<TagData?>? saveTask;
 
     public CreateCollectionModal()
     {
@@ -22,9 +22,9 @@ public partial class CreateCollectionModal : UserControl, IModal
     public bool canDismiss => true;
     public ModalContainer setContainer { set => container = value; }
 
-    public Task<CollectionData?> Init()
+    public Task<TagData?> Init()
     {
-        saveTask = new TaskCompletionSource<CollectionData?>();
+        saveTask = new TaskCompletionSource<TagData?>();
         return saveTask.Task;
     }
 
@@ -33,11 +33,10 @@ public partial class CreateCollectionModal : UserControl, IModal
         if (saveTask == null || string.IsNullOrEmpty(txt.Text))
             return;
 
-        saveTask.SetResult(new CollectionData()
+        saveTask.SetResult(new TagData()
         {
             collectionId = -1,
             collectionName = txt.Text,
-            type = ""
         });
 
         container?.requestCloserEvent?.Invoke();

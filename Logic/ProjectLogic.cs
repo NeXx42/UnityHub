@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Text.Json;
 using Models;
 using Models.Data;
+using Models.Enums;
+using Models.Helpers;
 using Models.Interfaces;
 
 namespace Logic;
@@ -29,8 +31,6 @@ public class ProjectLogic : IProjectLogic
         ConcurrentBag<ProjectInfo> updates = new();
         string[] changes = File.ReadAllLines(dirtyFile);
 
-        IEditorLogic deriverisionLogic = DependencyManager.GetService<IEditorLogic>()!;
-
         await Parallel.ForEachAsync(changes, async (change, token) =>
         {
             string[] pair = change.Split(":");
@@ -42,7 +42,7 @@ public class ProjectLogic : IProjectLogic
                 if (info == null)
                     return;
 
-                await deriverisionLogic.DeriveProjectInfo(info);
+                await DeriveProjectInfo(info, true).WhenAllProgressive(CancellationToken.None);
                 info.iconUrl = Path.Combine(GlobalConfig.getDataFolder, projectId.ToString(), "icon.png");
 
                 updates.Add(info);
@@ -134,7 +134,8 @@ public class ProjectLogic : IProjectLogic
             {
                 id = -1,
                 directory = folder,
-                name = dirInfo.Name
+                name = dirInfo.Name,
+                collectionId = (int)DefaultCollectionIds.InDevelopment
             };
 
             potentialCards.Add(card);
@@ -150,7 +151,7 @@ public class ProjectLogic : IProjectLogic
 
         DirectoryInfo dirInfo = new DirectoryInfo(info.directory);
 
-        await DependencyManager.GetService<IEditorLogic>()!.DeriveProjectInfo(info);
+        await DeriveProjectInfo(info, true).WhenAllProgressive(CancellationToken.None);
         return info;
 
         bool ValidateFolder(string folderName)
@@ -200,4 +201,102 @@ public class ProjectLogic : IProjectLogic
 
     public Task UpdateProperties(ProjectInfo info, IEnumerable<string> props) => data!.UpdateProjectProperties(info, props);
     public Task UpdateProperties(IEnumerable<ProjectInfo> elements, IEnumerable<string> props) => data!.UpdateProjectProperties(elements, props);
+
+    public LoadRequest[] DeriveProjectInfo(ProjectInfo info, bool overrideCache)
+    {
+        return [
+            new LoadRequest("Creation time", GetCreationTime),
+            new LoadRequest("Size", GetSize),
+            new LoadRequest("Version", GetVersionInfo),
+            new LoadRequest("Packages", GetPackageInfo),
+        ];
+
+        async Task GetCreationTime(CancellationToken token)
+        {
+            info.created ??= DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        }
+
+        async Task GetSize(CancellationToken token)
+        {
+            if (overrideCache || !info.size.HasValue)
+                info.size = GetFolderSizeParallel(info.directory);
+
+            long GetFolderSizeParallel(string path)
+            {
+                long total = 0;
+
+                void Walk(DirectoryInfo dir)
+                {
+                    long localSize = 0;
+                    var subDirs = new List<DirectoryInfo>();
+
+                    try
+                    {
+                        foreach (var entry in dir.EnumerateFileSystemInfos())
+                        {
+                            if (entry.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                                continue;
+
+                            if (entry is FileInfo fi)
+                                localSize += fi.Length;
+                            else if (entry is DirectoryInfo di)
+                                subDirs.Add(di);
+                        }
+                    }
+                    catch (UnauthorizedAccessException) { return; }
+                    catch (IOException) { return; }
+
+                    Interlocked.Add(ref total, localSize);
+
+                    if (subDirs.Count > 0)
+                        Parallel.ForEach(subDirs, Walk);
+                }
+
+                Walk(new DirectoryInfo(path));
+                return total;
+            }
+        }
+
+        async Task GetVersionInfo(CancellationToken token)
+        {
+            string versionFile = Path.Combine(info.directory, "ProjectSettings", "ProjectVersion.txt");
+
+            if (File.Exists(versionFile))
+            {
+                using (StreamReader reader = new StreamReader(versionFile))
+                {
+                    string? line = await reader.ReadLineAsync();
+
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        string[] parts = line.Split(":");
+                        info.version = parts[1].Replace(" ", "");
+                    }
+                }
+            }
+        }
+
+        async Task GetPackageInfo(CancellationToken token)
+        {
+            string manifestFile = Path.Combine(info.directory, "Packages", "manifest.json");
+
+            if (File.Exists(manifestFile))
+            {
+                using (StreamReader reader = new StreamReader(manifestFile))
+                {
+                    string manifestJson = await reader.ReadToEndAsync();
+                    JsonElement element = JsonDocument.Parse(manifestJson).RootElement.GetProperty("dependencies");
+
+                    info.packages = element.GetPropertyCount();
+
+                    if (element.TryGetProperty("com.unity.render-pipelines.universal", out _))
+                        info.renderPipeline = RenderPipelineTypes.Universal_Render_Pipeline;
+                    else if (element.TryGetProperty("com.unity.render-pipelines.high-definition", out _))
+                        info.renderPipeline = RenderPipelineTypes.High_Definition_Render_Pipeline;
+                    else
+                        info.renderPipeline = RenderPipelineTypes.Built_In_Render_Pipeline;
+                }
+            }
+        }
+    }
 }
