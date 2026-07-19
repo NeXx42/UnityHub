@@ -33,6 +33,19 @@ jobs:
           
       - name: Build
         run: make build
+        
+        
+        
+      - name: Build Windows
+        run: make build-windows
+          
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: UnityHub-Windows
+          path: ${{ env.OUTPUT_DIR }}/UnityHub_Windows.zip
+        
+          
           
       - name: Download appimagetool
         run: |
@@ -43,9 +56,7 @@ jobs:
         
       - name: Build Appimage
         run: make build-appimage
-        
-        
-        
+          
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v4
         with:
@@ -64,6 +75,12 @@ jobs:
         with:
             name: UnityHub-AppImage
             path: ./output
+            
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+            name: UnityHub-Windows
+            path: ./output
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -72,3 +89,4 @@ jobs:
             name: v${{ github.event.inputs.version }}
             files: |
               ./output/UnityHub.appimage
+              ./output/UnityHub_Windows.zip

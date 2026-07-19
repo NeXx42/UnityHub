@@ -12,7 +12,23 @@ build:
 		/p:IncludeAllContentForSelfExtract=true \
 		-o ${OUTPUT_DIR}/UnityHub
 
+build-windows:
+	rm -rf ${OUTPUT_DIR}/UnityHub_Windows
+
+	dotnet publish UI/UI.csproj \
+		-c Release \
+		-r win-x64 \
+		--self-contained true \
+		/p:PublishSingleFile=false \
+		/p:IncludeAllContentForSelfExtract=true \
+		-o ${OUTPUT_DIR}/UnityHub_Windows
+		
+	zip -r $(OUTPUT_DIR)/UnityHub_Windows.zip ${OUTPUT_DIR}/UnityHub_Windows
+	rm -rf ${OUTPUT_DIR}/UnityHub_Windows
+
 build-appimage:	
+	rm -rf ${OUTPUT_DIR}/UnityHub.appimage
+	
 	chmod +x ./Build/AppImageData/AppRun
 
 	mkdir -p ${OUTPUT_DIR}/UnityHub.AppDir/usr/bin
