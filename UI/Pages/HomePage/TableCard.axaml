@@ -1,0 +1,82 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.TableCard"
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectInfo" x:Name="root" Cursor="Hand" ClipToBounds="False"
+  xmlns:controls="clr-namespace:UI.Controls">
+  <UserControl.Styles>
+    <Style Selector="Border#border_Main">
+    </Style>
+
+    <Style Selector="Border#border_Main.Selected">
+    </Style>
+
+    <Style Selector="Border#border_Main:pointerover">
+    </Style>
+  </UserControl.Styles>
+
+  <Border Background="{DynamicResource Colour_BackgroundColour}" ClipToBounds="True" x:Name="border_Main">
+    <Border.Transitions>
+      <Transitions>
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="CubicEaseOut"/>
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.15" Easing="CubicEaseOut"/>
+      </Transitions>
+    </Border.Transitions>
+
+    <Grid ColumnDefinitions="1* .5* 1* 1*" VerticalAlignment="Stretch" Margin="5">
+
+      <!-- Fav btn -->
+      <Border Cursor="Hand" x:Name="btn_ToggleFav" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="10" IsVisible="False">
+        <Border.Styles>
+          <Style Selector="#btn_ToggleFav Path">
+            <Setter Property="Fill" Value="{DynamicResource TextColourMuted}"/>
+          </Style>
+          <Style Selector="#btn_ToggleFav:pointerover Path">
+            <Setter Property="Fill" Value="White"/>
+          </Style>
+        </Border.Styles>
+
+        <Viewbox Width="15" Height="15" x:Name="btn_Fav" Margin="10" IsHitTestVisible="False">
+          <Grid IsHitTestVisible="False">
+            <Path x:Name="icon_ToggleFavToOn" IsHitTestVisible="False" Data="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
+            <Path x:Name="icon_ToggleFavToOff" Fill="#FAC63E" IsHitTestVisible="False" Data="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+          </Grid>
+        </Viewbox>
+      </Border>
+
+
+      <!-- Content -->
+      <Label Content="{Binding name}" Grid.Column="0" VerticalAlignment="Center"/>
+
+      <!-- Version -->
+      <StackPanel Orientation="Horizontal" x:Name="cont_Version" Grid.Column="1" Margin="8 0 0 0">
+        <StackPanel.Styles>
+          <Style Selector="Label">
+            <Setter Property="Foreground" Value="{DynamicResource TextColourMuted}" />
+          </Style>
+          <Style Selector="StackPanel.Missing > Label">
+            <Setter Property="Foreground" Value="Red" />
+          </Style>
+          <Style Selector="StackPanel.Missing > Viewbox > Path">
+            <Setter Property="Fill" Value="Red" />
+          </Style>
+        </StackPanel.Styles>
+
+        <Viewbox Height="12" Width="12" VerticalAlignment="Center">
+          <Path Data="m 12.8497 1 v 3.9324 l 3.4868 2.0108 c 0.0279 0.0167 0.0501 0.0446 0.0668 0.0724 c 0.0223 0.0278 0.0279 0.0613 0.0279 0.0947 c 0 0.0334 -0.0056 0.0668 -0.0279 0.1003 c -0.0167 0.0278 -0.039 0.0501 -0.0668 0.0724 l -4.1441 2.384 c -0.0557 0.039 -0.1281 0.0557 -0.195 0.0557 c -0.0668 0 -0.1337 -0.0167 -0.195 -0.0557 l -4.1441 -2.384 c -0.0279 -0.0167 -0.0501 -0.0446 -0.0668 -0.0724 c -0.0167 -0.0279 -0.0279 -0.0613 -0.0279 -0.0947 c 0 -0.0334 0.0111 -0.0668 0.0279 -0.1003 c 0.0167 -0.0279 0.039 -0.0501 0.0668 -0.0724 l 3.4868 -2.0052 v -3.938 l -8.8953 5.13 v 10.2544 l 3.4144 -1.9662 v -4.0215 c 0 -0.0334 0.0056 -0.0668 0.0223 -0.0947 c 0.0167 -0.0279 0.0446 -0.0501 0.0724 -0.0724 c 0.0278 -0.0167 0.0613 -0.0223 0.1003 -0.0223 c 0.0334 0 0.0668 0.0056 0.0947 0.0223 l 4.1441 2.3895 c 0.0613 0.0334 0.1114 0.0836 0.1448 0.1448 c 0.0334 0.0557 0.0501 0.1225 0.0501 0.1949 v 4.7735 c 0 0.0334 -0.0056 0.0668 -0.0278 0.1003 c -0.0167 0.0279 -0.039 0.0557 -0.0668 0.0724 c -0.0334 0.0167 -0.0668 0.0223 -0.1003 0.0223 c -0.0334 0 -0.0668 -0.0056 -0.0947 -0.0223 l -3.4868 -2.0108 l -3.4144 1.9662 l 8.8953 5.13 l 8.8953 -5.13 l -3.4144 -1.9662 l -3.4868 2.0108 c -0.0278 0.0167 -0.0613 0.0223 -0.0947 0.0223 c -0.0334 0 -0.0668 -0.0111 -0.0947 -0.0279 c -0.0334 -0.0167 -0.0557 -0.039 -0.0724 -0.0668 c -0.0167 -0.0334 -0.0279 -0.0668 -0.0279 -0.1003 v -4.7735 c 0 -0.0724 0.0167 -0.1393 0.0501 -0.1949 c 0.039 -0.0613 0.0836 -0.1114 0.1448 -0.1448 l 4.1441 -2.3895 c 0.0278 -0.0167 0.0613 -0.0223 0.0947 -0.0223 c 0.0334 0 0.0668 0.0056 0.1003 0.0223 c 0.0278 0.0223 0.0501 0.0446 0.0668 0.0724 c 0.0223 0.0279 0.0279 0.0613 0.0279 0.1003 v 4.016 l 3.4144 1.9662 v -10.2544 l -8.8953 -5.13 z" Fill="white" />
+        </Viewbox>
+        <Label x:Name="lbl_Version" Content="{Binding version}" FontSize="11" VerticalAlignment="Center"/>
+      </StackPanel>
+
+      <!-- Dir -->
+      <Label Content="{Binding directory}" FontSize="11" Foreground="{DynamicResource TextColourMuted}" Grid.Column="2" VerticalAlignment="Center"/>
+
+      <!-- Tags -->
+      <StackPanel Orientation="Horizontal" x:Name="cont_Tags" Grid.Column="3" Spacing="5" VerticalAlignment="Stretch" Height="30" />
+
+      <!-- Last used -->
+      <Label x:Name="lbl_LastAccessed" Content="{Binding getLastOpenedTxt}" Foreground="{DynamicResource TextColourMuted}" FontSize="10" Grid.Column="4" VerticalAlignment="Center"/>
+
+    </Grid>
+  </Border>
+</UserControl>

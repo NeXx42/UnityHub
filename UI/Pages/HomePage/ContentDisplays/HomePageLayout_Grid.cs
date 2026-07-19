@@ -17,6 +17,7 @@ public class HomePageLayout_Grid : HomePageLayoutBase<ImageCard>
         WrapPanel container = new WrapPanel();
         container.ItemSpacing = 5;
         container.LineSpacing = 5;
+        container.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
 
         return container;
     }

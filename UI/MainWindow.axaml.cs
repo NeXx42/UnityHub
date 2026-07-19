@@ -40,6 +40,8 @@ public partial class MainWindow : Window, IUILinker
 
     public MainWindow()
     {
+        instance = this;
+
         InitializeComponent();
 
         DependencyManager.Init(this);
@@ -49,7 +51,6 @@ public partial class MainWindow : Window, IUILinker
             { PageNames.Settings, page_Settings },
         };
 
-        instance = this;
         activeModals = new Stack<ModalContainer>();
 
         RequestPage(PageNames.Home).Wrap();

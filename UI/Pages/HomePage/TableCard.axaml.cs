@@ -4,7 +4,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media.Imaging;
 using Logic;
 using Models.Data;
 using Models.Interfaces;
@@ -14,33 +13,28 @@ using UI.Interfaces;
 
 namespace UI.Pages.HomePage;
 
-public interface IListCardPlugin : IFrontendPlugin
+public interface ITableCardPlugin : IFrontendPlugin
 {
-    public void Setup(ListCard card);
-    public Task Draw(ListCard card, ProjectInfo info, int pos, Func<int, Task> onClick);
+    public void Setup(TableCard card);
+    public Task Draw(TableCard card, ProjectInfo info, int pos, Func<int, Task> onClick);
 }
 
-public partial class ListCard : UserControl
+public partial class TableCard : UserControl
 {
-    public static FrontendPluginHandler<IListCardPlugin> plugin = new();
-
-    private bool registered = false;
+    public static FrontendPluginHandler<ITableCardPlugin> plugin = new();
 
     private int? pos;
     private ProjectInfo? activeCard;
 
     private Func<int, Task>? onSelect;
 
-    private ReusableList<CollectionItem> tags;
-
-    public ListCard()
+    public TableCard()
     {
         InitializeComponent();
 
         this.DataContext = ProjectInfo.Test;
         btn_ToggleFav.PointerPressed += ToggleFav;
 
-        tags = new ReusableList<CollectionItem>(cont_Tags);
         plugin.Execute(t => t.Setup(this));
 
         PointerPressed += HandleOnSelect;
@@ -48,12 +42,6 @@ public partial class ListCard : UserControl
 
     public async Task Draw(ProjectInfo info, int pos, Func<int, Task> onClick)
     {
-        if (!registered)
-        {
-            registered = true;
-            DependencyManager.GetService<ITaggingLogic>()!.RegisterCallback(UpdateTagging);
-        }
-
         ToggleSelection(false);
 
         this.activeCard = info;
@@ -63,7 +51,6 @@ public partial class ListCard : UserControl
         this.onSelect = onClick;
 
         UpdateFavStatus();
-        await DrawTags();
 
         cont_Version.Classes.RemoveRange(0, cont_Version.Classes.Count);
 
@@ -71,12 +58,6 @@ public partial class ListCard : UserControl
             cont_Version.Classes.Add("Missing");
 
         await plugin.Execute(t => t.Draw(this, info, pos, onClick));
-        await IconFetcher.GetImage(info.iconUrl, UpdateIcon);
-    }
-
-    private void UpdateIcon(string? path, Bitmap? icon)
-    {
-        img.Source = icon;
     }
 
     private void HandleOnSelect(object? sender, PointerEventArgs args)
@@ -94,22 +75,6 @@ public partial class ListCard : UserControl
         else
             border_Main.Classes.Remove("Selected");
 
-    }
-
-    private void UpdateTagging(int? projectId, string msg)
-    {
-        if (!projectId.HasValue || activeCard == null || activeCard.id != projectId)
-            return;
-
-        DrawTags().Wrap();
-    }
-
-    private async Task DrawTags()
-    {
-        await tags.DrawAsync(() => DependencyManager.GetService<ITaggingLogic>()!.MapTags(activeCard!.tags), (ui, _, dat) =>
-        {
-            ui.Init(dat);
-        }, 3);
     }
 
     private void ToggleFav(object? _, PointerEventArgs args)

@@ -70,6 +70,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         {
             typeof(HomePageLayout_Grid),
             typeof(HomePageLayout_List),
+            typeof(HomePageLayout_Table),
         };
         plugins.Execute(p => p.RegisterLayout(layouts));
         contentDisplayers = new List<IHomePageLayout>();
@@ -86,6 +87,8 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
                 ButtonWrapper btn = layoutControl.CreateButton();
                 btn.RegisterClick(() => UpdateLayout(layoutId));
                 cont_Layouts.Children.Add(btn);
+
+                layoutControl.ToggleVisibility(false);
             }
         }
 

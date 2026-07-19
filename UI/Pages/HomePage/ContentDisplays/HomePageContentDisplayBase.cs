@@ -34,7 +34,7 @@ public abstract class HomePageLayoutBase<T> : IHomePageLayout where T : UserCont
 
     public abstract Task Draw(ProjectInfo[] cardInfo, Func<int, Task> onSelect);
 
-    public void ToggleVisibility(bool to)
+    public virtual void ToggleVisibility(bool to)
     {
         container.IsVisible = to;
 
@@ -44,7 +44,7 @@ public abstract class HomePageLayoutBase<T> : IHomePageLayout where T : UserCont
             selectionButton!.Classes.Remove("Primary");
     }
 
-    public void UpdateSelection(int to)
+    public virtual void UpdateSelection(int to)
     {
         for (int i = 0; i < cards.getElementCount; i++)
             ToggleElementSelection(cards[i], i == to);
