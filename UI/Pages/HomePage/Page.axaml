@@ -35,7 +35,7 @@
 
         <!-- Info / layouts -->
         <Grid ColumnDefinitions="* Auto" Height="35">
-          <Grid ColumnDefinitions="100 *">
+          <Grid ColumnDefinitions="200 *">
             <Label Content="{Binding #root.TotalProjectCountTxt}" FontSize="18"/>
             <WrapPanel Grid.Column="1" x:Name="cont_Filters" ItemSpacing="5" LineSpacing="5" ItemHeight="30"/>
           </Grid>

@@ -1,5 +1,8 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -25,13 +28,13 @@ public partial class LoadingModal : UserControl, IModal, INotifyPropertyChanged
     public bool canDismiss => false;
     public ModalContainer setContainer { set => _ = value; }
 
-    public async Task<Exception?> LoadProgressive(string header, params LoadRequest[] reqs)
+    public async Task<Exception?> LoadProgressive(string header, params IEnumerable<LoadRequest> reqs)
     {
         this.header = header;
         this.msg = string.Empty;
 
         inp_Progress.Minimum = 0;
-        inp_Progress.Maximum = reqs.Length - 1;
+        inp_Progress.Maximum = reqs.Count() - 1;
         inp_Progress.Value = 0;
 
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));

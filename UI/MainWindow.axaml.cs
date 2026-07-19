@@ -128,10 +128,19 @@ public partial class MainWindow : Window, IUILinker
         }
     }
 
-    public async Task<Exception?> LoadProgressive(string header, params LoadRequest[] reqs)
+    public async Task<int?> ShowConfirmationBox(string header, string paragraph, params IEnumerable<ConfirmationButton> btns)
+    {
+        ConfirmationBox box = ShowModal<ConfirmationBox>(out int pos);
+        int? res = await box.Show(header, paragraph, btns);
+
+        await CloseModal(pos);
+        return res;
+    }
+
+    public async Task<Exception?> LoadProgressive(string header, params IEnumerable<LoadRequest> tasks)
     {
         LoadingModal msg = ShowModal<LoadingModal>(out int pos);
-        Exception? error = await msg.LoadProgressive(header, reqs);
+        Exception? error = await msg.LoadProgressive(header, tasks);
 
         await CloseModal(pos);
         return error;

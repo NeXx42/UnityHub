@@ -177,13 +177,25 @@ public class ProjectLogic : IProjectLogic
     {
         try
         {
-            if (Directory.Exists(info.directory))
-                Directory.Delete(info.directory, true);
+            await DependencyManager.ui!.LoadProgressive("Deleting",
+                new LoadRequest("Deleting files", DeleteFiles),
+                new LoadRequest("Removing data", RemoveInfo)
+            );
 
-            await data.DeleteCard([info.id]);
             callback?.Invoke(nameof(DeleteCard));
         }
         catch { }
+
+        async Task DeleteFiles(CancellationToken token)
+        {
+            if (Directory.Exists(info.directory))
+                Directory.Delete(info.directory, true);
+        }
+
+        async Task RemoveInfo(CancellationToken token)
+        {
+            await data.DeleteCard([info.id]);
+        }
     }
 
     public Task UpdateProperties(ProjectInfo info, IEnumerable<string> props) => data!.UpdateProjectProperties(info, props);
