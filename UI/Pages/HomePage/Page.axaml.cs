@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Logic;
 using Models.Data;
+using Models.Enums;
 using Models.Helpers;
 using Models.Interfaces;
 using UI.Controls;
@@ -40,6 +41,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
     private int? currentSelectedCard;
     private Popup_Filter? filter;
+    private Popup_Sort? sort;
 
     private List<IHomePageLayout> contentDisplayers;
     private ReusableList<ButtonWrapper> pageControls;
@@ -103,8 +105,12 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
         filter = new Popup_Filter();
         filter.Init(activeSearch, SearchCards);
-
         btn_Filters.RegisterPopup(filter);
+
+        sort = new Popup_Sort();
+        sort.Draw(0, Enum.GetNames<ProjectOrder>(), UpdateSort);
+        btn_Sort.RegisterPopup(sort);
+
         inp_Text.TextChanged += (_, __) => UpdateTextFilter().Wrap();
 
         DependencyManager.GetService<IProjectLogic>()?.RegisterCallback(ProjectLogicCallback);
@@ -269,6 +275,14 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
         lastTextFilter = txt;
         activeSearch.text = lastTextFilter;
+
+        await SearchCards();
+    }
+
+    private async Task UpdateSort(int sort)
+    {
+        activeSearch.order = (ProjectOrder)sort;
+        btn_Sort.Label = activeSearch.order.ToString();
 
         await SearchCards();
     }

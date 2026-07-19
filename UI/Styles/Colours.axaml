@@ -35,6 +35,8 @@
   <Color x:Key="Colour_AccentColourLight">#6554d1</Color>
   <SolidColorBrush x:Key="AccentColourLight" Color="{DynamicResource Colour_AccentColourLight}" />
 
+  <Color x:Key="Colour_PopupBackground">#171a22</Color>
+  <SolidColorBrush x:Key="PopupBackground" Color="{DynamicResource Colour_PopupBackground}" />
 
 
   <Color x:Key="Colour_TextColour">#fff</Color>

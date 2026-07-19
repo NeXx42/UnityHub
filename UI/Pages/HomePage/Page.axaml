@@ -8,17 +8,19 @@
     <Grid RowDefinitions="Auto * Auto" Margin="15">
       <!-- Searching -->
       <StackPanel Orientation="Vertical" Spacing="15">
+        <!-- Filtering -->
         <Grid Height="35" ColumnDefinitions="* 5 Auto">
           <TextBox x:Name="inp_Text" HorizontalAlignment="Left" Width="300" CornerRadius="8" Background="{DynamicResource ButtonBackground}" Foreground="{DynamicResource TextColourMuted}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" PlaceholderText="Search projects" VerticalContentAlignment="Center"/>
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5" Grid.Column="2">
-            <controls:ButtonWrapper HorizontalAlignment="Right" Width="100" Label="Sort" x:Name="btn_Sort">
+            <!-- Sort -->
+            <controls:ButtonWrapper HorizontalAlignment="Right" Label="Sort" x:Name="btn_Sort">
               <controls:ButtonWrapper.Icon>
                 <Viewbox Height="16">
                   <Path Fill="White" Data="M2 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
                 </Viewbox>
               </controls:ButtonWrapper.Icon>
             </controls:ButtonWrapper>
-
+            <!-- Filter -->
             <controls:ButtonWrapper HorizontalAlignment="Right" Width="100" Label="Filters" x:Name="btn_Filters">
               <controls:ButtonWrapper.Icon>
                 <Viewbox Height="16">
@@ -31,11 +33,12 @@
           </StackPanel>
         </Grid>
 
+        <!-- Info / layouts -->
         <Grid ColumnDefinitions="* Auto" Height="35">
-          <StackPanel Orientation="Horizontal">
+          <Grid ColumnDefinitions="100 *">
             <Label Content="{Binding #root.TotalProjectCountTxt}" FontSize="18"/>
-            <WrapPanel x:Name="cont_Filters" ItemSpacing="5" LineSpacing="5"/>
-          </StackPanel>
+            <WrapPanel Grid.Column="1" x:Name="cont_Filters" ItemSpacing="5" LineSpacing="5" ItemHeight="30"/>
+          </Grid>
 
           <Border Grid.Column="1" Background="{DynamicResource ButtonBackground}" CornerRadius="8" BorderBrush="{DynamicResource ButtonBorder}" BorderThickness="1">
             <StackPanel Orientation="Horizontal" x:Name="cont_Layouts"/>

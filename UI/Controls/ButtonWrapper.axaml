@@ -51,8 +51,12 @@
       </StackPanel>
     </Border>
 
-    <Popup IsOpen="{Binding #root.IsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=RootPanel}" MinWidth="{Binding ElementName=RootPanel, Path=Bounds.Width}" IsLightDismissEnabled="True" HorizontalAlignment="Right">
-      <ContentPresenter Content="{Binding #root.PopupContent}"/>
+    <Popup IsOpen="{Binding #root.IsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=RootPanel}" Placement="BottomEdgeAlignedLeft" IsLightDismissEnabled="True" HorizontalOffset="0" VerticalOffset="5">
+      <Border MinWidth="{Binding ElementName=RootPanel, Path=Bounds.Width}" HorizontalAlignment="Left" Background="{DynamicResource PopupBackground}" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource ButtonBackground}" BoxShadow="0 0 12 0 #000000">
+        <Border CornerRadius="8" ClipToBounds="True">
+          <ContentPresenter Content="{Binding #root.PopupContent}"/>
+        </Border>
+      </Border>
     </Popup>
   </Panel>
 </UserControl>
