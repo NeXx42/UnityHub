@@ -158,8 +158,10 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
     private async Task CreateNewProject()
     {
-        CreateProjectModal proj = MainWindow.ShowModal<CreateProjectModal>(out _);
+        CreateProjectModal proj = MainWindow.ShowModal<CreateProjectModal>(out int id);
         await proj.Show();
+
+        await MainWindow.CloseModal(id);
     }
 
     private async Task SelectNewProjectOption(int id)

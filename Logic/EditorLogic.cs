@@ -349,7 +349,8 @@ public class EditorLogic : IEditorLogic
         if (true)
         {
             await CreateHandover(info.id);
-            await InjectPackagesIntoProject(info.directory, new Dictionary<string, string>() { { LINK_NAME, "file:/home/matth/Documents/Projects/UnityHub/com.nexx.unityhublink" } });
+            await CreateInjectorPackage(info);
+
         }
 
         info.lastOpened = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -566,6 +567,45 @@ public class EditorLogic : IEditorLogic
         {
             WriteIndented = true
         }));
+    }
+
+    private async Task CreateInjectorPackage(ProjectInfo info)
+    {
+        // need some way of determining the version to replace it on updates
+        const string packageName = "com.nexx.unityhublink";
+        string packageLocation = Path.Combine(GlobalConfig.getDataFolder, packageName);
+
+        if (!Directory.Exists(packageLocation))
+        {
+            string referencePackage = Path.Combine(AppContext.BaseDirectory, packageName);
+
+            if (!Directory.Exists(referencePackage))
+            {
+                Console.WriteLine("Failed to find injector package, skipping");
+                return;
+            }
+
+            CopyFromReference(referencePackage, packageLocation);
+
+            void CopyFromReference(string existing, string destination)
+            {
+                Directory.CreateDirectory(destination);
+
+                foreach (var file in Directory.GetFiles(existing))
+                {
+                    var destFile = Path.Combine(destination, Path.GetFileName(file));
+                    File.Copy(file, destFile, overwrite: true);
+                }
+
+                foreach (var directory in Directory.GetDirectories(existing))
+                {
+                    var destSubDir = Path.Combine(destination, Path.GetFileName(directory));
+                    CopyFromReference(directory, destSubDir);
+                }
+            }
+        }
+
+        await InjectPackagesIntoProject(info.directory, new Dictionary<string, string>() { { LINK_NAME, $"file:{packageLocation}" } });
     }
 
     public struct ActiveInstances

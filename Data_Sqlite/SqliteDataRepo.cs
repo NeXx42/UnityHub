@@ -228,11 +228,28 @@ public class SqliteDataRepo : IDataRepository
     }
 
 
-    public async Task CreateCard(ProjectInfo info) => await CreateCards([info]);
-    public async Task CreateCards(IEnumerable<ProjectInfo> cards)
+    public async Task<int> CreateCard(ProjectInfo info) => (await CreateCards([info])).Values.Single();
+    public async Task<Dictionary<string, int>> CreateCards(IEnumerable<ProjectInfo> cards)
     {
         dbo_Project[] dbObjs = cards.Select(MapToDto).ToArray();
         await database!.InsertItem(dbObjs);
+
+        // .. need to implement something in my sql orm to get the ids for new items
+
+        Dictionary<string, int> newIds = new Dictionary<string, int>();
+
+        dbo_Project[] dboItems = await database!.GetItems<dbo_Project>(SQLFilter
+            .In(nameof(dbo_Project.directory), cards.Select(c => c.directory))
+            .OrderDesc(nameof(dbo_Project.id))
+            .Limit(cards.Count()));
+
+        foreach (dbo_Project newItem in dboItems)
+        {
+            if (!newIds.ContainsKey(newItem.directory)) // ordered so if some how there is a duplicate it should still select the newest
+                newIds[newItem.directory] = newItem.id;
+        }
+
+        return newIds;
     }
 
     public async Task<TagData[]> GetTags()

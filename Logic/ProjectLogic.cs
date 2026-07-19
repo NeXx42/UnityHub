@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text.Json;
 using Models;
 using Models.Data;
@@ -168,7 +169,16 @@ public class ProjectLogic : IProjectLogic
 
     public async Task UploadCardsPrimitive(IEnumerable<ProjectInfo> cards)
     {
-        await data.CreateCards(cards);
+        Dictionary<string, int> res = await data.CreateCards(cards);
+
+        foreach (ProjectInfo card in cards)
+        {
+            if (res.TryGetValue(card.directory, out int databaseId))
+                card.id = databaseId;
+            else
+                Console.WriteLine($"Failed to create project - {card.directory}");
+        }
+
         callback?.Invoke(nameof(UploadCardsPrimitive));
     }
 

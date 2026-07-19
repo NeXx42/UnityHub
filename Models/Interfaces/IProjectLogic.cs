@@ -19,6 +19,11 @@ public interface IProjectLogic
 
     public LoadRequest[] DeriveProjectInfo(ProjectInfo info, bool recache);
 
+    /// <summary>
+    /// expect data interface to update the id to reflect the database
+    /// </summary>
+    /// <param name="cards"></param>
+    /// <returns></returns>
     public Task UploadCardsPrimitive(IEnumerable<ProjectInfo> cards);
 
     public Task UpdateProperties(ProjectInfo info, IEnumerable<string> props);

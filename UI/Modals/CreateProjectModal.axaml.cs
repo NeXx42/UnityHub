@@ -47,6 +47,11 @@ public partial class CreateProjectModal : UserControl, IModal
 
     private async Task Draw()
     {
+        string? lastSaveLocation = await DependencyManager.GetService<IConfigLogic>()!.Get(ConfigEntry.LastSaveLocation, string.Empty);
+
+        if (!string.IsNullOrEmpty(lastSaveLocation) && Directory.Exists(lastSaveLocation))
+            inp_Location.Text = lastSaveLocation;
+
         installedVersions = (await DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersionsMoreInfo(System.Threading.CancellationToken.None)).OrderByDescending(v => v.versionName).ToArray();
 
         inp_Versions.ItemsSource = installedVersions.Select(v => v.versionName);
@@ -103,7 +108,10 @@ public partial class CreateProjectModal : UserControl, IModal
             return;
         }
 
+        await DependencyManager.GetService<IConfigLogic>()!.Set(ConfigEntry.LastSaveLocation, loc, true);
         await projectLogic.UploadCardsPrimitive([newInfo]);
+        await editorLogic.LaunchProject(newInfo);
+
         task?.SetResult();
     }
 
