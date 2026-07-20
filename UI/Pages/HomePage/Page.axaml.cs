@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Logic;
@@ -111,7 +112,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         btn_Filters.RegisterPopup(filter);
 
         sort = new Popup_Sort();
-        sort.Draw(0, Enum.GetNames<ProjectOrder>(), UpdateSort);
+        sort.Draw(activeSearch, UpdateSort);
         btn_Sort.RegisterPopup(sort);
 
         inp_Text.TextChanged += (_, __) => UpdateTextFilter().Wrap();
@@ -228,6 +229,8 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
     private async Task RedrawFilterList()
     {
+        btn_Sort.Label = FormatOrderName(activeSearch.order);
+
         ITaggingLogic tagService = DependencyManager.GetService<ITaggingLogic>()!;
 
         List<TagData> filters = new List<TagData>();
@@ -290,10 +293,10 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         await SearchCards();
     }
 
-    private async Task UpdateSort(int sort)
+    private async Task UpdateSort(ProjectOrder sort)
     {
-        activeSearch.order = (ProjectOrder)sort;
-        btn_Sort.Label = activeSearch.order.ToString();
+        activeSearch.order = sort;
+        btn_Sort.Label = FormatOrderName(activeSearch.order);
 
         await SearchCards();
     }
@@ -310,5 +313,20 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
     class SearchFilterCollectionStandIn : TagData
     {
         public string customType = "";
+    }
+
+    private string FormatOrderName(ProjectOrder order)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        foreach (char c in order.ToString())
+        {
+            if (char.IsUpper(c))
+                sb.Append(" ");
+
+            sb.Append(c);
+        }
+
+        return sb.ToString().Substring(1);
     }
 }

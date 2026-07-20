@@ -1,12 +1,13 @@
 <UserControl xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Popups.Popup_Sort">
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Popups.Popup_Sort"
+  xmlns:controls="clr-namespace:UI.Controls">
   <ScrollViewer>
     <StackPanel x:Name="cont" Margin="5" Spacing="5">
-      <Grid ColumnDefinitions="* *" Margin="0 6">
-        <Label HorizontalAlignment="Center">Descending</Label>
-        <Label HorizontalAlignment="Center" Grid.Column="1">Ascending</Label>
+      <Grid ColumnDefinitions="* 5 *" Margin="0 6">
+        <controls:ButtonWrapper x:Name="btn_Asc" Label="Ascending" HorizontalContentAlignment="Center" Classes="Transparent"/>
+        <controls:ButtonWrapper x:Name="btn_Desc" Label="Descending" Grid.Column="2" HorizontalContentAlignment="Center" Classes="Transparent"/>
       </Grid>
 
       <Border Background="{DynamicResource ButtonBackground}" HorizontalAlignment="Stretch" Height="1" />

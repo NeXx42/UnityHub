@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Models.Data;
+using Models.Enums;
 using UI.Controls;
 using UI.Helpers;
 using UI.Interfaces;
@@ -12,10 +12,13 @@ namespace UI.Popups;
 
 public partial class Popup_Sort : UserControl, IPopup
 {
-    private int selectedOption = 0;
+    private bool isAscending;
+    private int selectedOption;
+
+    private ProjectSearch? currentSearchRef;
     private TaskCompletionSource? openTask;
 
-    private Action<int>? onUpdateAction;
+    private Func<ProjectOrder, Task>? onUpdateAction;
     private ReusableList<ButtonWrapper> options;
 
     public Popup_Sort()
@@ -28,42 +31,86 @@ public partial class Popup_Sort : UserControl, IPopup
 
             return btn;
         });
+
+        btn_Asc.RegisterClick(() => ChangeOrder(true));
+        btn_Desc.RegisterClick(() => ChangeOrder(false));
     }
 
-    public void Draw(int selectedOption, IEnumerable<string> values, Func<int, Task> onUpdateCallback)
-        => Draw(selectedOption, values, (v) => onUpdateCallback.WrapTask(v));
-
-    public void Draw(int selectedOption, IEnumerable<string> values, Action<int> onUpdateCallback)
+    public void Draw(ProjectSearch currentSearchRef, Func<ProjectOrder, Task> onUpdateCallback)
     {
-        this.selectedOption = selectedOption;
+        this.currentSearchRef = currentSearchRef;
         onUpdateAction = onUpdateCallback;
 
-        options.Draw(values, (ui, pos, v) =>
+        const string ascendingSuffix = "Asc";
+        string[] names = Enum.GetNames<ProjectOrder>()
+            .Where(e => e.EndsWith(ascendingSuffix))
+            .Select(e => e.Substring(0, e.Length - ascendingSuffix.Length))
+            .ToArray();
+
+        options.Draw(names, (ui, pos, v) =>
         {
             ui.Label = v;
             ui.RegisterClick(() => SelectOption(pos));
         });
     }
 
-    private void SelectOption(int pos)
+    public Task Show()
     {
-        openTask?.SetResult();
+        openTask = new TaskCompletionSource();
 
+        ProjectOrder order = currentSearchRef?.order ?? ProjectOrder.NameAsc;
+        selectedOption = (int)Math.Floor((int)order / 2f);
+        isAscending = (int)order % 2 == 0;
+
+        ToggleOrderButtons();
+        UpdateButtonSelection();
+
+        return openTask.Task;
+    }
+
+    private async Task SelectOption(int pos)
+    {
         selectedOption = pos;
-        onUpdateAction?.Invoke(pos);
+        UpdateButtonSelection();
 
+        int optionIndex = pos * 2;
+
+        if (!isAscending)
+            optionIndex++;
+
+        await (onUpdateAction?.Invoke((ProjectOrder)optionIndex) ?? Task.CompletedTask);
+    }
+
+    private async Task ChangeOrder(bool isAscendingNew)
+    {
+        isAscending = isAscendingNew;
+        ToggleOrderButtons();
+
+        await SelectOption(selectedOption);
+    }
+
+    private void UpdateButtonSelection()
+    {
         for (int i = 0; i < options.getElementCount; i++)
         {
-            if (i == pos)
+            if (i == selectedOption)
                 options[i].Classes.Add("Primary");
             else
                 options[i].Classes.Remove("Primary");
         }
     }
 
-    public Task Show()
+    private void ToggleOrderButtons()
     {
-        openTask = new TaskCompletionSource();
-        return openTask.Task;
+        if (isAscending)
+        {
+            btn_Asc.Classes.Add("Primary");
+            btn_Desc.Classes.Remove("Primary");
+        }
+        else
+        {
+            btn_Asc.Classes.Remove("Primary");
+            btn_Desc.Classes.Add("Primary");
+        }
     }
 }
