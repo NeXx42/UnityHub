@@ -28,7 +28,7 @@
 
       <!-- Buttons -->
       <Grid Grid.Row="4">
-        <StackPanel Orientation="Horizontal" Margin="10" Spacing="10">
+        <StackPanel Orientation="Horizontal" Margin="10" Spacing="10" HorizontalAlignment="Center">
           <local:ButtonWrapper Classes="Transparent" x:Name="btn_Home">
             <local:ButtonWrapper.Icon>
               <Viewbox Width="14" Height="14">

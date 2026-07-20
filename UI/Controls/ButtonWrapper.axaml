@@ -18,18 +18,8 @@
         </Transitions>
       </Setter>
     </Style>
-
     <Style Selector="Border#btn > Grid > TextBlock">
-      <Setter Property="Foreground" Value="{DynamicResource Colour_TextColour}"/>
-    </Style>
-
-
-    <Style Selector=".Primary Border#btn">
-      <Setter Property="Background" Value="{DynamicResource Colour_AccentColour}"/>
-    </Style>
-
-    <Style Selector=".Primary #btn > Grid > TextBlock">
-      <Setter Property="Foreground" Value="{DynamicResource Colour_TextColour}"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextColour}"/>
     </Style>
 
     <Style Selector=".Transparent Border#btn">
@@ -40,10 +30,20 @@
       <Setter Property="Background" Value="{DynamicResource ButtonBackground}"/>
     </Style>
 
-
     <Style Selector="Border#btn:pointerover">
       <Setter Property="Background" Value="{DynamicResource BackgroundColourLight}"/>
     </Style>
+
+    <Style Selector=".Primary Border#btn">
+      <Setter Property="Background" Value="{DynamicResource AccentColour}"/>
+    </Style>
+    <Style Selector=".Primary #btn > Grid > TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource TextColour}"/>
+    </Style>
+    <Style Selector=".Primary Border#btn:pointerover">
+      <Setter Property="Background" Value="{DynamicResource AccentColourDark}"/>
+    </Style>
+
   </UserControl.Styles>
 
   <Panel x:Name="RootPanel" HorizontalAlignment="Stretch">

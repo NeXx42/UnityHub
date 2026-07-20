@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -6,7 +7,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Logic;
 using Models.Data;
+using Models.Interfaces;
 using UI.Helpers;
 using UI.Popups;
 
@@ -19,6 +22,8 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
 
     private ReusableList<Border> tagLines;
     private ReusableList<Border> platforms;
+
+    private Func<Task>? redrawRequest;
 
     public new event PropertyChangedEventHandler? PropertyChanged;
 
@@ -45,8 +50,9 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
         }
     }
 
-    public void Draw(EditorInfo info, DownloadStatus? downloadingStatus)
+    public void Draw(EditorInfo info, DownloadStatus? downloadingStatus, Func<Task> redrawRequest)
     {
+        this.redrawRequest = redrawRequest;
         this.DataContext = downloadingStatus;
 
         ProductName = info.versionName;
@@ -122,6 +128,9 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
         switch (value)
         {
             case "Cancel":
+
+                DependencyManager.GetService<IEditorLogic>()!.StopActiveInstall(ProductName);
+                redrawRequest?.Invoke();
                 break;
         }
     }

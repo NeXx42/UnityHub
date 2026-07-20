@@ -76,7 +76,7 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
 
         (EditorInfo, DownloadStatus?)[] installs = [.. installed.Select(i => (i, (DownloadStatus?)null)), .. downloading.Select(d => (d.Key, d.Value))];
 
-        editorInstalls.Draw(installs, (ui, _, dat) => ui.Draw(dat.Item1, dat.Item2));
+        editorInstalls.Draw(installs, (ui, _, dat) => ui.Draw(dat.Item1, dat.Item2, RedrawDownloaded));
     }
 
     private async Task InstallNewEditor()
