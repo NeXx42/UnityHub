@@ -1,16 +1,41 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
 using Models.Data;
 using UI.Controls;
+using UI.Helpers;
 
 namespace UI.Pages.HomePage.ContentDisplays;
 
 public class HomePageLayout_Grid : HomePageLayoutBase<ImageCard>
 {
-    public HomePageLayout_Grid(Panel scroller) : base(scroller) { }
+    private StackPanel wrapper;
+    private ReusableList<ButtonWrapper> pageControls;
+
+    public HomePageLayout_Grid(Panel scroller, Action<int> pageChange) : base(scroller, pageChange)
+    {
+        scroller.Children.Remove(container);
+
+        wrapper = new StackPanel
+        {
+            Spacing = 5
+        };
+        wrapper.Children.Add(container);
+
+        StackPanel pageControlsContainer = new StackPanel()
+        {
+            Spacing = 5,
+            Orientation = Avalonia.Layout.Orientation.Horizontal,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
+        };
+        wrapper.Children.Add(pageControlsContainer);
+        pageControls = new ReusableList<ButtonWrapper>(pageControlsContainer);
+
+        scroller.Children.Add(wrapper);
+    }
 
     protected override Panel GetWrapper()
     {
@@ -22,8 +47,15 @@ public class HomePageLayout_Grid : HomePageLayoutBase<ImageCard>
         return container;
     }
 
-    public override async Task Draw(ProjectInfo[] cardInfo, Func<int, Task> onSelect)
+    public override void ToggleVisibility(bool to)
     {
+        wrapper.IsVisible = to;
+        base.ToggleVisibility(to);
+    }
+
+    public override async Task Draw(ProjectInfo[] cardInfo, bool isPageIncrement, int currentPage, int resultCount, Func<int, Task> onSelect)
+    {
+        DrawPageControls(currentPage, resultCount);
         await cards.DrawWhenAll(cardInfo, (c, i, dat) => c.Draw(dat, i, onSelect));
     }
 
@@ -45,5 +77,35 @@ public class HomePageLayout_Grid : HomePageLayoutBase<ImageCard>
         };
 
         return btn;
+    }
+
+    private void DrawPageControls(int currentPage, int resultCount)
+    {
+        const int MaxPageDistance = 4;
+        List<int> pageOptions = new List<int>();
+
+        int maxPage = (int)Math.Ceiling(resultCount / (float)getTake);
+
+        for (int i = currentPage - MaxPageDistance; i < currentPage + MaxPageDistance; i++)
+        {
+            if (i >= 0 && i < maxPage)
+                pageOptions.Add(i);
+        }
+
+        pageControls.Draw(pageOptions, (lbl, _, dat) =>
+        {
+            lbl.Label = (dat + 1).ToString();
+            lbl.RegisterClick(() => UpdatePage(dat));
+
+            if (dat == currentPage)
+                lbl.Classes.Add("Primary");
+            else
+                lbl.Classes.Remove("Primary");
+        });
+    }
+
+    private async Task UpdatePage(int to)
+    {
+        onPageChangeCallback?.Invoke(to);
     }
 }

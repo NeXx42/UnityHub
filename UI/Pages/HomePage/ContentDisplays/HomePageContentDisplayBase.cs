@@ -11,28 +11,36 @@ public interface IHomePageLayout
 {
     public ButtonWrapper CreateButton();
 
+    public int getTake { get; }
+
     public void ToggleVisibility(bool to);
-    public Task Draw(ProjectInfo[] cards, Func<int, Task> onSelect);
+    public Task Draw(ProjectInfo[] cards, bool isPageIncrement, int currentPage, int resultCount, Func<int, Task> onSelect);
     public void UpdateSelection(int to);
 }
 
 public abstract class HomePageLayoutBase<T> : IHomePageLayout where T : UserControl
 {
+    public virtual int getTake => 16;
+
     protected ButtonWrapper? selectionButton;
 
     protected Panel container;
     protected ReusableList<T> cards;
 
-    public HomePageLayoutBase(Panel scroller)
+    protected Action<int> onPageChangeCallback;
+
+    public HomePageLayoutBase(Panel scroller, Action<int> onPageChange)
     {
         container = GetWrapper();
 
         scroller.Children.Add(container);
         cards = new ReusableList<T>(container);
+
+        onPageChangeCallback = onPageChange;
     }
 
 
-    public abstract Task Draw(ProjectInfo[] cardInfo, Func<int, Task> onSelect);
+    public abstract Task Draw(ProjectInfo[] cardInfo, bool isPageIncrement, int currentPage, int resultCount, Func<int, Task> onSelect);
 
     public virtual void ToggleVisibility(bool to)
     {
@@ -47,6 +55,8 @@ public abstract class HomePageLayoutBase<T> : IHomePageLayout where T : UserCont
         {
             selectionButton!.Classes.Add("Transparent");
             selectionButton!.Classes.Remove("Primary");
+
+            cards.Clear();
         }
     }
 

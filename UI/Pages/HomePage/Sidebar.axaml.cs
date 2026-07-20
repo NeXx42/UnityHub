@@ -64,7 +64,7 @@ public partial class Sidebar : UserControl
         for (int i = 0; i < cont_Entries.Children.Count; i++)
             (cont_Entries.Children[i] as ISidebarControl)?.setSelected = i == id;
 
-        await homepage!.SearchCards();
+        await homepage!.SearchCards(false);
     }
 
     private void TaggingChange(int? projId, string msg)

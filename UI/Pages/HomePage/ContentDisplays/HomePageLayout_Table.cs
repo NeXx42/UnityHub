@@ -11,31 +11,49 @@ namespace UI.Pages.HomePage.ContentDisplays;
 
 public class HomePageLayout_Table : HomePageLayoutBase<TableCard>
 {
-    private Border decor;
+    private StackPanel decor;
+    private ButtonWrapper loadMoreBtn;
 
-    public HomePageLayout_Table(Panel scroller) : base(scroller)
+    private int currentPage = 1;
+    public override int getTake => currentPage * 24;
+
+    public HomePageLayout_Table(Panel scroller, Action<int> pageChange) : base(scroller, pageChange)
     {
-        decor = new Border
+        scroller.Children.Remove(container);
+
+        decor = new StackPanel()
+        {
+            Spacing = 5
+        };
+
+        decor.Children.Add(new Border
         {
             CornerRadius = new Avalonia.CornerRadius(15),
             ClipToBounds = true,
             Background = MainWindow.instance!.FindResource("ButtonBorder") as IBrush,
             MinHeight = 0,
-            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Top
-        };
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Top,
 
-        Border innerDecor = new Border()
+            Child = new Border()
+            {
+                CornerRadius = new Avalonia.CornerRadius(14),
+                ClipToBounds = true,
+                Margin = new Avalonia.Thickness(1),
+
+                Child = container
+            }
+        });
+
+        loadMoreBtn = new ButtonWrapper
         {
-            CornerRadius = new Avalonia.CornerRadius(14),
-            ClipToBounds = true,
-            Margin = new Avalonia.Thickness(1)
+            Label = "Load more",
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
         };
+        loadMoreBtn.Classes.Add("Primary");
+        loadMoreBtn.RegisterClick(RequestMore);
 
-        scroller.Children.Remove(container);
+        decor.Children.Add(loadMoreBtn);
         scroller.Children.Add(decor);
-
-        innerDecor.Child = container;
-        decor.Child = innerDecor;
     }
 
     protected override Panel GetWrapper()
@@ -55,8 +73,12 @@ public class HomePageLayout_Table : HomePageLayoutBase<TableCard>
         base.ToggleVisibility(to);
     }
 
-    public override async Task Draw(ProjectInfo[] cardInfo, Func<int, Task> onSelect)
+    public override async Task Draw(ProjectInfo[] cardInfo, bool isPageIncrement, int _, int resultCount, Func<int, Task> onSelect)
     {
+        if (!isPageIncrement)
+            currentPage = 1;
+
+        loadMoreBtn.IsVisible = resultCount > getTake;
         await cards.DrawWhenAll(cardInfo, (c, i, dat) => c.Draw(dat, i, onSelect));
     }
 
@@ -78,5 +100,11 @@ public class HomePageLayout_Table : HomePageLayoutBase<TableCard>
         };
 
         return btn;
+    }
+
+    private async Task RequestMore()
+    {
+        currentPage++;
+        onPageChangeCallback?.Invoke(0);
     }
 }

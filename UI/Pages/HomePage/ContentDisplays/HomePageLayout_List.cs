@@ -10,9 +10,33 @@ namespace UI.Pages.HomePage.ContentDisplays;
 
 public class HomePageLayout_List : HomePageLayoutBase<ListCard>
 {
-    public HomePageLayout_List(Panel scroller) : base(scroller)
-    {
+    private StackPanel wrapper;
+    private ButtonWrapper loadMoreBtn;
 
+    private int currentPage = 1;
+    public override int getTake => currentPage * 9;
+
+    public HomePageLayout_List(Panel scroller, Action<int> pageChange) : base(scroller, pageChange)
+    {
+        scroller.Children.Remove(container);
+
+        wrapper = new StackPanel()
+        {
+            Spacing = 5
+        };
+
+        wrapper.Children.Add(container);
+
+        loadMoreBtn = new ButtonWrapper
+        {
+            Label = "Load more",
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
+        };
+        loadMoreBtn.Classes.Add("Primary");
+        loadMoreBtn.RegisterClick(RequestMore);
+
+        wrapper.Children.Add(loadMoreBtn);
+        scroller.Children.Add(wrapper);
     }
 
     protected override Panel GetWrapper()
@@ -24,8 +48,18 @@ public class HomePageLayout_List : HomePageLayoutBase<ListCard>
         return container;
     }
 
-    public override async Task Draw(ProjectInfo[] cardInfo, Func<int, Task> onSelect)
+    public override void ToggleVisibility(bool to)
     {
+        wrapper.IsVisible = to;
+        base.ToggleVisibility(to);
+    }
+
+    public override async Task Draw(ProjectInfo[] cardInfo, bool isPageIncrement, int _, int resultCount, Func<int, Task> onSelect)
+    {
+        if (!isPageIncrement)
+            currentPage = 1;
+
+        loadMoreBtn.IsVisible = resultCount > getTake;
         await cards.DrawWhenAll(cardInfo, (c, i, dat) => c.Draw(dat, i, onSelect));
     }
 
@@ -47,5 +81,11 @@ public class HomePageLayout_List : HomePageLayoutBase<ListCard>
         };
 
         return btn;
+    }
+
+    private async Task RequestMore()
+    {
+        currentPage++;
+        onPageChangeCallback?.Invoke(0);
     }
 }

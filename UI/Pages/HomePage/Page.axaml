@@ -5,7 +5,7 @@
   xmlns:local="clr-namespace:UI.Pages.HomePage"
   xmlns:controls="clr-namespace:UI.Controls" x:Name="root">
   <Grid ColumnDefinitions="* Auto">
-    <Grid RowDefinitions="Auto * Auto" Margin="15">
+    <Grid RowDefinitions="Auto *" Margin="15">
       <!-- Searching -->
       <StackPanel Orientation="Vertical" Spacing="15">
         <!-- Filtering -->
@@ -51,8 +51,6 @@
       <ScrollViewer Grid.Row="1">
         <Grid x:Name="grid_Content" Margin="0 15"/>
       </ScrollViewer>
-
-      <StackPanel Grid.Row="2" x:Name="cont_PageControls" Height="30" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center"/>
     </Grid>
 
     <local:MoreInfo Grid.Column="1" x:Name="control_MoreInfo"/>

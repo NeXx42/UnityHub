@@ -35,9 +35,6 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         Add_Existing,
         Add_Folder,
     }
-
-    const int ItemsPerPage = 16;
-
     private int maxPages = 5;
 
     private int? currentSelectedCard;
@@ -45,7 +42,6 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
     private Popup_Sort? sort;
 
     private List<IHomePageLayout> contentDisplayers;
-    private ReusableList<ButtonWrapper> pageControls;
     private ReusableList<CollectionItem> activeFilters;
 
     public int projectCount;
@@ -62,6 +58,12 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
     public Page()
     {
+        activeSearch = new ProjectSearch()
+        {
+            page = 0,
+            take = 0
+        };
+
         InitializeComponent();
 
         if (Design.IsDesignMode)
@@ -82,7 +84,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
             {
                 int layoutId = contentDisplayers.Count;
 
-                IHomePageLayout layoutControl = (IHomePageLayout)Activator.CreateInstance(layout, grid_Content)!;
+                IHomePageLayout layoutControl = (IHomePageLayout)Activator.CreateInstance(layout, grid_Content, (int p) => UpdatePage(p).Wrap())!;
                 contentDisplayers.Add(layoutControl);
 
                 ButtonWrapper btn = layoutControl.CreateButton();
@@ -96,19 +98,12 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         UpdateLayout(0).Wrap();
 
         activeFilters = new ReusableList<CollectionItem>(cont_Filters);
-        pageControls = new ReusableList<ButtonWrapper>(cont_PageControls);
 
         btn_NewProject.RegisterOptions(((NewProjectOptions[])System.Enum.GetValues(typeof(NewProjectOptions))).Select(s => s.GetDisplayName()), SelectNewProjectOption);
         btn_NewProject.RegisterClick(CreateNewProject);
 
-        activeSearch = new ProjectSearch()
-        {
-            page = 0,
-            take = ItemsPerPage
-        };
-
         filter = new Popup_Filter();
-        filter.Init(activeSearch, SearchCards);
+        filter.Init(activeSearch, () => SearchCards(false));
         btn_Filters.RegisterPopup(filter);
 
         sort = new Popup_Sort();
@@ -137,16 +132,15 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         return Task.CompletedTask;
     }
 
-    public async Task SearchCards()
+    public async Task SearchCards(bool isPageIncrement)
     {
-        (cardInfo, projectCount) = await DependencyManager.GetService<IProjectLogic>()!.Search(activeSearch);
-        maxPages = (int)Math.Ceiling(projectCount / (float)ItemsPerPage);
+        activeSearch.take = getCurrentContentDisplay.getTake;
 
+        (cardInfo, projectCount) = await DependencyManager.GetService<IProjectLogic>()!.Search(activeSearch);
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalProjectCountTxt)));
 
-        await getCurrentContentDisplay.Draw(cardInfo, SelectCard);
+        await getCurrentContentDisplay.Draw(cardInfo, isPageIncrement, activeSearch.page, projectCount, SelectCard);
         await RedrawFilterList();
-        RedrawPageControls();
     }
 
     private async Task SelectCard(int cardPos)
@@ -201,30 +195,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
     private async Task UpdatePage(int to)
     {
         activeSearch.page = to;
-        await SearchCards();
-    }
-
-    private void RedrawPageControls()
-    {
-        const int MaxPageDistance = 4;
-        List<int> pageOptions = new List<int>();
-
-        for (int i = activeSearch.page - MaxPageDistance; i < activeSearch.page + MaxPageDistance; i++)
-        {
-            if (i >= 0 && i < maxPages)
-                pageOptions.Add(i);
-        }
-
-        pageControls.Draw(pageOptions, (lbl, _, dat) =>
-        {
-            lbl.Label = (dat + 1).ToString();
-            lbl.RegisterClick(() => UpdatePage(dat));
-
-            if (dat == activeSearch.page)
-                lbl.Classes.Add("Selected");
-            else
-                lbl.Classes.Remove("Selected");
-        });
+        await SearchCards(true);
     }
 
     private async Task RedrawFilterList()
@@ -275,7 +246,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         {
             case nameof(IProjectLogic.DeleteCard):
             case nameof(IProjectLogic.UploadCardsPrimitive):
-                SearchCards().Wrap();
+                SearchCards(false).Wrap();
                 break;
         }
     }
@@ -290,7 +261,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         lastTextFilter = txt;
         activeSearch.text = lastTextFilter;
 
-        await SearchCards();
+        await SearchCards(false);
     }
 
     private async Task UpdateSort(ProjectOrder sort)
@@ -298,7 +269,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         activeSearch.order = sort;
         btn_Sort.Label = FormatOrderName(activeSearch.order);
 
-        await SearchCards();
+        await SearchCards(false);
     }
 
     private async Task UpdateLayout(int to)
@@ -307,7 +278,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         selectedContentDisplayer = to;
         getCurrentContentDisplay.ToggleVisibility(true);
 
-        await getCurrentContentDisplay.Draw(cardInfo ?? [], SelectCard);
+        await SearchCards(false);
     }
 
     class SearchFilterCollectionStandIn : TagData

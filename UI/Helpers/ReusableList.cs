@@ -103,4 +103,9 @@ public class ReusableList<T> where T : Control
     {
         get => cachedEntries[i];
     }
+
+    public void Clear()
+    {
+        DrawInternal((string[])[], 0);
+    }
 }
