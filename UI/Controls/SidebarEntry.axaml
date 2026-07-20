@@ -24,7 +24,7 @@
     </Style>
   </UserControl.Styles>
 
-  <Border x:Name="cont_Border" Padding="8" CornerRadius="8">
+  <Border x:Name="cont_Border" Padding="8" CornerRadius="8" Cursor="Hand">
     <Grid>
       <StackPanel Orientation="Horizontal" Spacing="10">
         <ContentPresenter Content="{Binding #root.Icon}"/>

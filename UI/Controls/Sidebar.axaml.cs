@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using UI.Popups;
 
 namespace UI.Controls;
 
@@ -16,7 +17,7 @@ public partial class Sidebar : UserControl
 
         btn_Home.RegisterClick(() => MainWindow.RequestPage(PageNames.Home));
         btn_Settings.RegisterClick(() => MainWindow.RequestPage(PageNames.Settings));
-        btn_Downloads.RegisterClick(() => MainWindow.RequestPage(PageNames.Settings));
+        btn_Downloads.RegisterPopup<Popup_ActiveDownloads>();
     }
 
     public async Task Init()

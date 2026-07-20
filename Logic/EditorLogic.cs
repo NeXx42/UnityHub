@@ -18,7 +18,8 @@ public class EditorLogic : IEditorLogic
     public const string LINK_NAME = "com.nexx.unityhublink";
 
     private string[]? editorLocations;
-    private Dictionary<int, ActiveInstances> activeInstances = new Dictionary<int, ActiveInstances>();
+    private Dictionary<int, ActiveInstances> activeInstances = new();
+    private Dictionary<string, ActiveDownload> activeDownloads = new();
 
     public async Task<bool> IsVersionInstalled(string? version) => !string.IsNullOrEmpty(await GetEditorInstall(version));
 
@@ -441,34 +442,90 @@ public class EditorLogic : IEditorLogic
 
     public async Task InstallEditor(EditorInfo version, int download, string path)
     {
+        if (activeDownloads.ContainsKey(version.versionName))
+        {
+            await DependencyManager.ui!.ShowMessageBox("Already downloading", $"Failed to install version {version.versionName} because it is already being downloaded.");
+            return;
+        }
+
         if (await IsVersionInstalled(version.versionName))
         {
             await DependencyManager.ui!.ShowMessageBox("Install already exists", $"Failed to install version {version.versionName} because it is already installed.");
             return;
         }
 
+        EditorInfo.Download downloadInfo = version.downloads[download];
+
         string savePath = Path.Combine(path, version.versionName);
-        string extractPath = $"{savePath}.{version.downloads[download].type!.ToLower()}";
+        string extractPath = $"{savePath}.{downloadInfo.type!.ToLowerInvariant()}";
 
-        using (HttpClient http = new HttpClient())
+        ActiveDownload activeDownload = new ActiveDownload([
+            new LoadRequest("Downloading", DownloadFile),
+            new LoadRequest("Extracting", Unzip),
+        ]);
+
+        activeDownloads[version.versionName] = activeDownload;
+
+        async Task DownloadFile(IProgress<float> subProgress, CancellationToken token)
         {
-            HttpResponseMessage res = await http.GetAsync(version.downloads[download].url, HttpCompletionOption.ResponseHeadersRead);
+            using (HttpClient http = new HttpClient())
+            {
+                HttpResponseMessage res = await http.GetAsync(downloadInfo.url, HttpCompletionOption.ResponseHeadersRead);
+                res.EnsureSuccessStatusCode();
 
-            res.EnsureSuccessStatusCode();
+                long? totalBytes = res.Content.Headers.ContentLength;
 
-            await using Stream stream = await res.Content.ReadAsStreamAsync();
-            await using FileStream file = File.Create(extractPath);
+                await using Stream stream = await res.Content.ReadAsStreamAsync(token);
+                await using FileStream file = File.Create(extractPath);
 
-            await stream.CopyToAsync(file);
-            await Extract(extractPath, savePath);
-            await Extract(savePath, savePath);
+                byte[] buffer = new byte[81920];
+                long totalRead = 0;
+                int bytesRead;
+
+                while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                {
+                    if (token.IsCancellationRequested)
+                        break;
+
+                    await file.WriteAsync(buffer, 0, bytesRead);
+
+                    totalRead += bytesRead;
+
+                    if (totalBytes.HasValue)
+                    {
+                        subProgress?.Report((float)totalRead / totalBytes.Value);
+                    }
+                }
+
+                subProgress?.Report(1f);
+            }
+        }
+
+        async Task Unzip(IProgress<float> subProgress, CancellationToken token)
+        {
+            switch (downloadInfo.type.ToLowerInvariant())
+            {
+                case "tar.xz":
+                    await Unzip_Tar(subProgress, token);
+                    break;
+
+                default:
+                    break;
+            }
+
+            File.Delete(extractPath);
+        }
+
+        async Task Unzip_Tar(IProgress<float> subProgress, CancellationToken token)
+        {
+            await Extract(extractPath, savePath, token, subProgress);
+            await Extract(savePath, savePath, token, subProgress);
 
             File.Delete(Path.Combine(savePath, version.versionName));
-            File.Delete(extractPath);
         }
     }
 
-    private async Task Extract(string path, string result)
+    private async Task Extract(string path, string result, CancellationToken cancellationToken, IProgress<float> progress)
     {
         ProcessStartInfo info = new ProcessStartInfo();
         info.FileName = "7z";
@@ -490,59 +547,59 @@ public class EditorLogic : IEditorLogic
         p.StartInfo = info;
 
         p.Start();
-        await ReadProgressOfExtraction(p, CancellationToken.None);
+        await ReadProgressOfExtraction(p);
 
         if (p.ExitCode != 0)
         {
             throw new Exception(await p.StandardError.ReadToEndAsync());
         }
-    }
 
-    private static Task ReadProgressOfExtraction(Process p, CancellationToken cancellationToken)
-    {
-        int charNumber;
-        const int newLineCharNumber = '\b';
-
-        string line = string.Empty;
-
-        TaskCompletionSource task = new TaskCompletionSource();
-
-        Task.Run(() =>
+        Task ReadProgressOfExtraction(Process p)
         {
-            while (!p.HasExited)
+            int charNumber;
+            const int newLineCharNumber = '\b';
+
+            string line = string.Empty;
+
+            TaskCompletionSource task = new TaskCompletionSource();
+
+            Task.Run(() =>
             {
-                if (cancellationToken.IsCancellationRequested)
+                while (!p.HasExited)
                 {
-                    p.Kill();
-                    return;
-                }
-
-                while ((charNumber = p.StandardOutput.Read()) != -1)
-                {
-                    if (charNumber == newLineCharNumber)
+                    if (cancellationToken.IsCancellationRequested)
                     {
-                        string percentageText = line.Replace(" ", "");
-                        Match match = Regex.Match(percentageText, @"^(\d+)%");
+                        p.Kill();
+                        return;
+                    }
 
-                        if (match.Success)
+                    while ((charNumber = p.StandardOutput.Read()) != -1)
+                    {
+                        if (charNumber == newLineCharNumber)
                         {
-                            int percentage = int.Parse(match.Groups[1].Value);
-                            //progress.Report(percentage);
-                        }
+                            string percentageText = line.Replace(" ", "");
+                            Match match = Regex.Match(percentageText, @"^(\d+)%");
 
-                        line = string.Empty;
-                    }
-                    else
-                    {
-                        line += (char)charNumber;
+                            if (match.Success)
+                            {
+                                int percentage = int.Parse(match.Groups[1].Value);
+                                progress.Report(percentage);
+                            }
+
+                            line = string.Empty;
+                        }
+                        else
+                        {
+                            line += (char)charNumber;
+                        }
                     }
                 }
-            }
 
-            task.SetResult();
-        });
+                task.SetResult();
+            });
 
-        return task.Task;
+            return task.Task;
+        }
     }
 
     private async Task InjectPackagesIntoProject(string projectRoot, Dictionary<string, string> packages)
@@ -608,6 +665,34 @@ public class EditorLogic : IEditorLogic
         await InjectPackagesIntoProject(info.directory, new Dictionary<string, string>() { { LINK_NAME, $"file:{packageLocation}" } });
     }
 
+    public Dictionary<string, DownloadStatus> GetActiveInstalls()
+    {
+        KeyValuePair<string, ActiveDownload>[] inDownloads = activeDownloads.ToArray();
+        Dictionary<string, DownloadStatus> res = new(inDownloads.Length);
+
+        foreach (KeyValuePair<string, ActiveDownload> download in inDownloads)
+        {
+            if (download.Value.isDone)
+            {
+                activeDownloads.Remove(download.Key);
+                continue;
+            }
+
+            res.Add(download.Key, download.Value);
+        }
+
+        return res;
+    }
+
+    public void StopActiveInstall(string version)
+    {
+        if (activeDownloads.TryGetValue(version, out ActiveDownload? download) && download != null)
+        {
+            download.Stop();
+            activeDownloads.Remove(version);
+        }
+    }
+
     public struct ActiveInstances
     {
         private int id;
@@ -624,6 +709,59 @@ public class EditorLogic : IEditorLogic
         public void Start()
         {
             activeProcess.Start();
+        }
+    }
+
+    private class ActiveDownload : DownloadStatus
+    {
+        private Thread thread;
+        private CancellationTokenSource cancellation;
+
+        private IProgress<float> mainProgress;
+        private IProgress<float> secondaryProgress;
+        private LoadRequest[] loadRequests;
+
+        public float mainProgressValue { private set; get; }
+        public float secondaryProgressValue { private set; get; }
+
+        public ActiveDownload(params LoadRequest[] loads)
+        {
+            loadRequests = loads;
+            cancellation = new CancellationTokenSource();
+
+            mainProgress = new Progress<float>(v => mainProgressValue = v);
+            secondaryProgress = new Progress<float>(v =>
+            {
+                secondaryProgressValue = v;
+                currentValue = v;
+            });
+
+            thread = new Thread(Run);
+            thread.Start();
+
+            isDone = false;
+        }
+
+        private void Run()
+        {
+            float interval = 1 / loadRequests.Length;
+            float curProgress = 0;
+
+            foreach (LoadRequest req in loadRequests)
+            {
+                if (cancellation.IsCancellationRequested)
+                    break;
+
+                req.Run(cancellation.Token, secondaryProgress).Wait();
+                mainProgress.Report(curProgress += interval);
+            }
+
+            isDone = true;
+        }
+
+        public void Stop()
+        {
+            cancellation.Cancel();
         }
     }
 }

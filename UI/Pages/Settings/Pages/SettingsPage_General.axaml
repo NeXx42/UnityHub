@@ -8,7 +8,7 @@
       <Label FontSize="20">Projects</Label>
       <Grid ColumnDefinitions="* 5 200">
         <Label>Derive missing metadata</Label>
-        <controls:ButtonWrapper Label="Derive" x:Name="btn_Projects_DeriveMissingMetadata" Classes="Primary" Grid.Column="2"/>
+        <controls:ButtonWrapper Label="Derive" x:Name="btn_Projects_DeriveMissingMetadata" Classes="Primary" Grid.Column="2" HorizontalContentAlignment="Center"/>
       </Grid>
     </StackPanel>
   </StackPanel>

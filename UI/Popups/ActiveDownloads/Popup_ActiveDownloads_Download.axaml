@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Popups.ActiveDownloads.Popup_ActiveDownloads_Download" x:Name="root"
+  xmlns:controls="clr-namespace:UI.Controls"
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:DownloadStatus">
+
+  <Border Background="{DynamicResource ButtonBackground}" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}">
+    <StackPanel Orientation="Vertical" Spacing="5" Margin="5">
+      <Grid ColumnDefinitions="100 * Auto">
+        <Label Content="{Binding #root.VersionName}" />
+        <Label Content="{Binding getPercentageName}" Grid.Column="2"/>
+      </Grid>
+      <Grid ColumnDefinitions="* Auto">
+        <ProgressBar Value="{Binding currentValue}" Margin="0 0 5 0" Minimum="0" Maximum="1"/>
+        <controls:ButtonWrapper Grid.Column="1" Label="Cancel" x:Name="btn_Stop"/>
+      </Grid >
+    </StackPanel>
+  </Border>
+</UserControl>

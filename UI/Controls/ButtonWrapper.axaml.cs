@@ -57,18 +57,25 @@ public partial class ButtonWrapper : UserControl
         set => SetValue(IsOpenProperty, value);
     }
 
-    public static readonly StyledProperty<bool> HasPopupProperty = AvaloniaProperty.Register<ButtonWrapper, bool>(nameof(HasPopup), defaultValue: false);
-    public bool HasPopup
-    {
-        get => GetValue(HasPopupProperty);
-        set => SetValue(HasPopupProperty, value);
-    }
-
     public static new readonly StyledProperty<HorizontalAlignment> HorizontalContentAlignmentProperty = AvaloniaProperty.Register<ButtonWrapper, HorizontalAlignment>(nameof(HorizontalContentAlignment), HorizontalAlignment.Left);
     public new HorizontalAlignment HorizontalContentAlignment
     {
         get => GetValue(HorizontalContentAlignmentProperty);
         set => SetValue(HorizontalContentAlignmentProperty, value);
+    }
+
+    public static readonly StyledProperty<bool> HasPopupIconProperty = AvaloniaProperty.Register<ButtonWrapper, bool>(nameof(HasPopupIcon), false);
+    public bool HasPopupIcon
+    {
+        get => GetValue(HasPopupIconProperty);
+        set => SetValue(HasPopupIconProperty, value);
+    }
+
+    public static readonly StyledProperty<PlacementMode> PopupPlacementTargetProperty = AvaloniaProperty.Register<ButtonWrapper, PlacementMode>(nameof(PopupPlacementTarget), PlacementMode.BottomEdgeAlignedLeft);
+    public PlacementMode PopupPlacementTarget
+    {
+        get => GetValue(PopupPlacementTargetProperty);
+        set => SetValue(PopupPlacementTargetProperty, value);
     }
 
     private Action? onClick;
@@ -85,8 +92,6 @@ public partial class ButtonWrapper : UserControl
     {
         PopupContent = null;
         onClick = callback;
-
-        HasPopup = false;
     }
 
     public void RegisterPopup<T>() where T : UserControl, IPopup
@@ -96,8 +101,6 @@ public partial class ButtonWrapper : UserControl
     {
         PopupContent = popup;
         PopupData = popup;
-
-        HasPopup = true;
 
         onClick = () => HandlePopup().Wrap();
 

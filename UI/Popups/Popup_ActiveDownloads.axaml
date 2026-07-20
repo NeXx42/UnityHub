@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="150" x:Class="UI.Popups.Popup_ActiveDownloads">
+  <ScrollViewer>
+    <StackPanel Spacing="5" x:Name="cont" MinHeight="100" Width="300" Margin="10">
+      <Label HorizontalAlignment="Center" FontSize="20">Downloads</Label>
+
+      <Border Background="{DynamicResource ButtonBorder}" Height="1" HorizontalAlignment="Stretch"/>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

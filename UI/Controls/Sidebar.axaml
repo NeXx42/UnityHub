@@ -52,7 +52,7 @@
 
           <Border Height="20" Width="1" Background="{DynamicResource TextColourMuted}" />
 
-          <local:ButtonWrapper Classes="Transparent" x:Name="btn_Downloads">
+          <local:ButtonWrapper Classes="Transparent" x:Name="btn_Downloads" PopupPlacementTarget="Top">
             <local:ButtonWrapper.Icon>
               <Viewbox Width="16" Height="16">
                 <Grid>
