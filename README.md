@@ -2,7 +2,7 @@
 
 Open-source & cross-platform alternative to Unity's official Hub — for managing Unity editor installs and projects, built with [Avalonia UI](https://avaloniaui.net/) and .NET.
 
-> ⚠️ Early-stage project (`v0.1.0`). Expect rough edges and breaking changes.
+> ⚠️ Early-stage project. Expect rough edges and breaking changes.
 
 ## Features
 
