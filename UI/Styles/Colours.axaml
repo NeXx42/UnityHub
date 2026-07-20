@@ -10,6 +10,9 @@
   <Color x:Key="Colour_BackgroundColourLight">#12171c</Color>
   <SolidColorBrush x:Key="BackgroundColourLight" Color="{DynamicResource Colour_BackgroundColourLight}" />
 
+  <Color x:Key="Colour_BackgroundColourLightTransparent">#0012171c</Color>
+  <SolidColorBrush x:Key="BackgroundColourLightTransparent" Color="{DynamicResource Colour_BackgroundColourLightTransparent}" />
+
   <Color x:Key="Colour_BackgroundBorder">#12171c</Color>
   <SolidColorBrush x:Key="BackgroundBorder" Color="{DynamicResource Colour_BackgroundBorder}" />
 

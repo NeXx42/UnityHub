@@ -42,6 +42,8 @@ public partial class MainWindow : Window, IUILinker
         InitializeComponent();
 
         DependencyManager.Init(this);
+        ThemeHelper.Startup().Wrap();
+
         pages = new Dictionary<PageNames, IPage>()
         {
             { PageNames.Home, page_HomePage },

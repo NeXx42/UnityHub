@@ -5,11 +5,10 @@
   xmlns:common="clr-namespace:UI.Pages.Settings.Pages.Common">
   <StackPanel Orientation="Vertical" Spacing="5">
     <Label FontSize="20">Colours</Label>
-    <common:SettingsPage_Common_Colour/>
-    <common:SettingsPage_Common_Colour/>
-    <common:SettingsPage_Common_Colour/>
-    <common:SettingsPage_Common_Colour/>
-    <common:SettingsPage_Common_Colour/>
-    <common:SettingsPage_Common_Colour/>
+
+    <Grid ColumnDefinitions="Auto * 200">
+      <Label>Theme</Label>
+      <ComboBox x:Name="inp_ThemeDropdown" Grid.Column="3"/>
+    </Grid>
   </StackPanel>
 </UserControl>

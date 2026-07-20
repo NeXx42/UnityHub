@@ -1,0 +1,19 @@
+<Styles xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Style Selector="Label">
+    <Setter Property="Foreground" Value="{DynamicResource Colour_TextColour}"/>
+  </Style>
+  <Style Selector="TextBox">
+    <Setter Property="Foreground" Value="{DynamicResource Colour_TextColour}"/>
+  </Style>
+  <Style Selector="Path">
+    <Setter Property="Fill" Value="{DynamicResource Colour_TextColour}"/>
+  </Style>
+  <Style Selector="ComboBox">
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="Background" Value="{DynamicResource ButtonBackground}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorder}"/>
+    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="Padding" Value="10 0 0 0"/>
+  </Style>
+</Styles>

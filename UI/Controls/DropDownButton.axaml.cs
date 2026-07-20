@@ -33,7 +33,13 @@ public partial class DropDownButton : UserControl
         InitializeComponent();
         DataContext = this;
 
-        buttonList = new ReusableList<ButtonWrapper>(container);
+        buttonList = new ReusableList<ButtonWrapper>(container, () =>
+        {
+            ButtonWrapper btn = new ButtonWrapper();
+            btn.Classes.Add("Transparent");
+
+            return btn;
+        });
 
         btn.RegisterClick(() => onClick?.Invoke());
     }

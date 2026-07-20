@@ -19,7 +19,7 @@
       </Setter>
     </Style>
 
-    <Style Selector="Border#btn > Label">
+    <Style Selector="Border#btn > Grid > TextBlock">
       <Setter Property="Foreground" Value="{DynamicResource Colour_TextColour}"/>
     </Style>
 
@@ -28,13 +28,13 @@
       <Setter Property="Background" Value="{DynamicResource Colour_AccentColour}"/>
     </Style>
 
-    <Style Selector=".Primary #btn > Label">
+    <Style Selector=".Primary #btn > Grid > TextBlock">
       <Setter Property="Foreground" Value="{DynamicResource Colour_TextColour}"/>
     </Style>
 
     <Style Selector=".Transparent Border#btn">
       <Setter Property="Background" Value="{DynamicResource ButtonBackgroundTransparent}"/>
-      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource ButtonBackgroundTransparent}"/>
     </Style>
     <Style Selector=".Transparent Border#btn:pointerover">
       <Setter Property="Background" Value="{DynamicResource ButtonBackground}"/>

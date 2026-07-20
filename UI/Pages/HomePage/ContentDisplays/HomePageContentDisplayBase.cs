@@ -39,9 +39,15 @@ public abstract class HomePageLayoutBase<T> : IHomePageLayout where T : UserCont
         container.IsVisible = to;
 
         if (to)
+        {
+            selectionButton!.Classes.Remove("Transparent");
             selectionButton!.Classes.Add("Primary");
+        }
         else
+        {
+            selectionButton!.Classes.Add("Transparent");
             selectionButton!.Classes.Remove("Primary");
+        }
     }
 
     public virtual void UpdateSelection(int to)

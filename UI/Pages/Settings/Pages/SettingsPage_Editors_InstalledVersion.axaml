@@ -13,7 +13,7 @@
         <controls:ButtonWrapper VerticalAlignment="Center" Grid.Column="4" Classes="Transparent" x:Name="btn_Extra">
           <controls:ButtonWrapper.Icon>
             <Viewbox Height="12">
-              <Path Fill="white" Data="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+              <Path Fill="{DynamicResource TextColour}" Data="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
             </Viewbox>
           </controls:ButtonWrapper.Icon>
         </controls:ButtonWrapper >

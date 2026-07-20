@@ -8,13 +8,15 @@
     <Grid ColumnDefinitions="* 1 Auto">
       <local:ButtonWrapper x:Name="btn" Label="{Binding ButtonLabel}" CornerRadius="8 0 0 8" Classes="Primary"/>
       <ToggleButton IsChecked="{Binding IsOpen, Mode=TwoWay}" Background="{DynamicResource AccentColour}" CornerRadius="0 8 8 0" VerticalAlignment="Stretch" Grid.Column="2" Cursor="Hand">
-        <Path Data="M 0 0 L 6 6 L 12 0" Stroke="White" StrokeThickness="2" StrokeLineCap="Round" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <Path Data="M 0 0 L 6 6 L 12 0" Stroke="{DynamicResource TextColour}" StrokeThickness="2" StrokeLineCap="Round" HorizontalAlignment="Center" VerticalAlignment="Center" />
       </ToggleButton>
     </Grid>
 
-    <Popup IsOpen="{Binding IsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=RootPanel}" MinWidth="{Binding ElementName=RootPanel, Path=Bounds.Width}" IsLightDismissEnabled="True">
-      <Border Background="Red">
-        <StackPanel x:Name="container"/>
+    <Popup IsOpen="{Binding IsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=RootPanel}" MinWidth="{Binding ElementName=RootPanel, Path=Bounds.Width}" IsLightDismissEnabled="True" VerticalOffset="5">
+      <Border MinWidth="{Binding ElementName=RootPanel, Path=Bounds.Width}" Background="{DynamicResource PopupBackground}" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource ButtonBackground}" BoxShadow="0 0 12 0 #000000">
+        <Border CornerRadius="8" ClipToBounds="True">
+          <StackPanel x:Name="container" Margin="5"/>
+        </Border>
       </Border>
     </Popup>
   </Panel>

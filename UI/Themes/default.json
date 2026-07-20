@@ -1,0 +1,18 @@
+{
+    "BackgroundColour": "#0f151a",
+    "BackgroundColourDark": "#0c1015",
+    "BackgroundColourLight": "#12171c",
+    "BackgroundColourLightTransparent": "#0012171c",
+    "BackgroundBorder": "#12171c",
+    "ElementBackground": "#171c21",
+    "ButtonBorder": "#282D33",
+    "ButtonBackground": "#1C2127",
+    "ButtonBackgroundTransparent": "#001C2127",
+    "ButtonBackgroundDark": "#1a1c29",
+    "AccentColour": "#5735b8",
+    "AccentColourDark": "#2a2842",
+    "AccentColourLight": "#6554d1",
+    "PopupBackground": "#171a22",
+    "TextColour": "#fff",
+    "TextColourMuted": "#a0a5ac"
+}

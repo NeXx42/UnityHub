@@ -65,6 +65,7 @@ public class HomePageLayout_Table : HomePageLayoutBase<TableCard>
     public override ButtonWrapper CreateButton()
     {
         ButtonWrapper btn = base.CreateButton();
+        btn.Classes.Add("Transparent");
         btn.Label = string.Empty;
         btn.Icon = new Viewbox()
         {

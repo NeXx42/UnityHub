@@ -4,15 +4,15 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.CollectionItem" x:Name="root"
   xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:TagData">
   <Border CornerRadius="4" ClipToBounds="True">
-    <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" Spacing="1">
-
+    <Grid ColumnDefinitions="* Auto" VerticalAlignment="Stretch">
       <Border Background="{Binding bgColour}">
         <Label Content="{Binding collectionName}" FontSize="12" Margin="5 0" VerticalAlignment="Center" Foreground="{Binding colour}"/>
       </Border>
 
-      <Border IsVisible="{Binding #root.ShowCloseButton}" VerticalAlignment="Stretch" Cursor="Hand" x:Name="btn_Remove" Background="{Binding bgColour}">
+      <Border IsVisible="{Binding #root.ShowCloseButton}" VerticalAlignment="Stretch" Cursor="Hand" x:Name="btn_Remove" Background="{Binding bgColour}" Margin="1 0 0 0" Grid.Column="2">
         <Label Foreground="{Binding colour}" Margin="5 0" VerticalAlignment="Center">x</Label>
       </Border>
-    </StackPanel>
+
+    </Grid>
   </Border>
 </UserControl>

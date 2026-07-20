@@ -25,9 +25,11 @@
   <Target Name="CopyPluginsToOutput" AfterTargets="Build">
     <ItemGroup>
       <PluginFiles Include="Plugins\**\*.*" />
+      <ThemeFiles Include="Themes\**\*.*" />
       <PackageFolder Include="..\com.nexx.unityhublink\**\*.*" />
     </ItemGroup>
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(OutputPath)Plugins\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ThemeFiles)" DestinationFolder="$(OutputPath)Themes\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(PackageFolder)" DestinationFolder="$(OutputPath)com.nexx.unityhublink\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
 </Project>

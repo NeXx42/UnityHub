@@ -21,7 +21,7 @@
           <controls:ButtonWrapper Label="{Binding version}" Classes="Transparent" x:Name="inp_Version" HasPopupIcon="True">
             <controls:ButtonWrapper.Icon>
               <Viewbox Height="12" Width="12" Margin="0 0 10 0">
-                <Path Data="m 12.8497 1 v 3.9324 l 3.4868 2.0108 c 0.0279 0.0167 0.0501 0.0446 0.0668 0.0724 c 0.0223 0.0278 0.0279 0.0613 0.0279 0.0947 c 0 0.0334 -0.0056 0.0668 -0.0279 0.1003 c -0.0167 0.0278 -0.039 0.0501 -0.0668 0.0724 l -4.1441 2.384 c -0.0557 0.039 -0.1281 0.0557 -0.195 0.0557 c -0.0668 0 -0.1337 -0.0167 -0.195 -0.0557 l -4.1441 -2.384 c -0.0279 -0.0167 -0.0501 -0.0446 -0.0668 -0.0724 c -0.0167 -0.0279 -0.0279 -0.0613 -0.0279 -0.0947 c 0 -0.0334 0.0111 -0.0668 0.0279 -0.1003 c 0.0167 -0.0279 0.039 -0.0501 0.0668 -0.0724 l 3.4868 -2.0052 v -3.938 l -8.8953 5.13 v 10.2544 l 3.4144 -1.9662 v -4.0215 c 0 -0.0334 0.0056 -0.0668 0.0223 -0.0947 c 0.0167 -0.0279 0.0446 -0.0501 0.0724 -0.0724 c 0.0278 -0.0167 0.0613 -0.0223 0.1003 -0.0223 c 0.0334 0 0.0668 0.0056 0.0947 0.0223 l 4.1441 2.3895 c 0.0613 0.0334 0.1114 0.0836 0.1448 0.1448 c 0.0334 0.0557 0.0501 0.1225 0.0501 0.1949 v 4.7735 c 0 0.0334 -0.0056 0.0668 -0.0278 0.1003 c -0.0167 0.0279 -0.039 0.0557 -0.0668 0.0724 c -0.0334 0.0167 -0.0668 0.0223 -0.1003 0.0223 c -0.0334 0 -0.0668 -0.0056 -0.0947 -0.0223 l -3.4868 -2.0108 l -3.4144 1.9662 l 8.8953 5.13 l 8.8953 -5.13 l -3.4144 -1.9662 l -3.4868 2.0108 c -0.0278 0.0167 -0.0613 0.0223 -0.0947 0.0223 c -0.0334 0 -0.0668 -0.0111 -0.0947 -0.0279 c -0.0334 -0.0167 -0.0557 -0.039 -0.0724 -0.0668 c -0.0167 -0.0334 -0.0279 -0.0668 -0.0279 -0.1003 v -4.7735 c 0 -0.0724 0.0167 -0.1393 0.0501 -0.1949 c 0.039 -0.0613 0.0836 -0.1114 0.1448 -0.1448 l 4.1441 -2.3895 c 0.0278 -0.0167 0.0613 -0.0223 0.0947 -0.0223 c 0.0334 0 0.0668 0.0056 0.1003 0.0223 c 0.0278 0.0223 0.0501 0.0446 0.0668 0.0724 c 0.0223 0.0279 0.0279 0.0613 0.0279 0.1003 v 4.016 l 3.4144 1.9662 v -10.2544 l -8.8953 -5.13 z" Fill="white" />
+                <Path Data="m 12.8497 1 v 3.9324 l 3.4868 2.0108 c 0.0279 0.0167 0.0501 0.0446 0.0668 0.0724 c 0.0223 0.0278 0.0279 0.0613 0.0279 0.0947 c 0 0.0334 -0.0056 0.0668 -0.0279 0.1003 c -0.0167 0.0278 -0.039 0.0501 -0.0668 0.0724 l -4.1441 2.384 c -0.0557 0.039 -0.1281 0.0557 -0.195 0.0557 c -0.0668 0 -0.1337 -0.0167 -0.195 -0.0557 l -4.1441 -2.384 c -0.0279 -0.0167 -0.0501 -0.0446 -0.0668 -0.0724 c -0.0167 -0.0279 -0.0279 -0.0613 -0.0279 -0.0947 c 0 -0.0334 0.0111 -0.0668 0.0279 -0.1003 c 0.0167 -0.0279 0.039 -0.0501 0.0668 -0.0724 l 3.4868 -2.0052 v -3.938 l -8.8953 5.13 v 10.2544 l 3.4144 -1.9662 v -4.0215 c 0 -0.0334 0.0056 -0.0668 0.0223 -0.0947 c 0.0167 -0.0279 0.0446 -0.0501 0.0724 -0.0724 c 0.0278 -0.0167 0.0613 -0.0223 0.1003 -0.0223 c 0.0334 0 0.0668 0.0056 0.0947 0.0223 l 4.1441 2.3895 c 0.0613 0.0334 0.1114 0.0836 0.1448 0.1448 c 0.0334 0.0557 0.0501 0.1225 0.0501 0.1949 v 4.7735 c 0 0.0334 -0.0056 0.0668 -0.0278 0.1003 c -0.0167 0.0279 -0.039 0.0557 -0.0668 0.0724 c -0.0334 0.0167 -0.0668 0.0223 -0.1003 0.0223 c -0.0334 0 -0.0668 -0.0056 -0.0947 -0.0223 l -3.4868 -2.0108 l -3.4144 1.9662 l 8.8953 5.13 l 8.8953 -5.13 l -3.4144 -1.9662 l -3.4868 2.0108 c -0.0278 0.0167 -0.0613 0.0223 -0.0947 0.0223 c -0.0334 0 -0.0668 -0.0111 -0.0947 -0.0279 c -0.0334 -0.0167 -0.0557 -0.039 -0.0724 -0.0668 c -0.0167 -0.0334 -0.0279 -0.0668 -0.0279 -0.1003 v -4.7735 c 0 -0.0724 0.0167 -0.1393 0.0501 -0.1949 c 0.039 -0.0613 0.0836 -0.1114 0.1448 -0.1448 l 4.1441 -2.3895 c 0.0278 -0.0167 0.0613 -0.0223 0.0947 -0.0223 c 0.0334 0 0.0668 0.0056 0.1003 0.0223 c 0.0278 0.0223 0.0501 0.0446 0.0668 0.0724 c 0.0223 0.0279 0.0279 0.0613 0.0279 0.1003 v 4.016 l 3.4144 1.9662 v -10.2544 l -8.8953 -5.13 z" Fill="{DynamicResource TextColour}" />
               </Viewbox>
             </controls:ButtonWrapper.Icon>
           </controls:ButtonWrapper>
@@ -46,7 +46,7 @@
             <controls:ButtonWrapper Margin="0 0 0 0" Grid.Column="0" x:Name="btn_SourceControl" HorizontalContentAlignment="Center">
               <controls:ButtonWrapper.Icon>
                 <Viewbox Height="20">
-                  <Path Fill="White" Data="M15.698 7.287 8.712.302a1.03 1.03 0 0 0-1.457 0l-1.45 1.45 1.84 1.84a1.223 1.223 0 0 1 1.55 1.56l1.773 1.774a1.224 1.224 0 0 1 1.267 2.025 1.226 1.226 0 0 1-2.002-1.334L8.58 5.963v4.353a1.226 1.226 0 1 1-1.008-.036V5.887a1.226 1.226 0 0 1-.666-1.608L5.093 2.465l-4.79 4.79a1.03 1.03 0 0 0 0 1.457l6.986 6.986a1.03 1.03 0 0 0 1.457 0l6.953-6.953a1.03 1.03 0 0 0 0-1.457"/>
+                  <Path Fill="{DynamicResource TextColour}" Data="M15.698 7.287 8.712.302a1.03 1.03 0 0 0-1.457 0l-1.45 1.45 1.84 1.84a1.223 1.223 0 0 1 1.55 1.56l1.773 1.774a1.224 1.224 0 0 1 1.267 2.025 1.226 1.226 0 0 1-2.002-1.334L8.58 5.963v4.353a1.226 1.226 0 1 1-1.008-.036V5.887a1.226 1.226 0 0 1-.666-1.608L5.093 2.465l-4.79 4.79a1.03 1.03 0 0 0 0 1.457l6.986 6.986a1.03 1.03 0 0 0 1.457 0l6.953-6.953a1.03 1.03 0 0 0 0-1.457"/>
                 </Viewbox>
               </controls:ButtonWrapper.Icon>
             </controls:ButtonWrapper>
@@ -55,8 +55,8 @@
               <controls:ButtonWrapper.Icon>
                 <Viewbox Height="18">
                   <Grid>
-                    <Path Fill="White" Data="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9M3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708z"/>
-                    <Path Fill="White" Data="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/>
+                    <Path Fill="{DynamicResource TextColour}" Data="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9M3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708z"/>
+                    <Path Fill="{DynamicResource TextColour}" Data="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/>
                   </Grid>
                 </Viewbox>
               </controls:ButtonWrapper.Icon>
@@ -65,7 +65,7 @@
             <controls:ButtonWrapper Margin="5 0 0 0" Grid.Column="2" x:Name="btn_Clone" HorizontalContentAlignment="Center">
               <controls:ButtonWrapper.Icon>
                 <Viewbox Height="18">
-                  <Path Fill="White" Data="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
+                  <Path Fill="{DynamicResource TextColour}" Data="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
                 </Viewbox>
               </controls:ButtonWrapper.Icon>
             </controls:ButtonWrapper>
@@ -74,8 +74,8 @@
               <controls:ButtonWrapper.Icon>
                 <Viewbox Height="18">
                   <Grid>
-                    <Path Fill="White" Data="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                    <Path Fill="White" Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                    <Path Fill="{DynamicResource TextColour}" Data="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                    <Path Fill="{DynamicResource TextColour}" Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
                   </Grid>
                 </Viewbox>
               </controls:ButtonWrapper.Icon>
@@ -107,7 +107,7 @@
           </Style>
         </StackPanel.Styles>
 
-        <Label Content="Details" Foreground="White" Margin="0 0 0 10"/>
+        <Label Content="Details" Foreground="{DynamicResource TextColour}" Margin="0 0 0 10"/>
 
         <Grid ColumnDefinitions="Auto *">
           <Label Content="Path" />
@@ -143,12 +143,12 @@
       <!-- Tags -->
       <StackPanel Margin="8 0">
         <Grid>
-          <Label HorizontalAlignment="Left">Tags</Label>
+          <Label HorizontalAlignment="Left" Foreground="{DynamicResource TextColour}">Tags</Label>
 
           <controls:ButtonWrapper HorizontalAlignment="Right" Classes="Transparent" x:Name="btn_AddTag">
             <controls:ButtonWrapper.Icon>
               <Viewbox Width="18" Height="18">
-                <Path Fill="White" Data="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                <Path Fill="{DynamicResource TextColour}" Data="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
               </Viewbox>
             </controls:ButtonWrapper.Icon>
           </controls:ButtonWrapper>
@@ -159,12 +159,12 @@
       <!-- Collections -->
       <StackPanel Margin="8 0">
         <Grid>
-          <Label HorizontalAlignment="Left">Collections</Label>
+          <Label HorizontalAlignment="Left" Foreground="{DynamicResource TextColour}">Collections</Label>
 
           <controls:ButtonWrapper HorizontalAlignment="Right" Classes="Transparent" x:Name="btn_AddCollection">
             <controls:ButtonWrapper.Icon>
               <Viewbox Width="18" Height="18">
-                <Path Fill="White" Data="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                <Path Fill="{DynamicResource TextColour}" Data="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
               </Viewbox>
             </controls:ButtonWrapper.Icon>
           </controls:ButtonWrapper>
@@ -172,19 +172,11 @@
         <WrapPanel x:Name="cont_Collections" Margin="5 0 0 0" ItemSpacing="5" LineSpacing="5"/>
       </StackPanel>
 
-      <StackPanel Margin="8 0">
-        <Grid>
-          <Label HorizontalAlignment="Left">Notes</Label>
-
-          <controls:ButtonWrapper HorizontalAlignment="Right" Classes="Transparent">
-            <controls:ButtonWrapper.Icon>
-              <Viewbox Width="18" Height="18">
-                <Path Fill="White" Data="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-              </Viewbox>
-            </controls:ButtonWrapper.Icon>
-          </controls:ButtonWrapper>
-        </Grid>
-        <TextBlock />
+      <StackPanel Margin="8 0" Spacing="5">
+        <Label HorizontalAlignment="Left" Foreground="{DynamicResource TextColour}">Notes</Label>
+        <Border CornerRadius="8" Background="{DynamicResource ElementBackground}" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" Cursor="Ibeam">
+          <TextBlock TextWrapping="Wrap" Text="{Binding notes}" Margin="5" FontSize="12"/>
+        </Border>
       </StackPanel>
 
     </StackPanel>
