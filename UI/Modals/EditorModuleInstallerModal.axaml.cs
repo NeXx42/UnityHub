@@ -61,5 +61,6 @@ public partial class EditorModuleInstallerModal : UserControl, IModal
             }
 
         await DependencyManager.GetService<IEditorLogic>()!.InstallEditor(selectedVersion, download, selectedPath);
+        modalTask?.SetResult();
     }
 }

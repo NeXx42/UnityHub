@@ -459,7 +459,7 @@ public class EditorLogic : IEditorLogic
         string savePath = Path.Combine(path, version.versionName);
         string extractPath = $"{savePath}.{downloadInfo.type!.ToLowerInvariant()}";
 
-        ActiveDownload activeDownload = new ActiveDownload([
+        ActiveDownload activeDownload = new ActiveDownload(version, [
             new LoadRequest("Downloading", DownloadFile),
             new LoadRequest("Extracting", Unzip),
         ]);
@@ -665,10 +665,10 @@ public class EditorLogic : IEditorLogic
         await InjectPackagesIntoProject(info.directory, new Dictionary<string, string>() { { LINK_NAME, $"file:{packageLocation}" } });
     }
 
-    public Dictionary<string, DownloadStatus> GetActiveInstalls()
+    public Dictionary<EditorInfo, DownloadStatus> GetActiveInstalls()
     {
         KeyValuePair<string, ActiveDownload>[] inDownloads = activeDownloads.ToArray();
-        Dictionary<string, DownloadStatus> res = new(inDownloads.Length);
+        Dictionary<EditorInfo, DownloadStatus> res = new(inDownloads.Length);
 
         foreach (KeyValuePair<string, ActiveDownload> download in inDownloads)
         {
@@ -678,7 +678,7 @@ public class EditorLogic : IEditorLogic
                 continue;
             }
 
-            res.Add(download.Key, download.Value);
+            res.Add(download.Value.editorInfo, download.Value);
         }
 
         return res;
@@ -714,6 +714,8 @@ public class EditorLogic : IEditorLogic
 
     private class ActiveDownload : DownloadStatus
     {
+        public EditorInfo editorInfo { private set; get; }
+
         private Thread thread;
         private CancellationTokenSource cancellation;
 
@@ -724,8 +726,10 @@ public class EditorLogic : IEditorLogic
         public float mainProgressValue { private set; get; }
         public float secondaryProgressValue { private set; get; }
 
-        public ActiveDownload(params LoadRequest[] loads)
+        public ActiveDownload(EditorInfo editorInfo, params LoadRequest[] loads)
         {
+            this.editorInfo = editorInfo;
+
             loadRequests = loads;
             cancellation = new CancellationTokenSource();
 

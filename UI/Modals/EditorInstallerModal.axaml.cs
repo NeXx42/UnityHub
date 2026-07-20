@@ -61,6 +61,8 @@ public partial class EditorInstallerModal : UserControl, IModal
         EditorModuleInstallerModal modal = MainWindow.ShowModal<EditorModuleInstallerModal>(out int pos);
         await modal.Show(version);
         await MainWindow.CloseModal(pos);
+
+        modalTask?.SetResult();
     }
 
     private async Task UpdateSelectedEditorType(EditorFilterType type)

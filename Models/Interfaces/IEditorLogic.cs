@@ -11,7 +11,7 @@ public interface IEditorLogic
     public Task<EditorInstallInfo[]> GetInstalledEditorVersionsMoreInfo(CancellationToken token);
     public Task<(EditorInfo[], int)> GetEditorDownloads(EditorFilterType filterType, string? filter, int page, int pageSize);
 
-    public Dictionary<string, DownloadStatus> GetActiveInstalls();
+    public Dictionary<EditorInfo, DownloadStatus> GetActiveInstalls();
     public void StopActiveInstall(string version);
 
     public Task<bool> IsVersionInstalled(string? version);

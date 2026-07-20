@@ -33,8 +33,8 @@ public partial class Popup_ActiveDownloads : UserControl, IPopup
     private void Draw()
     {
         IEditorLogic logic = DependencyManager.GetService<IEditorLogic>()!;
-        Dictionary<string, DownloadStatus> activeDownloads = logic.GetActiveInstalls();
+        Dictionary<EditorInfo, DownloadStatus> activeDownloads = logic.GetActiveInstalls();
 
-        downloadList.Draw(activeDownloads, (ui, _, dat) => ui.Draw(dat.Key, dat.Value));
+        downloadList.Draw(activeDownloads, (ui, _, dat) => ui.Draw(dat.Key.versionName, dat.Value));
     }
 }

@@ -9,7 +9,7 @@
       <Grid RowDefinitions="* 5 Auto">
         <StackPanel x:Name="cont_Locations"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="2">
-          <controls:ButtonWrapper Label="Add" x:Name="btn_AddLocation" Classes="Primary" Width="100"/>
+          <controls:ButtonWrapper Label="Add" x:Name="btn_AddLocation" Classes="Primary" Width="100" HorizontalContentAlignment="Center"/>
         </StackPanel>
       </Grid>
     </StackPanel>
@@ -19,7 +19,7 @@
       <Grid RowDefinitions="* 5 Auto">
         <StackPanel x:Name="cont_Versions" Spacing="5"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5" Grid.Row="2">
-          <controls:ButtonWrapper Label="Install" Classes="Primary" Width="100" x:Name="btn_InstallVersion"/>
+          <controls:ButtonWrapper Label="Install" Classes="Primary" Width="100" x:Name="btn_InstallVersion" HorizontalContentAlignment="Center"/>
         </StackPanel>
       </Grid>
     </StackPanel>

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -68,13 +69,22 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
 
     private async Task RedrawDownloaded()
     {
-        EditorInstallInfo[] installs = await DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersionsMoreInfo(System.Threading.CancellationToken.None);
-        editorInstalls.Draw(installs, (ui, _, dat) => ui.Draw(dat));
+        IEditorLogic logic = DependencyManager.GetService<IEditorLogic>()!;
+
+        EditorInstallInfo[] installed = await logic.GetInstalledEditorVersionsMoreInfo(System.Threading.CancellationToken.None);
+        Dictionary<EditorInfo, DownloadStatus> downloading = logic.GetActiveInstalls();
+
+        (EditorInfo, DownloadStatus?)[] installs = [.. installed.Select(i => (i, (DownloadStatus?)null)), .. downloading.Select(d => (d.Key, d.Value))];
+
+        editorInstalls.Draw(installs, (ui, _, dat) => ui.Draw(dat.Item1, dat.Item2));
     }
 
     private async Task InstallNewEditor()
     {
-        EditorInstallerModal modal = MainWindow.ShowModal<EditorInstallerModal>(out _);
+        EditorInstallerModal modal = MainWindow.ShowModal<EditorInstallerModal>(out int pos);
         await modal.Open();
+
+        await MainWindow.CloseModal(pos);
+        await RedrawDownloaded();
     }
 }

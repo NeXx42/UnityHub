@@ -1,11 +1,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Models.Data;
 using UI.Helpers;
+using UI.Popups;
 
 namespace UI.Pages.Settings.Pages;
 
@@ -23,36 +26,29 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
     {
         InitializeComponent();
 
-        tagLines = new ReusableList<Border>(cont_Tags, () =>
+        tagLines = new ReusableList<Border>(cont_Tags, CreateTag);
+        platforms = new ReusableList<Border>(cont_Platforms, CreateTag);
+
+        Border CreateTag()
         {
-            Border border = new Border()
+            return new Border()
             {
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(8),
-            };
-            Label l = new Label();
-            l.FontSize = 12;
 
-            border.Child = l;
-            return border;
-        });
-        platforms = new ReusableList<Border>(cont_Platforms, () =>
-        {
-            Border border = new Border()
-            {
-                BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(8),
+                Child = new Label
+                {
+                    FontSize = 12,
+                    Margin = new Thickness(5, 0)
+                }
             };
-            Label l = new Label();
-            l.FontSize = 12;
-
-            border.Child = l;
-            return border;
-        });
+        }
     }
 
-    public void Draw(EditorInfo info)
+    public void Draw(EditorInfo info, DownloadStatus? downloadingStatus)
     {
+        this.DataContext = downloadingStatus;
+
         ProductName = info.versionName;
 
         List<(string, string)> tags = new();
@@ -70,11 +66,29 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
             lbl.Background = new SolidColorBrush(new Color(100, c.R, c.G, c.B));
         });
 
+        Popup_GenericList popupOptions;
+
         if (info is not EditorInstallInfo installedInfo)
         {
+            if (downloadingStatus != null)
+            {
+                InstallLocation = string.Empty;
+                cont_DownloadStatus.IsVisible = true;
+
+                popupOptions = new Popup_GenericList();
+                popupOptions.Draw(["Cancel"], OnExtraOptionCallback);
+                btn_Extra.RegisterPopup(popupOptions);
+            }
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
             return;
         }
+
+        popupOptions = new Popup_GenericList();
+        popupOptions.Draw(["Manage", "Delete"], OnExtraOptionCallback);
+        btn_Extra.RegisterPopup(popupOptions);
+
+        cont_DownloadStatus.IsVisible = false;
 
         InstallLocation = installedInfo.installLocation;
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
@@ -100,6 +114,15 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
             }
 
             return (msg, hexColour ?? "#ffffff");
+        }
+    }
+
+    private async Task OnExtraOptionCallback(int _, string value)
+    {
+        switch (value)
+        {
+            case "Cancel":
+                break;
         }
     }
 }

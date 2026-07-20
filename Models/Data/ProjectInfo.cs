@@ -48,10 +48,10 @@ public class ProjectInfo
     }
 
     public long? lastOpened { get; set; }
-    public string getLastOpenedTxt => lastOpened.HasValue ? DateTimeOffset.FromUnixTimeSeconds(lastOpened.Value).ToString() : "Never";
+    public string getLastOpenedTxt => lastOpened.HasValue ? DateTimeOffset.FromUnixTimeSeconds(lastOpened.Value).LocalDateTime.ToString() : "Never";
 
     public long? created { get; set; }
-    public string getCreatedTxt => created.HasValue ? DateTimeOffset.FromUnixTimeSeconds(created.Value).ToString() : "Never";
+    public string getCreatedTxt => created.HasValue ? DateTimeOffset.FromUnixTimeSeconds(created.Value).LocalDateTime.ToString() : "Never";
 
     public string? notes { get; set; }
     public int? packages { get; set; }
