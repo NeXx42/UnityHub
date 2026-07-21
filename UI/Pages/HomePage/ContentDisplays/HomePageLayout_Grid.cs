@@ -81,6 +81,12 @@ public class HomePageLayout_Grid : HomePageLayoutBase<ImageCard>
 
     private void DrawPageControls(int currentPage, int resultCount)
     {
+        if (resultCount < getTake)
+        {
+            pageControls.Clear();
+            return;
+        }
+
         const int MaxPageDistance = 4;
         List<int> pageOptions = new List<int>();
 

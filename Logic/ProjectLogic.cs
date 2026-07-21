@@ -92,15 +92,18 @@ public class ProjectLogic : IProjectLogic
         return (cards.ToArray(), total);
     }
 
-    public async Task<ProjectInfo?> GetProjectInfo(int id)
+    public async Task<ProjectInfo?> GetProjectInfo(int? id)
     {
-        if (cache.TryGetValue(id, out ProjectInfo? proj))
+        if (id == null)
+            return null;
+
+        if (cache.TryGetValue(id.Value, out ProjectInfo? proj))
         {
             return proj;
         }
 
-        ProjectInfo? info = await data.GetProjectInfo(id);
-        cache[id] = info;
+        ProjectInfo? info = await data.GetProjectInfo(id.Value);
+        cache[id.Value] = info;
 
         return info;
     }

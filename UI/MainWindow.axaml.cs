@@ -149,4 +149,9 @@ public partial class MainWindow : Window, IUILinker
         await CloseModal(pos);
         return error;
     }
+
+    public static void ClearFocus()
+    {
+        instance!.FocusManager?.Focus(null);
+    }
 }

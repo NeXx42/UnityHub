@@ -91,8 +91,9 @@ public partial class ButtonWrapper : UserControl
     public void RegisterClick(Action callback)
     {
         PopupContent = null;
-        onClick = callback;
+        onClick = () => ClickWrapper(callback);
     }
+    public void RegisterClick(Func<Task> callback) => onClick = () => ClickWrapper(callback.Wrap);
 
     public void RegisterPopup<T>() where T : UserControl, IPopup
         => RegisterPopup(Activator.CreateInstance<T>());
@@ -106,14 +107,18 @@ public partial class ButtonWrapper : UserControl
 
         async Task HandlePopup()
         {
+            MainWindow.ClearFocus();
+
             IsOpen = true;
             await popup.Show();
             IsOpen = false;
         }
     }
 
-    public void RegisterClick(Func<Task> callback)
+
+    private void ClickWrapper(Action callback)
     {
-        onClick = callback.Wrap;
+        MainWindow.ClearFocus();
+        callback?.Invoke();
     }
 }

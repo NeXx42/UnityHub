@@ -79,7 +79,7 @@ public static class ThemeHelper
 
     public static string[] GetThemes()
     {
-        return ["Default", .. GetThemeRoots().SelectMany(SearchDir)];
+        return ["default", .. GetThemeRoots().SelectMany(SearchDir)];
 
         string[] SearchDir(string root)
         {

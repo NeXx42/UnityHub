@@ -7,7 +7,7 @@ public interface IProjectLogic
     public void RegisterCallback(Action<string> callback);
 
     public Task<(ProjectInfo[], int total)> Search(ProjectSearch search);
-    public Task<ProjectInfo?> GetProjectInfo(int id);
+    public Task<ProjectInfo?> GetProjectInfo(int? id);
 
     public Task<string[]> GetProjectVersions();
 

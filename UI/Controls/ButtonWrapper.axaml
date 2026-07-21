@@ -44,6 +44,10 @@
       <Setter Property="Background" Value="{DynamicResource AccentColourDark}"/>
     </Style>
 
+    <Style Selector=".Disabled Border#btn > Grid > TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource TextColourMuted}"/>
+    </Style>
+
   </UserControl.Styles>
 
   <Panel x:Name="RootPanel" HorizontalAlignment="Stretch">

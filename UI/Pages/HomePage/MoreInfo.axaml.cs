@@ -37,15 +37,32 @@ public partial class MoreInfo : UserControl
         Popup_GenericList versionList = new Popup_GenericList();
         versionList.Draw(GetEditorVersions, SelectNewEditorVersion);
         inp_Version.RegisterPopup(versionList);
+
+        inp_Notes.TextChanged += (_, __) => btn_SaveNotes.IsVisible = !(inp_Notes.Text ?? "").Equals(info?.notes ?? "");
+        btn_SaveNotes.RegisterClick(SaveNotes);
+
+        if (!Design.IsDesignMode)
+        {
+            cont_Main.IsVisible = false;
+            cont_Message.IsVisible = true;
+        }
     }
 
-    public async Task Show(int id)
+    public async Task Show(int? id)
     {
+        MainWindow.ClearFocus();
+
         info = await DependencyManager.GetService<IProjectLogic>()!.GetProjectInfo(id);
         DataContext = info;
 
+        cont_Message.IsVisible = info == null;
+        cont_Main.IsVisible = info != null;
+
         if (info == null)
             return;
+
+        inp_Notes.Text = info.notes;
+        btn_SaveNotes.IsVisible = false;
 
         ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
 
@@ -153,5 +170,17 @@ public partial class MoreInfo : UserControl
 
         IProjectLogic logic = DependencyManager.GetService<IProjectLogic>()!;
         await logic.TrySwitchVersion(info, val);
+    }
+
+    private async Task SaveNotes()
+    {
+        if (info == null)
+            return;
+
+        info.notes = inp_Notes.Text;
+        btn_SaveNotes.IsVisible = false;
+
+        IProjectLogic logic = DependencyManager.GetService<IProjectLogic>()!;
+        await logic.UpdateProperties(info, [nameof(ProjectInfo.notes)]);
     }
 }

@@ -141,6 +141,8 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
         await getCurrentContentDisplay.Draw(cardInfo, isPageIncrement, activeSearch.page, projectCount, SelectCard);
         await RedrawFilterList();
+
+        await control_MoreInfo.Show(null);
     }
 
     private async Task SelectCard(int cardPos)
