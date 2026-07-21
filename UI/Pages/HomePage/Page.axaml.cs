@@ -95,9 +95,9 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
             }
         }
 
-        UpdateLayout(0).Wrap();
-
         activeFilters = new ReusableList<CollectionItem>(cont_Filters);
+
+        UpdateLayout(0).Wrap();
 
         btn_NewProject.RegisterOptions(((NewProjectOptions[])System.Enum.GetValues(typeof(NewProjectOptions))).Select(s => s.GetDisplayName()), SelectNewProjectOption);
         btn_NewProject.RegisterClick(CreateNewProject);

@@ -68,6 +68,34 @@ public partial class MainWindow : Window, IUILinker
         return container.ShowModal<T>(pos, CloseModal);
     }
 
+    public static async Task ShowModalAndWait<T>(Func<T, Task> handler) where T : UserControl, IModal
+    {
+        T modal = ShowModal<T>(out int pos);
+
+        try
+        {
+            await handler(modal);
+        }
+        catch (TaskCanceledException) { }
+
+        await CloseModal(pos);
+    }
+
+    public static async Task<RES?> ShowModalAndWait<T, RES>(Func<T, Task<RES>> handler) where T : UserControl, IModal
+    {
+        T modal = ShowModal<T>(out int pos);
+        RES? res = default;
+
+        try
+        {
+            res = await handler(modal);
+        }
+        catch (TaskCanceledException) { }
+
+        await CloseModal(pos);
+        return res;
+    }
+
     public static async Task CloseModal(int pos)
     {
         for (int i = instance!.activeModals.Count - 1; i >= pos; i--)

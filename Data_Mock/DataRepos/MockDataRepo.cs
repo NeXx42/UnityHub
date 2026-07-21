@@ -167,4 +167,14 @@ public class MockDataRepo : IDataRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task DeleteTag(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteCollection(int id)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -44,7 +44,6 @@ public partial class Popup_GenericList : UserControl, IPopup
 
     public Task Show()
     {
-        openTask?.SetCanceled();
         openTask = new TaskCompletionSource();
 
         if (dataloader != null)

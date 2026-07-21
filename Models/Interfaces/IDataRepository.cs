@@ -35,4 +35,7 @@ public interface IDataRepository
     public Task<string?[]> GetConfigValue(string key);
     public Task SetConfigValue(string key, string? value);
     public Task DeleteConfigValue(string key);
+
+    public Task DeleteTag(int id);
+    public Task DeleteCollection(int id);
 }

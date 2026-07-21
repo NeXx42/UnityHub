@@ -1,12 +1,26 @@
 <UserControl xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.CreateCollectionModal">
-  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}" MinWidth="200">
-    <StackPanel Orientation="Vertical">
-      <Label>Test</Label>
-      <TextBox x:Name="txt"/>
-      <Button Content="Add" x:Name="btn"/>
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.CreateCollectionModal"
+  xmlns:controls="clr-namespace:UI.Controls">
+  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}" Width="400" CornerRadius="8">
+    <StackPanel Orientation="Vertical" Margin="10" Spacing="10">
+      <Label FontSize="20" HorizontalAlignment="Center" Margin="0 0 0 10">Save Collection</Label>
+
+      <Grid ColumnDefinitions="100 *">
+        <Label VerticalAlignment="Center">Name</Label>
+        <TextBox x:Name="inp_Name" Grid.Column="2"/>
+      </Grid>
+
+      <Grid ColumnDefinitions="100 *">
+        <Label VerticalAlignment="Center">Colour</Label>
+        <TextBox x:Name="inp_Colour" Grid.Column="2"/>
+      </Grid>
+
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
+        <controls:ButtonWrapper Label="Cancel" x:Name="btn_Cancel"/>
+        <controls:ButtonWrapper Label="Save" x:Name="btn_Save" Classes="Primary"/>
+      </StackPanel>
     </StackPanel>
   </Border>
 </UserControl>

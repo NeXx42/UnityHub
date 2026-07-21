@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_Collections_Container"
+  xmlns:controls="clr-namespace:UI.Controls"
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:TagData">
+  <Border x:Name="cont">
+    <Border.Styles>
+      <Style Selector="Border.Odd">
+        <Setter Property="Background" Value="{DynamicResource BackgroundColourLight}"/>
+      </Style>
+    </Border.Styles>
+
+    <Grid ColumnDefinitions="Auto Auto * Auto" Margin="5">
+      <Label VerticalAlignment="Center" Content="{Binding collectionName}" Margin="0 0 5 0"/>
+      <controls:CollectionItem x:Name="cont_CollectionResult" Grid.Column="1" VerticalAlignment="Center"/>
+
+      <controls:ButtonWrapper VerticalAlignment="Center" Grid.Column="4" Classes="Transparent" x:Name="btn_Extra">
+        <controls:ButtonWrapper.Icon>
+          <Viewbox Height="12">
+            <Path Fill="{DynamicResource TextColour}" Data="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+          </Viewbox>
+        </controls:ButtonWrapper.Icon>
+      </controls:ButtonWrapper >
+
+    </Grid>
+  </Border>
+</UserControl>

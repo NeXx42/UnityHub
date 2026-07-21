@@ -10,35 +10,66 @@ namespace UI.Modals;
 
 public partial class CreateCollectionModal : UserControl, IModal
 {
+    private bool servingCollection { get; set; }
+
     private ModalContainer? container;
-    private TaskCompletionSource<TagData?>? saveTask;
+    private TaskCompletionSource<TagData>? saveTask;
 
     public CreateCollectionModal()
     {
         InitializeComponent();
-        btn.Click += (_, __) => Save();
+
+        btn_Cancel.RegisterClick(() => saveTask?.SetCanceled());
+        btn_Save.RegisterClick(Save);
     }
 
     public bool canDismiss => true;
     public ModalContainer setContainer { set => container = value; }
 
-    public Task<TagData?> Init()
+    public Task<TagData> Init<T>(T? existingData) where T : TagData
     {
-        saveTask = new TaskCompletionSource<TagData?>();
+        saveTask = new TaskCompletionSource<TagData>();
+
+        inp_Name.Text = existingData?.collectionName;
+        inp_Colour.Text = existingData?.colour;
+
+        if (typeof(T) == typeof(CollectionData) || existingData is CollectionData)
+        {
+            servingCollection = true;
+
+            if (existingData is CollectionData colDat)
+            {
+
+            }
+        }
+        else
+        {
+            servingCollection = false;
+        }
+
         return saveTask.Task;
     }
 
     private void Save()
     {
-        if (saveTask == null || string.IsNullOrEmpty(txt.Text))
+        if (saveTask == null || string.IsNullOrEmpty(inp_Name.Text))
             return;
 
-        saveTask.SetResult(new TagData()
+        if (servingCollection)
         {
-            collectionId = -1,
-            collectionName = txt.Text,
-        });
-
-        container?.requestCloserEvent?.Invoke();
+            saveTask.SetResult(new CollectionData()
+            {
+                collectionId = -1,
+                collectionName = inp_Name.Text,
+            });
+        }
+        else
+        {
+            saveTask.SetResult(new TagData()
+            {
+                collectionId = -1,
+                collectionName = inp_Name.Text,
+            });
+        }
     }
 }

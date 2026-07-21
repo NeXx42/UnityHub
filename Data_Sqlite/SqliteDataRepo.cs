@@ -412,4 +412,24 @@ public class SqliteDataRepo : IDataRepository
 
         await database!.Update(updates.Select(MapToDto), (u) => SQLFilter.Equal(nameof(dbo_Project.id), u.id), [.. properties.Select(p => columnMappings[p])]);
     }
+
+    public async Task DeleteTag(int id)
+    {
+        await database!.Delete<dbo_ProjectTag>(SQLFilter.Equal(nameof(dbo_ProjectTag.TagId), id));
+        await database!.Delete<dbo_Tag>(SQLFilter.Equal(nameof(dbo_Tag.Id), id));
+    }
+
+    public async Task DeleteCollection(int id)
+    {
+        await database!.Update(new dbo_Project()
+        {
+            id = -1,
+            collectionId = (int)DefaultCollectionIds.InDevelopment,
+            directory = string.Empty,
+            favourited = false,
+
+        }, SQLFilter.Equal(nameof(dbo_Project.collectionId), id), [nameof(dbo_Project.collectionId)]);
+
+        await database!.Delete<dbo_Collection>(SQLFilter.Equal(nameof(dbo_Collection.Id), id));
+    }
 }

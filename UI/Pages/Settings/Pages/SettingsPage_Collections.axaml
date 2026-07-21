@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_Collections"
+  xmlns:controls="clr-namespace:UI.Controls">
+  <StackPanel Spacing="20">
+    <StackPanel Spacing="5">
+      <Grid>
+        <Label FontSize="20">Collections</Label>
+
+        <controls:ButtonWrapper HorizontalAlignment="Right" Classes="Transparent" x:Name="btn_AddCollection">
+          <controls:ButtonWrapper.Icon>
+            <Viewbox>
+              <Path Data="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+            </Viewbox>
+          </controls:ButtonWrapper.Icon>
+        </controls:ButtonWrapper>
+      </Grid>
+      <Border CornerRadius="8" Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" ClipToBounds="True">
+        <Grid RowDefinitions="* 5 Auto">
+          <StackPanel x:Name="cont_Collections" MinHeight="50"/>
+        </Grid>
+      </Border>
+    </StackPanel>
+
+    <StackPanel Spacing="5">
+      <Grid>
+        <Label FontSize="20">Tags</Label>
+
+        <controls:ButtonWrapper HorizontalAlignment="Right" Classes="Transparent" x:Name="btn_AddTag">
+          <controls:ButtonWrapper.Icon>
+            <Viewbox >
+              <Path Data="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+            </Viewbox>
+          </controls:ButtonWrapper.Icon>
+        </controls:ButtonWrapper>
+      </Grid>
+
+      <Border CornerRadius="8" Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" ClipToBounds="True">
+        <Grid RowDefinitions="* 5 Auto">
+          <StackPanel x:Name="cont_Tags" MinHeight="50"/>
+        </Grid>
+      </Border>
+    </StackPanel>
+
+  </StackPanel>
+</UserControl>

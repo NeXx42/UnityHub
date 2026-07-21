@@ -24,4 +24,7 @@ public interface ITaggingLogic
 
     public Task CreateTag(TagData data);
     public Task CreateCollection(CollectionData data);
+
+    public Task DeleteTag(int id);
+    public Task DeleteCollection(int id);
 }

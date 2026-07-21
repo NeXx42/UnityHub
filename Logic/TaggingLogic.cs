@@ -22,18 +22,21 @@ public class TaggingLogic : ITaggingLogic
 
     private static CollectionData[] defaultCollections = [
         new CollectionData(){
+            isDefault = true,
             collectionId = (int)DefaultCollectionIds.InDevelopment,
             collectionName = "In Development",
             colour = "#3ddc84",
             handlingType = CollectionHandlingTypes.None,
         },
         new CollectionData(){
+            isDefault = true,
             collectionId = (int)DefaultCollectionIds.Archive,
             collectionName = "Archived",
             colour = "#f0c94e",
             handlingType = CollectionHandlingTypes.Archive,
         },
         new CollectionData(){
+            isDefault = true,
             collectionId = (int)DefaultCollectionIds.Released,
             collectionName = "Released",
             colour = "#4ea8f0",
@@ -239,5 +242,20 @@ public class TaggingLogic : ITaggingLogic
 
         _ = await GetCollections(true);
         callbacks?.Invoke(null, nameof(CreateCollection));
+    }
+
+    public async Task DeleteTag(int id)
+    {
+        cachedTags?.Remove(id);
+        await data.DeleteTag(id);
+
+        callbacks?.Invoke(null, nameof(DeleteTag));
+    }
+    public async Task DeleteCollection(int id)
+    {
+        cachedCollections?.Remove(id);
+        await data.DeleteCollection(id);
+
+        callbacks?.Invoke(null, nameof(DeleteCollection));
     }
 }
