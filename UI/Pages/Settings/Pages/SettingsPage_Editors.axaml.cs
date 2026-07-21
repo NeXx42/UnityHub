@@ -37,7 +37,7 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
     public async Task OnOpen()
     {
         await RedrawLocations();
-        RedrawDownloaded().Wrap(); // can be slow, so let it load without blocking this
+        RedrawDownloaded().Wrap(); // can be slow, so let it load without blocking this, should wrap this in the loading boundary
     }
 
     private async Task UpdateLocation(int? index)
@@ -76,7 +76,7 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
 
         (EditorInfo, DownloadStatus?)[] installs = [.. installed.Select(i => (i, (DownloadStatus?)null)), .. downloading.Select(d => (d.Key, d.Value))];
 
-        editorInstalls.Draw(installs, (ui, _, dat) => ui.Draw(dat.Item1, dat.Item2, RedrawDownloaded));
+        editorInstalls.Draw(installs, (ui, pos, dat) => ui.Draw(dat.Item1, dat.Item2, pos, RedrawDownloaded));
     }
 
     private async Task InstallNewEditor()

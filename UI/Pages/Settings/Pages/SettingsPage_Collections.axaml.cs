@@ -25,7 +25,7 @@ public partial class SettingsPage_Collections : UserControl, ISettingsPage
         btn_AddCollection.RegisterClick(TryToCreateCollection);
         btn_AddTag.RegisterClick(TryToCreateTag);
 
-        DependencyManager.GetService<ITaggingLogic>().RegisterCallback(OnChange);
+        DependencyManager.GetService<ITaggingLogic>()!.RegisterCallback(OnChange);
     }
 
     public UserControl getControl => this;

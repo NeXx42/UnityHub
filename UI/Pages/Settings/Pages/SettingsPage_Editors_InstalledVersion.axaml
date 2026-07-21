@@ -4,7 +4,13 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_Editors_InstalledVersion" x:Name="root"
   xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:DownloadStatus"
   xmlns:controls="clr-namespace:UI.Controls">
-  <Border Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="8">
+  <Border x:Name="cont">
+    <Border.Styles>
+      <Style Selector="Border.Odd">
+        <Setter Property="Background" Value="{DynamicResource BackgroundColourLight}"/>
+      </Style>
+    </Border.Styles>
+
     <StackPanel Orientation="Vertical" Margin="10">
       <Grid ColumnDefinitions="Auto Auto * Auto">
         <Label Content="{Binding #root.ProductName}" VerticalAlignment="Center" />

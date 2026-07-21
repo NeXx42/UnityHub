@@ -51,8 +51,13 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
         }
     }
 
-    public void Draw(EditorInfo info, DownloadStatus? downloadingStatus, Func<Task> redrawRequest)
+    public void Draw(EditorInfo info, DownloadStatus? downloadingStatus, int pos, Func<Task> redrawRequest)
     {
+        if (pos % 2 == 0)
+            cont.Classes.Remove("Odd");
+        else
+            cont.Classes.Add("Odd");
+
         this.redrawRequest = redrawRequest;
         this.DataContext = downloadingStatus;
 
