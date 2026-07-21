@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -128,9 +129,18 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
         switch (value)
         {
             case "Cancel":
-
                 DependencyManager.GetService<IEditorLogic>()!.StopActiveInstall(ProductName);
                 redrawRequest?.Invoke();
+                break;
+
+            case "Delete":
+                IEditorLogic logic = DependencyManager.GetService<IEditorLogic>()!;
+                string? dir = Directory.GetParent((await logic.GetEditorInstall(ProductName))!)!.Parent!.FullName; // rather it fail then give back an invalid result
+
+                if (await DependencyManager.ui!.ShowConfirmationBox("Delete", $"Are you sure you want to delete\n{dir}?", new ConfirmationButton("Cancel"), new ConfirmationButton("Delete", true)) != 1)
+                    return;
+
+                await logic.Delete(ProductName);
                 break;
         }
     }

@@ -693,6 +693,15 @@ public class EditorLogic : IEditorLogic
         }
     }
 
+    public async Task Delete(string version)
+    {
+        string path = (await GetEditorInstall(version))!;
+        string dir = Directory.GetParent(path)!.Parent!.FullName;
+
+        if (Directory.Exists(dir))
+            Directory.Delete(dir, true);
+    }
+
     public struct ActiveInstances
     {
         private int id;

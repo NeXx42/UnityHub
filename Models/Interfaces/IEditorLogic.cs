@@ -23,4 +23,5 @@ public interface IEditorLogic
     public Task LaunchProject(ProjectInfo info);
 
     public Task<bool> CreateProject(ProjectCreationInfo info);
+    public Task Delete(string versionName);
 }
