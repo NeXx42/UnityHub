@@ -24,6 +24,8 @@ public class ProjectLogic : IProjectLogic
 
     public async Task Migrate()
     {
+        DependencyManager.GetService<ITaggingLogic>()!.RegisterCallback(OnTagginSituationChange);
+
         string dirtyFile = Path.Combine(GlobalConfig.getDataFolder, "dirty");
 
         if (!File.Exists(dirtyFile))
@@ -341,5 +343,21 @@ public class ProjectLogic : IProjectLogic
         await UpdateProperties(info, [nameof(ProjectInfo.version)]);
 
         return true;
+    }
+
+    private void OnTagginSituationChange(int? id, string change)
+    {
+        if (!id.HasValue)
+            return;
+
+        switch (change)
+        {
+            case nameof(ITaggingLogic.DeleteCollection):
+                int[] toDecache = cache.Values.Where(v => v != null && v.collectionId == id).Select(v => v!.id).ToArray();
+
+                foreach (int i in toDecache)
+                    cache.Remove(i);
+                break;
+        }
     }
 }

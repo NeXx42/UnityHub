@@ -249,13 +249,13 @@ public class TaggingLogic : ITaggingLogic
         cachedTags?.Remove(id);
         await data.DeleteTag(id);
 
-        callbacks?.Invoke(null, nameof(DeleteTag));
+        callbacks?.Invoke(id, nameof(DeleteTag));
     }
     public async Task DeleteCollection(int id)
     {
         cachedCollections?.Remove(id);
         await data.DeleteCollection(id);
 
-        callbacks?.Invoke(null, nameof(DeleteCollection));
+        callbacks?.Invoke(id, nameof(DeleteCollection));
     }
 }

@@ -50,6 +50,9 @@ public partial class MoreInfo : UserControl
 
     public async Task Show(int? id)
     {
+        if (info?.id == id)
+            return;
+
         MainWindow.ClearFocus();
 
         info = await DependencyManager.GetService<IProjectLogic>()!.GetProjectInfo(id);
