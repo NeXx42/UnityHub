@@ -29,16 +29,16 @@ public partial class Sidebar_DriveUsage : UserControl, INotifyPropertyChanged
         {
             sliceColours = new[]
             {
-                new SolidColorBrush(Color.Parse("#4C78A8")),
-                new SolidColorBrush(Color.Parse("#477FA3")),
-                new SolidColorBrush(Color.Parse("#43859D")),
-                new SolidColorBrush(Color.Parse("#3F8B96")),
-                new SolidColorBrush(Color.Parse("#45918D")),
-                new SolidColorBrush(Color.Parse("#519780")),
-                new SolidColorBrush(Color.Parse("#639B73")),
-                new SolidColorBrush(Color.Parse("#789E68")),
-                new SolidColorBrush(Color.Parse("#8D9E60")),
-                new SolidColorBrush(Color.Parse("#A19B5C"))
+                new SolidColorBrush(Color.Parse("#4E79A7")),
+                new SolidColorBrush(Color.Parse("#5B8DB8")),
+                new SolidColorBrush(Color.Parse("#4C9FB1")),
+                new SolidColorBrush(Color.Parse("#59A89C")),
+                new SolidColorBrush(Color.Parse("#72A98A")),
+                new SolidColorBrush(Color.Parse("#8FAF78")),
+                new SolidColorBrush(Color.Parse("#A6A96B")),
+                new SolidColorBrush(Color.Parse("#B39B63")),
+                new SolidColorBrush(Color.Parse("#A9826B")),
+                new SolidColorBrush(Color.Parse("#96758C"))
             };
         }
 
@@ -48,6 +48,9 @@ public partial class Sidebar_DriveUsage : UserControl, INotifyPropertyChanged
             Border b = new Border();
             b.Margin = new Thickness(0, 0, 1, 0);
 
+            ToolTip t = new ToolTip();
+
+            b.Child = t;
             return b;
         });
     }
@@ -88,12 +91,14 @@ public partial class Sidebar_DriveUsage : UserControl, INotifyPropertyChanged
                 groupedSpace += proj.size ?? 0;
         }
 
-        slices.Add(("Rest", groupedSpace));
+        slices.Add(("Other Projects", groupedSpace));
         slices.Add(("Filesystem", unknownSpace));
 
         sliceList.Draw(slices, (ui, pos, dat) =>
         {
             ui.Width = dat.Item2 * pixelsPerByte;
+            ToolTip.SetTip(ui, dat.Item1);
+
             ui.Background = sliceColours![pos % sliceColours.Length];
         });
     }
