@@ -16,7 +16,7 @@
           </controls:ButtonWrapper.Icon>
         </controls:ButtonWrapper>
       </Grid>
-      <Border CornerRadius="8" Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" ClipToBounds="True">
+      <Border CornerRadius="{DynamicResource CornerRadius_Element}" Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" ClipToBounds="True">
         <Grid RowDefinitions="* 5 Auto">
           <StackPanel x:Name="cont_Collections" MinHeight="50"/>
         </Grid>
@@ -36,7 +36,7 @@
         </controls:ButtonWrapper>
       </Grid>
 
-      <Border CornerRadius="8" Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" ClipToBounds="True">
+      <Border CornerRadius="{DynamicResource CornerRadius_Element}" Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" ClipToBounds="True">
         <Grid RowDefinitions="* 5 Auto">
           <StackPanel x:Name="cont_Tags" MinHeight="50"/>
         </Grid>

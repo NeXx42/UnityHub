@@ -21,7 +21,7 @@
     </Style>
   </UserControl.Styles>
 
-  <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="20" ClipToBounds="True" x:Name="border_Main">
+  <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="{DynamicResource CornerRadius_Menu}" ClipToBounds="True" x:Name="border_Main">
     <Border.Transitions>
       <Transitions>
         <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="CubicEaseOut"/>
@@ -30,7 +30,7 @@
     </Border.Transitions>
 
     <Grid>
-      <Border VerticalAlignment="Top" HorizontalAlignment="Stretch" MaxHeight="200" CornerRadius="19" ClipToBounds ="True">
+      <Border VerticalAlignment="Top" HorizontalAlignment="Stretch" MaxHeight="200" CornerRadius="{DynamicResource CornerRadius_Menu}" ClipToBounds ="True">
         <Image x:Name="img" VerticalAlignment="Top" HorizontalAlignment="Stretch" StretchDirection="DownOnly">
           <Image.Effect>
             <BlurEffect Radius="0"/>

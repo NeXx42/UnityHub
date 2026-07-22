@@ -3,7 +3,7 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.ConfirmationBox"
   xmlns:controls="clr-namespace:UI.Controls" x:Name="root">
-  <Border Background="{DynamicResource BackgroundColourLight}" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}" CornerRadius="20" MinWidth="250" MinHeight="150">
+  <Border Background="{DynamicResource BackgroundColourLight}" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}" CornerRadius="{DynamicResource CornerRadius_Menu}" MinWidth="250" MinHeight="150">
     <Grid RowDefinitions="Auto * Auto" Margin="10">
       <Label Content="{Binding #root.Header}" HorizontalAlignment="Center" Grid.Row="0" FontSize="20"/>
       <TextBlock Text="{Binding #root.Body}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>

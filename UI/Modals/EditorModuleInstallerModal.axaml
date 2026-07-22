@@ -4,7 +4,7 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.EditorModuleInstallerModal"
   xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:EditorInfo"
   xmlns:controls="clr-namespace:UI.Controls">
-  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="20">
+  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="{DynamicResource CornerRadius_Menu}">
     <Grid RowDefinitions="50 Auto * Auto" Margin="20">
       <Label Content="{Binding versionName}"/>
 

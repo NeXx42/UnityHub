@@ -10,7 +10,7 @@
       <StackPanel Orientation="Vertical" Spacing="15">
         <!-- Filtering -->
         <Grid Height="35" ColumnDefinitions="* 5 Auto">
-          <TextBox x:Name="inp_Text" HorizontalAlignment="Left" Width="300" CornerRadius="8" Background="{DynamicResource ButtonBackground}" Foreground="{DynamicResource TextColourMuted}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" PlaceholderText="Search projects" VerticalContentAlignment="Center"/>
+          <TextBox x:Name="inp_Text" HorizontalAlignment="Left" Width="300" Foreground="{DynamicResource TextColourMuted}" PlaceholderText="Search projects"/>
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5" Grid.Column="2">
             <!-- Sort -->
             <controls:ButtonWrapper HorizontalAlignment="Right" Label="Sort" x:Name="btn_Sort" HasPopupIcon="True">
@@ -40,7 +40,7 @@
             <WrapPanel Grid.Column="2" x:Name="cont_Filters" ItemSpacing="5" LineSpacing="5" ItemHeight="30"/>
           </Grid>
 
-          <Border Grid.Column="1" Background="{DynamicResource ButtonBackground}" CornerRadius="8" BorderBrush="{DynamicResource ButtonBorder}" BorderThickness="1">
+          <Border Grid.Column="1" Background="{DynamicResource ButtonBackground}" CornerRadius="{DynamicResource CornerRadius_Element}" BorderBrush="{DynamicResource ButtonBorder}" BorderThickness="1">
             <StackPanel Orientation="Horizontal" x:Name="cont_Layouts"/>
           </Border>
         </Grid>

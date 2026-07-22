@@ -38,11 +38,11 @@ public partial class MainWindow : Window, IUILinker
     public MainWindow()
     {
         instance = this;
+        ThemeHelper.Startup().Wrap();
 
         InitializeComponent();
 
         DependencyManager.Init(this);
-        ThemeHelper.Startup().Wrap();
 
         pages = new Dictionary<PageNames, IPage>()
         {

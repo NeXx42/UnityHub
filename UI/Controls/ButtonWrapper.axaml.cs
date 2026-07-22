@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using UI.Helpers;
 using UI.Interfaces;
 
@@ -34,8 +35,8 @@ public partial class ButtonWrapper : UserControl
         get => GetValue(LabelProperty);
         set => SetValue(LabelProperty, value);
     }
-
-    public new static readonly StyledProperty<CornerRadius> CornerRadiusProperty = AvaloniaProperty.Register<ButtonWrapper, CornerRadius>(nameof(CornerRadius), defaultValue: new CornerRadius(8));
+    //defaultValue: ThemeHelper.GetValueFromTheme<CornerRadius>("CornerRadius_Element")
+    public new static readonly StyledProperty<CornerRadius> CornerRadiusProperty = AvaloniaProperty.Register<ButtonWrapper, CornerRadius>(nameof(CornerRadius));
     public new CornerRadius CornerRadius
     {
         get => GetValue(CornerRadiusProperty);

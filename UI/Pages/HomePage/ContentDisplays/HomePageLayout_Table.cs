@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
@@ -26,17 +27,20 @@ public class HomePageLayout_Table : HomePageLayoutBase<TableCard>
             Spacing = 5
         };
 
+        CornerRadius radius = ThemeHelper.GetValueFromTheme<CornerRadius>("CornerRadius_Menu");
+        CornerRadius subRadius = new CornerRadius(radius.TopLeft - 1);
+
         decor.Children.Add(new Border
         {
-            CornerRadius = new Avalonia.CornerRadius(15),
+            CornerRadius = radius,
             ClipToBounds = true,
-            Background = MainWindow.instance!.FindResource("ButtonBorder") as IBrush,
+            Background = ThemeHelper.GetValueFromTheme<IBrush>("ButtonBorder"),
             MinHeight = 0,
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Top,
 
             Child = new Border()
             {
-                CornerRadius = new Avalonia.CornerRadius(14),
+                CornerRadius = subRadius,
                 ClipToBounds = true,
                 Margin = new Avalonia.Thickness(1),
 

@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:controls="clr-namespace:UI.Controls">
 
   <Color x:Key="Colour_BackgroundColour">#0f151a</Color>
   <SolidColorBrush x:Key="BackgroundColour" Color="{DynamicResource Colour_BackgroundColour}" />
@@ -51,4 +52,10 @@
   <Color x:Key="Colour_TextColourMuted">#a0a5ac</Color>
   <SolidColorBrush x:Key="TextColourMuted" Color="{DynamicResource Colour_TextColourMuted}" />
 
+  <CornerRadius x:Key="CornerRadius_Element">8</CornerRadius>
+  <CornerRadius x:Key="CornerRadius_Menu">20</CornerRadius>
+
+  <ControlTheme x:Key="{x:Type controls:ButtonWrapper}" TargetType="controls:ButtonWrapper">
+    <Setter Property="CornerRadius" Value="{DynamicResource CornerRadius_Element}" />
+  </ControlTheme>
 </ResourceDictionary>

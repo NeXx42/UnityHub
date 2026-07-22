@@ -3,9 +3,26 @@
   <Style Selector="Label">
     <Setter Property="Foreground" Value="{DynamicResource Colour_TextColour}"/>
   </Style>
+
   <Style Selector="TextBox">
     <Setter Property="Foreground" Value="{DynamicResource Colour_TextColour}"/>
+    <Setter Property="CornerRadius" Value="{DynamicResource CornerRadius_Element}"/>
+    <Setter Property="Background" Value="{DynamicResource ButtonBackground}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorder}"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
   </Style>
+  <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource ButtonBackgroundDark}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AccentColour}"/>
+  </Style>
+
+  <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource ButtonBackgroundDark}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AccentColour}"/>
+  </Style>
+
+
   <Style Selector="Path">
     <Setter Property="Fill" Value="{DynamicResource Colour_TextColour}"/>
   </Style>

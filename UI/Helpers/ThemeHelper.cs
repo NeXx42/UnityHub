@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.Embedding.Offscreen;
 using Avalonia.Media;
 using Logic;
@@ -57,12 +58,23 @@ public static class ThemeHelper
                 try
                 {
                     string key = el.Name;
-                    string? colour = el.Value.GetString();
+                    string? val = el.Value.GetString();
 
-                    if (string.IsNullOrEmpty(colour))
+                    if (string.IsNullOrEmpty(val))
                         continue;
 
-                    Application.Current!.Resources[$"Colour_{key}"] = Color.Parse(colour);
+                    string type = key.Split("_").First().ToLowerInvariant();
+
+                    switch (type)
+                    {
+                        case "colour":
+                            Application.Current!.Resources[key] = Color.Parse(val);
+                            break;
+
+                        case "cornerradius":
+                            Application.Current!.Resources[key] = new CornerRadius(int.Parse(val));
+                            break;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -91,5 +103,10 @@ public static class ThemeHelper
                 .Select(f => Path.GetFileName(f).Replace(".json", ""))
                 .ToArray();
         }
+    }
+
+    public static T GetValueFromTheme<T>(string key)
+    {
+        return (T)Application.Current!.FindResource(key)!;
     }
 }

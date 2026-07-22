@@ -5,7 +5,7 @@
   xmlns:controls="clr-namespace:UI.Controls"
   xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:DownloadStatus">
 
-  <Border Background="{DynamicResource ButtonBackground}" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}">
+  <Border Background="{DynamicResource ButtonBackground}" CornerRadius="{DynamicResource CornerRadius_Element}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}">
     <StackPanel Orientation="Vertical" Spacing="5" Margin="5">
       <Grid ColumnDefinitions="100 * Auto">
         <Label Content="{Binding #root.VersionName}" />

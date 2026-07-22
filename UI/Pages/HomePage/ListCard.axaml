@@ -21,7 +21,7 @@
     </Style>
   </UserControl.Styles>
 
-  <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="20" ClipToBounds="True" x:Name="border_Main">
+  <Border Background="{DynamicResource BackgroundColourLight}" CornerRadius="{DynamicResource CornerRadius_Menu}" ClipToBounds="True" x:Name="border_Main">
     <Border.Transitions>
       <Transitions>
         <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="CubicEaseOut"/>

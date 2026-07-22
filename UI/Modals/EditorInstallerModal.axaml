@@ -3,7 +3,7 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.EditorInstallerModal"
   xmlns:controls="clr-namespace:UI.Controls">
-  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="20" MinWidth="700" MinHeight="500">
+  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="{DynamicResource CornerRadius_Menu}" MinWidth="700" MinHeight="500">
     <Grid RowDefinitions="Auto Auto *" Margin="10">
       <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Spacing="5" x:Name="cont_Types"/>
       <Border Grid.Row="1" Margin="0 10" HorizontalAlignment="Stretch" Background="{DynamicResource ButtonBorder}" Height="1"/>
@@ -11,7 +11,7 @@
       <controls:LoadingBoundary x:Name="loadingBoundary" Grid.Row="2">
         <Grid RowDefinitions="Auto * Auto">
           <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Right">
-            <TextBox VerticalAlignment="Center" Width="200" x:Name="inp_VersionFilter" CornerRadius="8" BorderBrush="{DynamicResource ButtonBorder}" Watermark="Search"/>
+            <TextBox VerticalAlignment="Center" Width="200" x:Name="inp_VersionFilter" CornerRadius="{DynamicResource CornerRadius_Element}" BorderBrush="{DynamicResource ButtonBorder}" Watermark="Search"/>
             <controls:ButtonWrapper Label="Search" x:Name="btn_Search" />
           </StackPanel>
           <ScrollViewer Grid.Row="1">

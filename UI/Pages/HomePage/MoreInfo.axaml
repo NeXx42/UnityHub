@@ -13,7 +13,7 @@
 
       <StackPanel Spacing="15" x:Name="cont_Main">
         <!-- ICON -->
-        <Border HorizontalAlignment="Stretch" Height="150" Background="{DynamicResource BackgroundColourDark}" CornerRadius="10" ClipToBounds="True">
+        <Border HorizontalAlignment="Stretch" Height="150" Background="{DynamicResource BackgroundColourDark}" CornerRadius="{DynamicResource CornerRadius_Element}" ClipToBounds="True">
           <Image x:Name="img" Stretch="UniformToFill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         </Border>
 
@@ -179,7 +179,7 @@
 
         <StackPanel Margin="8 0" Spacing="5">
           <Label HorizontalAlignment="Left" Foreground="{DynamicResource TextColour}">Notes</Label>
-          <TextBox TextWrapping="Wrap" FontSize="12" x:Name="inp_Notes" Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="8"/>
+          <TextBox TextWrapping="Wrap" FontSize="12" x:Name="inp_Notes" Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="{DynamicResource CornerRadius_Element}"/>
           <controls:ButtonWrapper Label="Save" x:Name="btn_SaveNotes" HorizontalAlignment="Right" Classes="Primary"/>
         </StackPanel>
 

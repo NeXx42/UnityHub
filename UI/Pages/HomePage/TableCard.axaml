@@ -26,7 +26,7 @@
     <Grid ColumnDefinitions="1* .5* 1* 1*" VerticalAlignment="Stretch" Margin="5">
 
       <!-- Fav btn -->
-      <Border Cursor="Hand" x:Name="btn_ToggleFav" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="10" IsVisible="False">
+      <Border Cursor="Hand" x:Name="btn_ToggleFav" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="{DynamicResource CornerRadius_Element}" IsVisible="False">
         <Border.Styles>
           <Style Selector="#btn_ToggleFav Path">
             <Setter Property="Fill" Value="{DynamicResource TextColourMuted}"/>

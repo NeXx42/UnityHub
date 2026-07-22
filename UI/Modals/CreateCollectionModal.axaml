@@ -3,7 +3,7 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.CreateCollectionModal"
   xmlns:controls="clr-namespace:UI.Controls">
-  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}" Width="400" CornerRadius="8">
+  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}" Width="400" CornerRadius="{DynamicResource CornerRadius_Element}">
     <StackPanel Orientation="Vertical" Margin="10" Spacing="10">
       <Label FontSize="20" HorizontalAlignment="Center" Margin="0 0 0 10">Save Collection</Label>
 
