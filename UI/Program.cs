@@ -8,6 +8,8 @@ using Avalonia;
 using Data.DataRepos;
 using Data_Sqlite;
 using Logic;
+using Logic.Editor;
+using Models;
 using Models.Interfaces;
 using UI.Helpers;
 
@@ -30,8 +32,16 @@ class Program
         {
             await DependencyManager.RegisterService<IDataRepository, SqliteDataRepo>(repo => repo.Setup());
 
+            if (GlobalConfig.isOnLinux)
+            {
+                DependencyManager.RegisterService<IEditorLogic, EditorLogic_Linux>();
+            }
+            else
+            {
+                DependencyManager.RegisterService<IEditorLogic, EditorLogic_Windows>();
+            }
+
             DependencyManager.RegisterService<IConfigLogic, ConfigLogic>();
-            DependencyManager.RegisterService<IEditorLogic, EditorLogic>();
             DependencyManager.RegisterService<ITaggingLogic, TaggingLogic>();
             await DependencyManager.RegisterService<IProjectLogic, ProjectLogic>(logic => logic.Migrate());
 

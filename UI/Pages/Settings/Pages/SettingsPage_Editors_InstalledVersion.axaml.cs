@@ -12,6 +12,7 @@ using Logic;
 using Models.Data;
 using Models.Interfaces;
 using UI.Helpers;
+using UI.Modals;
 using UI.Popups;
 
 namespace UI.Pages.Settings.Pages;
@@ -24,6 +25,7 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
     private ReusableList<Border> tagLines;
     private ReusableList<Border> platforms;
 
+    private EditorInfo? info;
     private Func<Task>? redrawRequest;
 
     public new event PropertyChangedEventHandler? PropertyChanged;
@@ -58,6 +60,7 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
         else
             cont.Classes.Add("Odd");
 
+        this.info = info;
         this.redrawRequest = redrawRequest;
         this.DataContext = downloadingStatus;
 
@@ -146,6 +149,16 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
                     return;
 
                 await logic.Delete(ProductName);
+                break;
+
+            case "Manage":
+                if (info == null)
+                    return;
+
+                await MainWindow.ShowModalAndWait<EditorManageModal>(async m =>
+                {
+                    await m.Open(info);
+                });
                 break;
         }
     }

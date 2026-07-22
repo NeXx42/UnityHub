@@ -51,16 +51,7 @@ public partial class EditorModuleInstallerModal : UserControl, IModal
         if (string.IsNullOrEmpty(selectedPath) || !Directory.Exists(selectedPath) || selectedVersion == null)
             return;
 
-        int download = 0;
-
-        for (int i = 0; i < selectedVersion.downloads.Length; i++)
-            if (selectedVersion.downloads[i].platform!.Equals("linux", System.StringComparison.CurrentCultureIgnoreCase))
-            {
-                download = i;
-                break;
-            }
-
-        await DependencyManager.GetService<IEditorLogic>()!.InstallEditor(selectedVersion, download, selectedPath);
+        await DependencyManager.GetService<IEditorLogic>()!.InstallEditor(selectedVersion, selectedPath);
         modalTask?.SetResult();
     }
 }

@@ -7,7 +7,7 @@ public interface IEditorLogic
 {
     public Task<string[]> GetInstalledEditorVersions();
 
-    public Task InstallEditor(EditorInfo version, int downloadId, string path);
+    public Task InstallEditor(EditorInfo version, string path);
     public Task<EditorInstallInfo[]> GetInstalledEditorVersionsMoreInfo(CancellationToken token);
     public Task<(EditorInfo[], int)> GetEditorDownloads(EditorFilterType filterType, string? filter, int page, int pageSize);
 

@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Net;
 using System.Reflection.Emit;
@@ -12,7 +13,7 @@ using Models.Interfaces;
 
 namespace Logic;
 
-public class EditorLogic : IEditorLogic
+public abstract class EditorLogic : IEditorLogic
 {
     public IDataRepository database => DependencyManager.GetService<IDataRepository>()!;
     public const string LINK_NAME = "com.nexx.unityhublink";
@@ -229,7 +230,6 @@ public class EditorLogic : IEditorLogic
             foreach (JsonElement result in doc.RootElement.GetProperty("results").EnumerateArray())
             {
                 string version = result.GetProperty("version").GetString()!;
-
                 versions.TryGetValue(version, out EditorInfo? info);
 
                 if (info == null)
@@ -241,42 +241,93 @@ public class EditorLogic : IEditorLogic
                     versions[version] = info;
                 }
 
-                info.stream = result.GetProperty("stream").GetString();
-
-                if (result.TryGetProperty("label", out JsonElement lbl))
-                    info.label = new EditorInfo.Label
-                    {
-                        description = lbl.GetProperty("description").GetString(),
-                        labelText = lbl.GetProperty("labelText").GetString(),
-                        colour = lbl.GetProperty("color").GetString(),
-                        icon = lbl.GetProperty("icon").GetString(),
-                    };
-
-                if (result.TryGetProperty("downloads", out JsonElement downloads))
-                {
-                    try
-                    {
-                        info.downloads = downloads.EnumerateArray().Select(download => new EditorInfo.Download
-                        {
-                            url = download.GetProperty("url").GetString(),
-                            type = download.GetProperty("type").GetString(),
-                            platform = download.GetProperty("platform").GetString(),
-                            architecture = download.GetProperty("architecture").GetString(),
-
-                            downloadSize = download.TryGetProperty("downloadSize", out JsonElement downloadSize) ? downloadSize.GetProperty("value").GetUInt64() : 0,
-                            installSize = download.TryGetProperty("installSize", out JsonElement installSize) ? installSize.GetProperty("value").GetUInt64() : 0,
-
-                            integrity = download.GetProperty("integrity").GetString(),
-
-                        }).ToArray();
-                    }
-                    catch { }
-                }
+                ParseEditorResponse(info, result);
             }
         });
 
         return totalResults;
     }
+
+    protected virtual void ParseEditorResponse(EditorInfo info, JsonElement result)
+    {
+        info.stream = result.GetProperty("stream").GetString();
+
+        if (result.TryGetProperty("label", out JsonElement lbl))
+            info.label = new EditorInfo.Label
+            {
+                description = lbl.GetProperty("description").GetString(),
+                labelText = lbl.GetProperty("labelText").GetString(),
+                colour = lbl.GetProperty("color").GetString(),
+                icon = lbl.GetProperty("icon").GetString(),
+            };
+
+        if (result.TryGetProperty("downloads", out JsonElement downloads))
+        {
+            foreach (JsonElement download in downloads.EnumerateArray())
+            {
+                if (download.TryGetProperty("platform", out JsonElement plat) && download.TryGetProperty("architecture", out JsonElement arch))
+                {
+                    if (!IsEditorDownloadSupported(plat.GetString() ?? "", arch.GetString() ?? ""))
+                        continue;
+
+                    info.download = new EditorInfo.Download()
+                    {
+                        url = TryParse<string>(download, "url"),
+                        type = TryParse<string>(download, "type"),
+                        platform = TryParse<string>(download, "platform"),
+                        architecture = TryParse<string>(download, "architecture"),
+
+                        downloadSize = download.TryGetProperty("downloadSize", out JsonElement downloadSize) ? TryParse<ulong>(downloadSize, "value") : 0,
+                        installSize = download.TryGetProperty("installSize", out JsonElement installSize) ? TryParse<ulong>(installSize, "value") : 0,
+
+                        integrity = TryParse<string>(download, "integrity"),
+
+                        modules = download.GetProperty("modules").EnumerateArray().Select(a => new EditorInfo.Download.Module()
+                        {
+                            id = TryParse<string>(a, nameof(EditorInfo.Download.Module.id)),
+                            slug = TryParse<string>(a, nameof(EditorInfo.Download.Module.slug)),
+                            description = TryParse<string>(a, nameof(EditorInfo.Download.Module.description)),
+                            name = TryParse<string>(a, nameof(EditorInfo.Download.Module.name)),
+                            url = TryParse<string>(a, nameof(EditorInfo.Download.Module.url)),
+                            type = TryParse<string>(a, nameof(EditorInfo.Download.Module.type)),
+
+                            //downloadSize = a.TryGetProperty(nameof(EditorInfo.Download.Module.downloadSize), out JsonElement moduleDownloadSize) ? TryParse<ulong>(moduleDownloadSize, "value") : 0,
+                            //installedSize = a.TryGetProperty(nameof(EditorInfo.Download.Module.installedSize), out JsonElement moduleInstalledSize) ? TryParse<ulong>(moduleInstalledSize, "value") : 0,
+
+                            required = TryParse<bool>(a, nameof(EditorInfo.Download.Module.required)),
+                            hidden = TryParse<bool>(a, nameof(EditorInfo.Download.Module.hidden)),
+                            preSelected = TryParse<bool>(a, nameof(EditorInfo.Download.Module.preSelected)),
+
+                            integrity = TryParse<string>(a, nameof(EditorInfo.Download.Module.integrity)),
+                            destination = TryParse<string>(a, nameof(EditorInfo.Download.Module.destination)),
+
+                        }).ToArray()
+                    };
+
+                    break;
+                }
+            }
+        }
+
+        T? TryParse<T>(JsonElement parent, string key)
+        {
+            if (parent.TryGetProperty(key, out JsonElement el))
+            {
+                try
+                {
+                    return el.Deserialize<T>();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+
+            return default;
+        }
+    }
+
+    protected abstract bool IsEditorDownloadSupported(string platform, string architecture);
 
     private async Task GetInstalledEditorInfoForVersions(IEnumerable<EditorInstallInfo> installs)
     {
@@ -440,7 +491,7 @@ public class EditorLogic : IEditorLogic
         }
     }
 
-    public async Task InstallEditor(EditorInfo version, int download, string path)
+    public async Task InstallEditor(EditorInfo version, string path)
     {
         if (activeDownloads.ContainsKey(version.versionName))
         {
@@ -454,153 +505,16 @@ public class EditorLogic : IEditorLogic
             return;
         }
 
-        EditorInfo.Download downloadInfo = version.downloads[download];
-
-        string savePath = Path.Combine(path, version.versionName);
-        string extractPath = $"{savePath}.{downloadInfo.type!.ToLowerInvariant()}";
-
-        ActiveDownload activeDownload = new ActiveDownload(version, [
-            new LoadRequest("Downloading", DownloadFile),
-            new LoadRequest("Extracting", Unzip),
-        ]);
-
-        activeDownloads[version.versionName] = activeDownload;
-
-        async Task DownloadFile(IProgress<float> subProgress, CancellationToken token)
+        if (!version.download.HasValue)
         {
-            using (HttpClient http = new HttpClient())
-            {
-                HttpResponseMessage res = await http.GetAsync(downloadInfo.url, HttpCompletionOption.ResponseHeadersRead);
-                res.EnsureSuccessStatusCode();
-
-                long? totalBytes = res.Content.Headers.ContentLength;
-
-                await using Stream stream = await res.Content.ReadAsStreamAsync(token);
-                await using FileStream file = File.Create(extractPath);
-
-                byte[] buffer = new byte[81920];
-                long totalRead = 0;
-                int bytesRead;
-
-                while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                {
-                    if (token.IsCancellationRequested)
-                        break;
-
-                    await file.WriteAsync(buffer, 0, bytesRead);
-
-                    totalRead += bytesRead;
-
-                    if (totalBytes.HasValue)
-                    {
-                        subProgress?.Report((float)totalRead / totalBytes.Value);
-                    }
-                }
-
-                subProgress?.Report(1f);
-            }
+            await DependencyManager.ui!.ShowMessageBox("No available download", $"Failed to install version {version.versionName} because it there is no download avaliable.");
+            return;
         }
 
-        async Task Unzip(IProgress<float> subProgress, CancellationToken token)
-        {
-            switch (downloadInfo.type.ToLowerInvariant())
-            {
-                case "tar.xz":
-                    await Unzip_Tar(subProgress, token);
-                    break;
-
-                default:
-                    break;
-            }
-
-            File.Delete(extractPath);
-        }
-
-        async Task Unzip_Tar(IProgress<float> subProgress, CancellationToken token)
-        {
-            await Extract(extractPath, savePath, token, subProgress);
-            await Extract(savePath, savePath, token, subProgress);
-
-            File.Delete(Path.Combine(savePath, version.versionName));
-        }
+        activeDownloads[version.versionName] = new ActiveDownload(version, DownloadEditorInternal(version, path));
     }
 
-    private async Task Extract(string path, string result, CancellationToken cancellationToken, IProgress<float> progress)
-    {
-        ProcessStartInfo info = new ProcessStartInfo();
-        info.FileName = "7z";
-
-        info.RedirectStandardError = true;
-        info.RedirectStandardOutput = true;
-        info.UseShellExecute = false;
-        info.CreateNoWindow = true;
-
-        info.ArgumentList.Add("x");
-        info.ArgumentList.Add(path);
-
-        info.ArgumentList.Add($"-o{result}");
-
-        info.ArgumentList.Add("-y");
-        info.ArgumentList.Add("-bsp1");
-
-        Process p = new Process();
-        p.StartInfo = info;
-
-        p.Start();
-        await ReadProgressOfExtraction(p);
-
-        if (p.ExitCode != 0)
-        {
-            throw new Exception(await p.StandardError.ReadToEndAsync());
-        }
-
-        Task ReadProgressOfExtraction(Process p)
-        {
-            int charNumber;
-            const int newLineCharNumber = '\b';
-
-            string line = string.Empty;
-
-            TaskCompletionSource task = new TaskCompletionSource();
-
-            Task.Run(() =>
-            {
-                while (!p.HasExited)
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        p.Kill();
-                        return;
-                    }
-
-                    while ((charNumber = p.StandardOutput.Read()) != -1)
-                    {
-                        if (charNumber == newLineCharNumber)
-                        {
-                            string percentageText = line.Replace(" ", "");
-                            Match match = Regex.Match(percentageText, @"^(\d+)%");
-
-                            if (match.Success)
-                            {
-                                int percentage = int.Parse(match.Groups[1].Value);
-                                progress.Report(percentage);
-                            }
-
-                            line = string.Empty;
-                        }
-                        else
-                        {
-                            line += (char)charNumber;
-                        }
-                    }
-                }
-
-                task.SetResult();
-            });
-
-            return task.Task;
-        }
-    }
+    protected abstract LoadRequest[] DownloadEditorInternal(EditorInfo download, string path);
 
     private async Task InjectPackagesIntoProject(string projectRoot, Dictionary<string, string> packages)
     {

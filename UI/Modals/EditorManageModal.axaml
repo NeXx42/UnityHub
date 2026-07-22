@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.EditorManageModal"
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:EditorInfo">
+  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="{DynamicResource CornerRadius_Menu}">
+    <Grid Margin="20">
+      <Label Content="{Binding versionName}" />
+      <Label Content="{Binding stream}" />
+
+    </Grid>
+  </Border>
+</UserControl>
