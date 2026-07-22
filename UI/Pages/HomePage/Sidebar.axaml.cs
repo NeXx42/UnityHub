@@ -1,10 +1,16 @@
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Logic;
 using Models.Data;
+using Models.Enums;
 using Models.Interfaces;
+using Tmds.DBus.Protocol;
 using UI.Controls;
 using UI.Helpers;
 
@@ -13,10 +19,13 @@ namespace UI.Pages.HomePage;
 public partial class Sidebar : UserControl
 {
     private Pages.HomePage.Page? homepage;
+    private ReusableList<Sidebar_DriveUsage> storageUsage;
 
     public Sidebar()
     {
         InitializeComponent();
+
+        storageUsage = new ReusableList<Sidebar_DriveUsage>(cont_Storage);
     }
 
     public async Task Init(Pages.HomePage.Page homepage)
@@ -32,8 +41,10 @@ public partial class Sidebar : UserControl
         await Task.WhenAll([
             DrawTags(),
             DrawCollections(),
-            UpdateSelection(0)
+            UpdateSelection(0),
         ]);
+
+        DrawStorageUsage().Wrap();
     }
 
 
@@ -88,4 +99,35 @@ public partial class Sidebar : UserControl
 
     private async Task DrawTags() => await entry_Tags.Init((cId) => UpdateSelection(4, cId), DependencyManager.GetService<ITaggingLogic>()!.GetTags);
     private async Task DrawCollections() => await entry_Cols.Init((cId) => UpdateSelection(3, cId), DependencyManager.GetService<ITaggingLogic>()!.GetCollections);
+
+    private async Task DrawStorageUsage()
+    {
+        (ProjectInfo[] info, _) = await DependencyManager.GetService<IProjectLogic>()!.Search(new ProjectSearch()
+        {
+            order = ProjectOrder.SizeDesc
+        });
+
+        Dictionary<DriveInfo, List<ProjectInfo>> projectPerDrive = new();
+        DriveInfo[] drives = DriveInfo.GetDrives();
+
+        foreach (ProjectInfo proj in info)
+        {
+            DriveInfo? mostComplexMatch = drives.Where(d => proj.directory.StartsWith(d.Name))
+                .OrderByDescending(d => d.Name.Length)
+                .FirstOrDefault();
+
+            if (mostComplexMatch == null)
+                continue;
+
+            if (projectPerDrive.ContainsKey(mostComplexMatch))
+                projectPerDrive[mostComplexMatch].Add(proj);
+            else
+                projectPerDrive[mostComplexMatch] = new() { proj };
+        }
+
+        storageUsage.Draw(projectPerDrive, (ui, _, dat) =>
+        {
+            ui.DrawSlices(dat.Key, dat.Value.OrderByDescending(v => v.size)).Wrap();
+        });
+    }
 }
