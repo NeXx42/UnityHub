@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.EditorManager_Module"
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:EditorInfo+Download+Module">
+  <Border x:Name="root">
+    <Border.Styles>
+      <Style Selector="Border.Odd">
+        <Setter Property="Background" Value="{DynamicResource BackgroundColourLight}"/>
+      </Style>
+    </Border.Styles>
+
+    <Grid Margin="5" ColumnDefinitions="Auto Auto * Auto">
+      <CheckBox x:Name="inp_Checkbox"></CheckBox>
+      <Label Content="{Binding name}" VerticalAlignment="Center" Grid.Column="2"/>
+
+      <Label Content="{Binding getDownloadSize}" VerticalAlignment="Center" Grid.Column="3"/>
+    </Grid>
+  </Border>
+</UserControl>

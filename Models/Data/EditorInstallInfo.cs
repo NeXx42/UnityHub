@@ -3,7 +3,9 @@ namespace Models.Data;
 public class EditorInstallInfo : EditorInfo
 {
     public required string installLocation;
+
     public BuiltInPackage[] builtInPackages = [];
+    public HashSet<string> installedPackages = new();
 
 
     public struct BuiltInPackage

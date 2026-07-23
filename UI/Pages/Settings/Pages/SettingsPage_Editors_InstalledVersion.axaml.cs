@@ -11,6 +11,7 @@ using Avalonia.Media;
 using Logic;
 using Models.Data;
 using Models.Interfaces;
+using UI.Controls;
 using UI.Helpers;
 using UI.Modals;
 using UI.Popups;
@@ -22,7 +23,7 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
     public string ProductName { get; set; } = "";
     public string InstallLocation { get; set; } = "";
 
-    private ReusableList<Border> tagLines;
+    private ReusableList<CollectionItem> tagLines;
     private ReusableList<Border> platforms;
 
     private EditorInfo? info;
@@ -34,7 +35,7 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
     {
         InitializeComponent();
 
-        tagLines = new ReusableList<Border>(cont_Tags, CreateTag);
+        tagLines = new ReusableList<CollectionItem>(cont_Tags);
         platforms = new ReusableList<Border>(cont_Platforms, CreateTag);
 
         Border CreateTag()
@@ -66,21 +67,7 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
 
         ProductName = info.versionName;
 
-        List<(string, string)> tags = new();
-
-        if (!string.IsNullOrEmpty(info.stream)) tags.Add(CreateTag(info.stream, info.stream));
-        if (!string.IsNullOrEmpty(info.label?.labelText)) tags.Add(CreateTag(info.label.Value.labelText, info.label.Value.colour ?? "WARNING"));
-
-        tagLines.Draw(tags, (lbl, _, dat) =>
-        {
-            Color c = Color.Parse(dat.Item2);
-
-            (lbl.Child as Label)!.Content = dat.Item1;
-            (lbl.Child as Label)!.Foreground = new SolidColorBrush(c);
-
-            lbl.Background = new SolidColorBrush(new Color(100, c.R, c.G, c.B));
-        });
-
+        tagLines.Draw(info.CreateTags(), (lbl, _, dat) => lbl.Init(dat));
         Popup_GenericList popupOptions;
 
         if (info is not EditorInstallInfo installedInfo)
@@ -107,29 +94,6 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
 
         InstallLocation = installedInfo.installLocation;
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
-
-        (string, string) CreateTag(string msg, string colourName)
-        {
-            string? hexColour = null;
-
-            switch (colourName)
-            {
-                case "Beta":
-                case "Alpha":
-                    hexColour = "#006CDF";
-                    break;
-
-                case "WARNING":
-                    hexColour = "#FFC53D";
-                    break;
-
-                case "ERROR":
-                    hexColour = "#E5484D";
-                    break;
-            }
-
-            return (msg, hexColour ?? "#ffffff");
-        }
     }
 
     private async Task OnExtraOptionCallback(int _, string value)
@@ -155,7 +119,7 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
                 if (info == null)
                     return;
 
-                await MainWindow.ShowModalAndWait<EditorManageModal>(async m =>
+                await MainWindow.ShowModalAndWait<EditorManagerModal>(async m =>
                 {
                     await m.Open(info);
                 });

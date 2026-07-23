@@ -18,6 +18,7 @@ public class DownloadStatus : INotifyPropertyChanged
     private float m_CurrentValue;
 
     public bool isDone { protected set; get; }
+    public Exception? error { protected set; get; }
 
     public string getPercentageName => $"{Math.Round(currentValue * 100)}%";
 

@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.EditorManagerModal"
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:EditorInfo"
+  xmlns:controls="clr-namespace:UI.Controls">
+  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="{DynamicResource CornerRadius_Menu}" Width="700">
+    <StackPanel Margin="20" Orientation="Vertical" Spacing="5">
+      <Label FontSize="20" HorizontalAlignment="Center" Content="{Binding versionName}" />
+      <StackPanel x:Name="cont_Tags" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center"/>
+
+      <Grid Margin="0 10">
+        <Label>Path</Label>
+        <ComboBox HorizontalAlignment="Right" Width="200" x:Name="inp_Path"></ComboBox>
+      </Grid>
+
+      <!-- Modules -->
+      <ScrollViewer MaxHeight="500">
+        <StackPanel Spacing="5">
+          <Grid>
+            <Label FontSize="20">Modules</Label>
+          </Grid>
+
+          <Border CornerRadius="{DynamicResource CornerRadius_Element}" Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" ClipToBounds="True">
+            <StackPanel x:Name="cont_Modules" MinHeight="50"/>
+          </Border>
+        </StackPanel>
+      </ScrollViewer>
+
+      <controls:ButtonWrapper Label="Install" HorizontalAlignment="Right" Classes="Primary" x:Name="btn_Install"/>
+    </StackPanel>
+  </Border>
+</UserControl>

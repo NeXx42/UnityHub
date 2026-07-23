@@ -36,6 +36,11 @@ public partial class CollectionItem : UserControl, INotifyPropertyChanged
 
     public void Init(TagData collection, Func<Task>? onClick = null, Func<Task>? onRemove = null)
     {
+        if (string.IsNullOrEmpty(collection.tooltip))
+            ToolTip.SetTip(this, null);
+        else
+            ToolTip.SetTip(this, collection.tooltip);
+
         DataContext = collection;
         onClickCallback = onClick.Wrap;
         onRemoveCallback = onRemove.Wrap;

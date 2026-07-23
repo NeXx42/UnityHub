@@ -1,3 +1,5 @@
+using Models.Helpers;
+
 namespace Models.Data;
 
 public class EditorInfo
@@ -9,6 +11,45 @@ public class EditorInfo
 
     public string? stream { get; set; }
     public Label? label { get; set; }
+
+    public TagData[] CreateTags()
+    {
+        List<TagData> tags = new(2);
+
+        if (!string.IsNullOrEmpty(stream)) tags.Add(CreateTag(stream, "", stream));
+        if (!string.IsNullOrEmpty(label?.labelText)) tags.Add(CreateTag(label.Value.labelText, label.Value.description, label.Value.colour ?? "WARNING"));
+
+        return tags.ToArray();
+
+        TagData CreateTag(string msg, string? desciption, string colourName)
+        {
+            string? hexColour = null;
+
+            switch (colourName)
+            {
+                case "Beta":
+                case "Alpha":
+                    hexColour = "#006CDF";
+                    break;
+
+                case "WARNING":
+                    hexColour = "#FFC53D";
+                    break;
+
+                case "ERROR":
+                    hexColour = "#E5484D";
+                    break;
+            }
+
+            return new TagData()
+            {
+                collectionId = -1,
+                collectionName = msg,
+                colour = hexColour ?? "#ffffff",
+                tooltip = desciption
+            };
+        }
+    }
 
     public struct Label
     {
@@ -33,10 +74,11 @@ public class EditorInfo
 
         public struct Module
         {
-            public string? id { get; set; }
+            public required string id { get; set; }
             public string? slug { get; set; }
             public string? name { get; set; }
             public string? description { get; set; }
+            public string? category { get; set; }
             public string? url { get; set; }
             public string? type { get; set; }
 
@@ -49,6 +91,8 @@ public class EditorInfo
 
             public string? integrity { get; set; }
             public string? destination { get; set; }
+
+            public string getDownloadSize => downloadSize.FormatSize();
         }
     }
 }

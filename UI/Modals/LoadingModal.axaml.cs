@@ -45,15 +45,12 @@ public partial class LoadingModal : UserControl, IModal, INotifyPropertyChanged
             msg = task.msg;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(msg)));
 
-            try
-            {
-                await task.Run(token.Token);
-                inp_Progress.Value++;
-            }
-            catch (Exception e)
-            {
+            Exception? e = await task.Run(token.Token);
+
+            if (e == null)
                 return e;
-            }
+
+            inp_Progress.Value++;
         }
 
         return null;

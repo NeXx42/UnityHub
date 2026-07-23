@@ -3,9 +3,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Net;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using Logic.Editor;
 using Models;
 using Models.Data;
 using Models.Enums;
@@ -60,7 +62,7 @@ public abstract class EditorLogic : IEditorLogic
             dirs = GetEditorInstallerPerDir(root);
 
             foreach (string version in dirs)
-                if (!installs.Contains(version))
+                if (!installs.Contains(version) && !activeDownloads.ContainsKey(version))
                     installs.Add(version);
         }
 
@@ -284,15 +286,16 @@ public abstract class EditorLogic : IEditorLogic
 
                         modules = download.GetProperty("modules").EnumerateArray().Select(a => new EditorInfo.Download.Module()
                         {
-                            id = TryParse<string>(a, nameof(EditorInfo.Download.Module.id)),
+                            id = a.GetProperty(nameof(EditorInfo.Download.Module.id)).GetString()!,
                             slug = TryParse<string>(a, nameof(EditorInfo.Download.Module.slug)),
                             description = TryParse<string>(a, nameof(EditorInfo.Download.Module.description)),
+                            category = TryParse<string>(a, nameof(EditorInfo.Download.Module.category)),
                             name = TryParse<string>(a, nameof(EditorInfo.Download.Module.name)),
                             url = TryParse<string>(a, nameof(EditorInfo.Download.Module.url)),
                             type = TryParse<string>(a, nameof(EditorInfo.Download.Module.type)),
 
-                            //downloadSize = a.TryGetProperty(nameof(EditorInfo.Download.Module.downloadSize), out JsonElement moduleDownloadSize) ? TryParse<ulong>(moduleDownloadSize, "value") : 0,
-                            //installedSize = a.TryGetProperty(nameof(EditorInfo.Download.Module.installedSize), out JsonElement moduleInstalledSize) ? TryParse<ulong>(moduleInstalledSize, "value") : 0,
+                            downloadSize = TryParseSize(a, nameof(EditorInfo.Download.Module.downloadSize)),
+                            installedSize = TryParseSize(a, nameof(EditorInfo.Download.Module.installedSize)),
 
                             required = TryParse<bool>(a, nameof(EditorInfo.Download.Module.required)),
                             hidden = TryParse<bool>(a, nameof(EditorInfo.Download.Module.hidden)),
@@ -307,6 +310,20 @@ public abstract class EditorLogic : IEditorLogic
                     break;
                 }
             }
+        }
+
+        ulong TryParseSize(JsonElement parent, string key)
+        {
+            if (!parent.TryGetProperty(key, out JsonElement child))
+                return 0;
+
+            if (child.TryGetProperty("value", out JsonElement el))
+            {
+                el.TryGetDecimal(out decimal d);
+                return (ulong)Math.Round(d);
+            }
+
+            return 0;
         }
 
         T? TryParse<T>(JsonElement parent, string key)
@@ -333,6 +350,21 @@ public abstract class EditorLogic : IEditorLogic
     {
         await Parallel.ForEachAsync(installs, async (el, token) =>
         {
+            el.installedPackages = new();
+
+            if (el.download.HasValue)
+            {
+                foreach (EditorInfo.Download.Module module in el.download.Value.modules)
+                {
+                    string? moduleExtractPath = module.destination?.Replace("{UNITY_PATH}", Path.Combine(el.installLocation, el.versionName));
+
+                    if (string.IsNullOrEmpty(moduleExtractPath) || !DoesHaveModuleInstalled(module, moduleExtractPath))
+                        continue;
+
+                    el.installedPackages.Add(module.id);
+                }
+            }
+
             string moduleInfo = Path.Combine(el.installLocation, el.versionName, "Editor", "Data", "Resources", "PackageManager", "BuiltInPackages");
 
             if (!Directory.Exists(moduleInfo))
@@ -358,6 +390,24 @@ public abstract class EditorLogic : IEditorLogic
 
             el.builtInPackages = packageMetadata.ToArray();
         });
+
+        bool DoesHaveModuleInstalled(EditorInfo.Download.Module module, string moduleRoot)
+        {
+            switch (module.category ?? "")
+            {
+                case "":
+                    return false;
+
+                case "LANGUAGE_PACK":
+                case "Language packs":
+                case "Language packs (Preview)":
+                    string? languagePackName = module.id?.Replace("language-", "");
+                    return File.Exists(Path.Combine(moduleRoot, $"{languagePackName}.po"));
+
+                default:
+                    return Directory.Exists(moduleRoot);
+            }
+        }
     }
 
 
@@ -491,17 +541,11 @@ public abstract class EditorLogic : IEditorLogic
         }
     }
 
-    public async Task InstallEditor(EditorInfo version, string path)
+    public async Task InstallEditor(EditorInfo version, HashSet<string> desiredModules, string? path)
     {
         if (activeDownloads.ContainsKey(version.versionName))
         {
             await DependencyManager.ui!.ShowMessageBox("Already downloading", $"Failed to install version {version.versionName} because it is already being downloaded.");
-            return;
-        }
-
-        if (await IsVersionInstalled(version.versionName))
-        {
-            await DependencyManager.ui!.ShowMessageBox("Install already exists", $"Failed to install version {version.versionName} because it is already installed.");
             return;
         }
 
@@ -511,7 +555,84 @@ public abstract class EditorLogic : IEditorLogic
             return;
         }
 
-        activeDownloads[version.versionName] = new ActiveDownload(version, DownloadEditorInternal(version, path));
+        LoadRequest[] toInstall;
+        string editorVersionRoot;
+
+        if (version is EditorInstallInfo installedVersion)
+        {
+            editorVersionRoot = Path.Combine(installedVersion.installLocation, version.versionName);
+            await EnsureManifestExists(editorVersionRoot);
+
+            toInstall = [];
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
+            {
+                await DependencyManager.ui!.ShowMessageBox("Invalid Path", $"Failed to install version {version.versionName} because the provided path ({path}) is invalid.");
+                return;
+            }
+
+            if (await IsVersionInstalled(version.versionName))
+            {
+                await DependencyManager.ui!.ShowMessageBox("Install already exists", $"Failed to install version {version.versionName} because it is already installed.");
+                return;
+            }
+
+            editorVersionRoot = Path.Combine(path!, version.versionName);
+
+            Directory.CreateDirectory(editorVersionRoot);
+            await EnsureManifestExists(editorVersionRoot);
+
+            toInstall = DownloadEditorInternal(version, path);
+        }
+
+        EditorInfo.Download.Module[] modulesToInstall = version.download.Value.modules
+            .Where(m => desiredModules.Contains(m.id))
+            .ToArray();
+
+        activeDownloads[version.versionName] = new ActiveDownload(version, editorVersionRoot, [.. toInstall, .. InstallEditorSubModules(editorVersionRoot, modulesToInstall)]);
+
+        async Task EnsureManifestExists(string editorVersionRoot)
+        {
+            if (File.Exists(Path.Combine(editorVersionRoot, "modules.json")))
+                return;
+
+            await File.WriteAllTextAsync(Path.Combine(editorVersionRoot, "modules.json"), JsonSerializer.Serialize(version.download.Value.modules, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            }));
+        }
+    }
+
+    private LoadRequest[] InstallEditorSubModules(string editorRoot, params EditorInfo.Download.Module[] modules)
+    {
+        string tempDir = Path.Combine(editorRoot, "_temp");
+
+        return modules.Select(m => new LoadRequest($"Installing {m.name}", (p, c) => Install(m, p, c))).ToArray();
+
+        async Task Install(EditorInfo.Download.Module module, IProgress<float> progress, CancellationToken token)
+        {
+            string destination = module.destination!.Replace("{UNITY_PATH}", editorRoot);
+
+            switch (module.category)
+            {
+                case "LANGUAGE_PACK":
+                case "Language packs":
+                case "Language packs (Preview)":
+                    await InstallLanguagePack(module, progress, token);
+                    break;
+            }
+
+            async Task InstallLanguagePack(EditorInfo.Download.Module module, IProgress<float> progress, CancellationToken token)
+            {
+                string languagePackName = $"{module.id!.Replace("language-", "")}.po";
+                await EditorInstallHelper.DownloadFile(module.url!, Path.Combine(tempDir, languagePackName), progress, token);
+
+                Directory.CreateDirectory(destination);
+                File.Move(Path.Combine(tempDir, languagePackName), Path.Combine(destination, languagePackName));
+            }
+        }
     }
 
     protected abstract LoadRequest[] DownloadEditorInternal(EditorInfo download, string path);
@@ -646,11 +767,14 @@ public abstract class EditorLogic : IEditorLogic
         private IProgress<float> secondaryProgress;
         private LoadRequest[] loadRequests;
 
+        private string root;
+
         public float mainProgressValue { private set; get; }
         public float secondaryProgressValue { private set; get; }
 
-        public ActiveDownload(EditorInfo editorInfo, params LoadRequest[] loads)
+        public ActiveDownload(EditorInfo editorInfo, string root, params LoadRequest[] loads)
         {
+            this.root = root;
             this.editorInfo = editorInfo;
 
             loadRequests = loads;
@@ -663,27 +787,48 @@ public abstract class EditorLogic : IEditorLogic
                 currentValue = v;
             });
 
-            thread = new Thread(Run);
+            thread = new Thread(() => _ = Run());
             thread.Start();
 
             isDone = false;
         }
 
-        private void Run()
+        private async Task Run()
         {
-            float interval = 1 / loadRequests.Length;
-            float curProgress = 0;
+            string tempDir = Path.Combine(root, "_temp");
 
-            foreach (LoadRequest req in loadRequests)
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
+
+            Directory.CreateDirectory(tempDir);
+
+            try
             {
-                if (cancellation.IsCancellationRequested)
-                    break;
+                float interval = 1 / loadRequests.Length;
+                float curProgress = 0;
 
-                req.Run(cancellation.Token, secondaryProgress).Wait();
-                mainProgress.Report(curProgress += interval);
+                foreach (LoadRequest req in loadRequests)
+                {
+                    if (cancellation.IsCancellationRequested)
+                        break;
+
+                    Exception? e = await req.Run(cancellation.Token, secondaryProgress);
+
+                    if (e != null)
+                    {
+                        error = e;
+                        break;
+                    }
+
+                    mainProgress.Report(curProgress += interval);
+                }
+
+                isDone = true;
             }
-
-            isDone = true;
+            finally
+            {
+                Directory.Delete(tempDir, true);
+            }
         }
 
         public void Stop()

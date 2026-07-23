@@ -3,6 +3,7 @@ namespace Models.Data;
 public struct LoadRequest
 {
     public string msg;
+
     public Func<CancellationToken, Task>? task;
     public Func<IProgress<float>, CancellationToken, Task>? taskWithProgress;
 
@@ -20,19 +21,28 @@ public struct LoadRequest
         this.taskWithProgress = task;
     }
 
-    public async Task Run(CancellationToken token, IProgress<float>? secondaryProgress = null)
+    public async Task<Exception?> Run(CancellationToken token, IProgress<float>? secondaryProgress = null)
     {
-        if (taskWithProgress != null)
+        try
         {
-            secondaryProgress ??= new Progress<float>();
-            secondaryProgress.Report(0);
+            if (taskWithProgress != null)
+            {
+                secondaryProgress ??= new Progress<float>();
+                secondaryProgress.Report(0);
 
-            await taskWithProgress(secondaryProgress, token);
-            secondaryProgress.Report(1);
+                await taskWithProgress(secondaryProgress, token);
+                secondaryProgress.Report(1);
+            }
+            else
+            {
+                await task!(token);
+            }
         }
-        else
+        catch (Exception e)
         {
-            await task!(token);
+            return e;
         }
+
+        return null;
     }
 }

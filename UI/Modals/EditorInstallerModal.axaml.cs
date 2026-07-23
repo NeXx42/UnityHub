@@ -55,16 +55,6 @@ public partial class EditorInstallerModal : UserControl, IModal
 
         return modalTask.Task;
     }
-
-    private async Task StartInstall(EditorInfo version)
-    {
-        EditorModuleInstallerModal modal = MainWindow.ShowModal<EditorModuleInstallerModal>(out int pos);
-        await modal.Show(version);
-        await MainWindow.CloseModal(pos);
-
-        modalTask?.SetResult();
-    }
-
     private async Task UpdateSelectedEditorType(EditorFilterType type)
     {
         if (selectedFilter != type)
@@ -82,7 +72,7 @@ public partial class EditorInstallerModal : UserControl, IModal
                 menuOptionsList[i].Classes.Remove("Primary");
 
         EditorInfo[]? editors = await loadingBoundary.Load(GetPotentialInstalls);
-        entryList.Draw(editors ?? [], (ui, _, dat) => ui.Draw(dat, StartInstall));
+        entryList.Draw(editors ?? [], (ui, _, dat) => ui.Draw(dat, OpenInstallModal));
 
         async Task<EditorInfo[]> GetPotentialInstalls()
         {
@@ -90,6 +80,14 @@ public partial class EditorInstallerModal : UserControl, IModal
             maxPages = (int)Math.Ceiling(resultCount / (float)pageTake);
 
             return info;
+        }
+
+        async Task OpenInstallModal(EditorInfo info)
+        {
+            await MainWindow.ShowModalAndWait<EditorManagerModal>(async m =>
+            {
+                await m.Open(info);
+            });
         }
     }
 

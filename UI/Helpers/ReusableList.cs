@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,7 +7,7 @@ using Avalonia.Controls;
 
 namespace UI.Helpers;
 
-public class ReusableList<T> where T : Control
+public class ReusableList<T> : IEnumerable<T> where T : Control
 {
     private int currentElementCount;
 
@@ -107,5 +108,16 @@ public class ReusableList<T> where T : Control
     public void Clear()
     {
         DrawInternal((string[])[], 0);
+    }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        for (int i = 0; i < currentElementCount; i++)
+            yield return cachedEntries[i];
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }
