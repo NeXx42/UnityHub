@@ -22,9 +22,12 @@ public interface ITaggingLogic
     public Task UpdateTag(int projId, int tagId, bool to);
     public Task<bool> TryToChangeCollection(ProjectInfo project, int colId);
 
-    public Task CreateTag(TagData data);
-    public Task CreateCollection(CollectionData data);
+    public Task CreateOrUpdateTag(TagData data);
+    public Task CreateOrUpdateCollection(CollectionData data);
 
     public Task DeleteTag(int id);
     public Task DeleteCollection(int id);
+
+    public int GetTagCount();
+    public int GetCollectionCount();
 }

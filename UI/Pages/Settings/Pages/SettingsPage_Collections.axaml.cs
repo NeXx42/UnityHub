@@ -51,7 +51,7 @@ public partial class SettingsPage_Collections : UserControl, ISettingsPage
         if (newTag == null)
             return;
 
-        await DependencyManager.GetService<ITaggingLogic>()!.CreateTag(newTag);
+        await DependencyManager.GetService<ITaggingLogic>()!.CreateOrUpdateTag(newTag);
         await RedrawTags();
     }
 
@@ -65,7 +65,7 @@ public partial class SettingsPage_Collections : UserControl, ISettingsPage
         if (newCol == null)
             return;
 
-        await DependencyManager.GetService<ITaggingLogic>()!.CreateCollection(newCol);
+        await DependencyManager.GetService<ITaggingLogic>()!.CreateOrUpdateCollection(newCol);
         await RedrawCollections();
     }
 
@@ -73,10 +73,12 @@ public partial class SettingsPage_Collections : UserControl, ISettingsPage
     {
         switch (msg)
         {
+            case nameof(ITaggingLogic.CreateOrUpdateCollection):
             case nameof(ITaggingLogic.DeleteCollection):
                 RedrawCollections().Wrap();
                 break;
 
+            case nameof(ITaggingLogic.CreateOrUpdateTag):
             case nameof(ITaggingLogic.DeleteTag):
                 RedrawTags().Wrap();
                 break;

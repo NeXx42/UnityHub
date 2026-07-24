@@ -44,22 +44,21 @@ public partial class SettingsPage_Collections_Container : UserControl
 
     private async Task OnOpen(int _, string option)
     {
+        ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
+
         switch (option)
         {
             case "Edit":
                 TagData? res = await MainWindow.ShowModalAndWait<CreateCollectionModal, TagData>(async d => await d.Init(activeData));
 
-                if (res == null)
+                if (res == null || res.collectionId == -1)
                     return;
 
                 if (res is CollectionData resCol)
-                {
-
-                }
+                    await logic.CreateOrUpdateCollection(resCol);
                 else
-                {
+                    await logic.CreateOrUpdateTag(res);
 
-                }
                 break;
 
             case "Delete":
@@ -74,7 +73,7 @@ public partial class SettingsPage_Collections_Container : UserControl
                         new ConfirmationButton("Cancel"),
                         new ConfirmationButton("Delete", true)
                     ) == 1)
-                        await DependencyManager.GetService<ITaggingLogic>()!.DeleteCollection(activeData.collectionId);
+                        await logic.DeleteCollection(activeData.collectionId);
                 }
                 else
                 {
@@ -84,7 +83,7 @@ public partial class SettingsPage_Collections_Container : UserControl
                         new ConfirmationButton("Cancel"),
                         new ConfirmationButton("Delete", true)
                     ) == 1)
-                        await DependencyManager.GetService<ITaggingLogic>()!.DeleteTag(activeData.collectionId);
+                        await logic.DeleteTag(activeData.collectionId);
                 }
                 break;
         }

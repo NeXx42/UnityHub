@@ -15,6 +15,18 @@ namespace UI.Helpers;
 
 public static class ThemeHelper
 {
+    private static string[] m_collectionColours = [
+        "#f0546c",
+        "#f0a84e",
+        "#f0c94e",
+        "#3ddc84",
+        "#4ecfc0",
+        "#4ea8f0",
+        "#6c7bf0",
+        "#b47cf0",
+        "#e07cf0",
+    ];
+    public static string[] collectionColours => m_collectionColours;
     public static string currentThemeName { get; private set; } = "";
 
     private static string[] GetThemeRoots() => [Path.Combine(AppContext.BaseDirectory, "Themes"), Path.Combine(GlobalConfig.getDataFolder, "Themes")];

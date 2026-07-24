@@ -2,7 +2,8 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.CreateCollectionModal"
-  xmlns:controls="clr-namespace:UI.Controls">
+  xmlns:controls="clr-namespace:UI.Controls"
+  xmlns:local="clr-namespace:UI.Modals" x:Name="root">
   <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}" Width="400" CornerRadius="{DynamicResource CornerRadius_Element}">
     <StackPanel Orientation="Vertical" Margin="10" Spacing="10">
       <Label FontSize="20" HorizontalAlignment="Center" Margin="0 0 0 10">Save Collection</Label>
@@ -14,7 +15,21 @@
 
       <Grid ColumnDefinitions="100 *">
         <Label VerticalAlignment="Center">Colour</Label>
-        <TextBox x:Name="inp_Colour" Grid.Column="2"/>
+        <ComboBox Grid.Column="2" x:Name="inp_Colours">
+          <ComboBox.ItemTemplate >
+            <DataTemplate x:DataType="local:CreateCollectionModal_Colour">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <Border Width="16" Height="16" Background="{Binding colour}" CornerRadius="3" />
+                <TextBlock Text="{Binding colourName}" VerticalAlignment="Center" />
+              </StackPanel>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+      </Grid>
+
+      <Grid ColumnDefinitions="100 *" IsVisible="{Binding #root.servingCollection}">
+        <Label VerticalAlignment="Center">Behaviour</Label>
+        <ComboBox Grid.Column="2" x:Name="inp_CollectionHandling"/>
       </Grid>
 
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">

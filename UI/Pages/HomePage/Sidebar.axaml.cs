@@ -86,12 +86,12 @@ public partial class Sidebar : UserControl
         switch (msg)
         {
             case nameof(ITaggingLogic.DeleteCollection):
-            case nameof(ITaggingLogic.CreateCollection):
+            case nameof(ITaggingLogic.CreateOrUpdateCollection):
                 DrawCollections().Wrap();
                 break;
 
             case nameof(ITaggingLogic.DeleteTag):
-            case nameof(ITaggingLogic.CreateTag):
+            case nameof(ITaggingLogic.CreateOrUpdateTag):
                 DrawTags().Wrap();
                 break;
         }

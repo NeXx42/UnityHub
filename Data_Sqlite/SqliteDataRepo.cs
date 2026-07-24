@@ -17,18 +17,13 @@ public class SqliteDataRepo : IDataRepository
     public async Task Setup()
     {
         database = new Database_Manager.DatabaseInstance();
-        await database.Init(Path.Combine(GlobalConfig.getDataFolder, "data.db"), ExceptionHandler);
+        await database.Init(Path.Combine(GlobalConfig.getDataFolder, "data.db"));
     }
 
     public async Task Setup_Test(string path)
     {
         database = new Database_Manager.DatabaseInstance();
-        await database.Init(path, ExceptionHandler);
-    }
-
-    private void ExceptionHandler(Exception e, string? sql)
-    {
-        Console.WriteLine(sql);
+        await database.Init(path);
     }
 
     private ProjectInfo MapToInfo(dbo_Project dbData)
@@ -334,22 +329,24 @@ public class SqliteDataRepo : IDataRepository
         }, SQLFilter.Equal(nameof(dbo_Project.id), projId), [nameof(dbo_Project.collectionId)]);
     }
 
-    public async Task CreateTag(TagData src)
+    public async Task CreateOrUpdateTag(TagData src)
     {
-        await database!.InsertItem(new dbo_Tag
+        await database!.AddOrUpdate(new dbo_Tag
         {
             Name = src.collectionName,
             Colour = src.colour
-        });
+        }, SQLFilter.Equal(nameof(dbo_Tag.Id), src.collectionId), nameof(dbo_Tag.Colour), nameof(dbo_Tag.Name));
     }
 
-    public async Task CreateCollection(CollectionData src)
+    public async Task CreateOrUpdateCollection(CollectionData src)
     {
-        await database!.InsertItem(new dbo_Collection
+        await database!.AddOrUpdate(new dbo_Collection
         {
             Name = src.collectionName,
-            Colour = src.colour
-        });
+            Colour = src.colour,
+            HandlingType = (int)src.handlingType
+
+        }, SQLFilter.Equal(nameof(dbo_Collection.Id), src.collectionId), nameof(dbo_Collection.Colour), nameof(dbo_Collection.HandlingType), nameof(dbo_Tag.Name));
     }
 
     public async Task<string[]> GetProjectVersions()

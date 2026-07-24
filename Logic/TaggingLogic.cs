@@ -8,18 +8,6 @@ namespace Logic;
 
 public class TaggingLogic : ITaggingLogic
 {
-    private static string[] collectionColours = [
-        "#f0546c",
-        "#f0a84e",
-        "#f0c94e",
-        "#3ddc84",
-        "#4ecfc0",
-        "#4ea8f0",
-        "#6c7bf0",
-        "#b47cf0",
-        "#e07cf0",
-    ];
-
     private static CollectionData[] defaultCollections = [
         new CollectionData(){
             isDefault = true,
@@ -62,7 +50,7 @@ public class TaggingLogic : ITaggingLogic
         if (cachedCollections == null || forceRecache)
         {
             CollectionData[] cols = [.. defaultCollections, .. await data.GetCollections()];
-            cachedCollections = new Dictionary<int, CollectionData>(cols.Length);
+            cachedCollections = new(cols.Length);
 
             foreach (CollectionData col in cols)
                 cachedCollections[col.collectionId] = col;
@@ -216,32 +204,20 @@ public class TaggingLogic : ITaggingLogic
         callbacks?.Invoke(projId, nameof(UpdateCollection));
     }
 
-    public async Task CreateTag(TagData src)
+    public async Task CreateOrUpdateTag(TagData src)
     {
-        int colourId = (cachedTags?.Count ?? 0) % collectionColours.Length;
-        await data.CreateTag(new TagData
-        {
-            collectionId = 1,
-            collectionName = src.collectionName,
-            colour = collectionColours[colourId],
-        });
+        await data.CreateOrUpdateTag(src);
 
-        _ = await GetTags(true);
-        callbacks?.Invoke(null, nameof(CreateTag));
+        await GetTags(true);
+        callbacks?.Invoke(null, nameof(CreateOrUpdateTag));
     }
 
-    public async Task CreateCollection(CollectionData src)
+    public async Task CreateOrUpdateCollection(CollectionData src)
     {
-        int colourId = (cachedCollections?.Count ?? 0) % collectionColours.Length;
-        await data.CreateCollection(new CollectionData
-        {
-            collectionId = 1,
-            collectionName = src.collectionName,
-            colour = collectionColours[colourId],
-        });
+        await data.CreateOrUpdateCollection(src);
 
-        _ = await GetCollections(true);
-        callbacks?.Invoke(null, nameof(CreateCollection));
+        await GetCollections(true);
+        callbacks?.Invoke(null, nameof(CreateOrUpdateCollection));
     }
 
     public async Task DeleteTag(int id)
@@ -258,4 +234,7 @@ public class TaggingLogic : ITaggingLogic
 
         callbacks?.Invoke(id, nameof(DeleteCollection));
     }
+
+    public int GetTagCount() => cachedTags?.Count ?? 1;
+    public int GetCollectionCount() => cachedCollections?.Count ?? 1;
 }

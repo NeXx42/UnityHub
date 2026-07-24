@@ -82,15 +82,42 @@ public class MockDataRepo : IDataRepository
         throw new NotImplementedException();
     }
 
-    public Task CreateTag(TagData src)
+    public Task CreateOrUpdateTag(TagData src)
     {
-        tags.Add(src);
+        if (src.collectionId == -1)
+            tags.Add(src);
+        else
+        {
+            foreach (var col in tags)
+            {
+                if (col.collectionId == src.collectionId)
+                {
+                    col.colour = src.colour;
+                    col.collectionName = src.collectionName;
+                }
+            }
+        }
+
         return Task.CompletedTask;
     }
 
-    public Task CreateCollection(CollectionData src)
+    public Task CreateOrUpdateCollection(CollectionData src)
     {
-        collections.Add(src);
+        if (src.collectionId == -1)
+            collections.Add(src);
+        else
+        {
+            foreach (var col in collections)
+            {
+                if (col.collectionId == src.collectionId)
+                {
+                    col.colour = src.colour;
+                    col.collectionName = src.collectionName;
+                    col.handlingType = src.handlingType;
+                }
+            }
+        }
+
         return Task.CompletedTask;
     }
 
@@ -101,7 +128,7 @@ public class MockDataRepo : IDataRepository
 
     public Task<string?[]> GetConfigValue(string key)
     {
-        throw new NotImplementedException();
+        return Task.FromResult((string?[])[]);
     }
 
     public Task SetConfigValue(string key, string? value)
