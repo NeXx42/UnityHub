@@ -20,12 +20,12 @@ public class TaggingTest
 
         TagData newTag = new TagData()
         {
-            collectionId = 0,
+            collectionId = -1,
             collectionName = Guid.NewGuid().ToString(),
             colour = Guid.NewGuid().ToString()
         };
 
-        await logic.CreateTag(newTag);
+        await logic.CreateOrUpdateTag(newTag);
 
         TagData[] dbTags = await logic.GetTags();
 

@@ -18,7 +18,7 @@ public class DependencyManagementTest
 
         Assert.That(dataRepo, Is.Not.Null);
 
-        await dataRepo.CreateCollection(new Models.Data.CollectionData() { collectionId = 0, collectionName = "" });
+        await dataRepo.CreateOrUpdateCollection(new Models.Data.CollectionData() { collectionId = -1, collectionName = "" });
         var res = await dataRepo.GetCollections();
 
         Assert.That(res.Length != 0);
