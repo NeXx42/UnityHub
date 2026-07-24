@@ -8,7 +8,7 @@
   <Border BorderThickness="1 0 0 0" BorderBrush="{DynamicResource ButtonBorder}" Padding="10">
     <Grid>
       <Grid x:Name="cont_Message">
-        <Label HorizontalAlignment="Center" VerticalAlignment="Center">Nothing Selected</Label>
+        <Label HorizontalAlignment="Center" VerticalAlignment="Center" Content="{DynamicResource LANG_HomePage_MoreInfo_NothingSelected}"/>
       </Grid>
 
       <StackPanel Spacing="15" x:Name="cont_Main">
@@ -42,10 +42,10 @@
               </Style>
             </StackPanel.Styles>
 
-            <controls:DropDownButton x:Name="btn_OpenProject" ButtonLabel="Open Project" Height="45"/>
+            <controls:DropDownButton x:Name="btn_OpenProject" ButtonLabel="{DynamicResource LANG_HomePage_MoreInfo_Open}" Height="45"/>
 
-            <controls:ButtonWrapper x:Name="btn_OpenIDE" Label="Open in Editor" Height="45"/>
-            <controls:ButtonWrapper x:Name="btn_OpenExplorer" Label="Reveal in Explorer" Height="45"/>
+            <controls:ButtonWrapper x:Name="btn_OpenIDE" Label="{DynamicResource LANG_HomePage_MoreInfo_OpenIDE}" Height="45"/>
+            <controls:ButtonWrapper x:Name="btn_OpenExplorer" Label="{DynamicResource LANG_HomePage_MoreInfo_OpenBrowser}" Height="45"/>
 
             <!-- Terminal -->
             <Grid ColumnDefinitions="* * * *" Height="45">
@@ -120,7 +120,7 @@
 
           <Grid ColumnDefinitions="Auto *">
             <Label Content="Path" />
-            <TextBlock Text="{Binding directory}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Grid.Column="2"/>
+            <TextBlock Text="{Binding directory}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Grid.Column="2" VerticalAlignment="Center"/>
           </Grid>
           <StackPanel>
             <Label Width="100" Content="Last Opened" />
@@ -149,26 +149,10 @@
 
         </StackPanel>
 
-        <!-- Tags -->
-        <StackPanel Margin="8 0">
-          <Grid>
-            <Label HorizontalAlignment="Left" Foreground="{DynamicResource TextColour}">Tags</Label>
-
-            <controls:ButtonWrapper HorizontalAlignment="Right" Classes="Transparent" x:Name="btn_AddTag">
-              <controls:ButtonWrapper.Icon>
-                <Viewbox Width="18" Height="18">
-                  <Path Fill="{DynamicResource TextColour}" Data="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                </Viewbox>
-              </controls:ButtonWrapper.Icon>
-            </controls:ButtonWrapper>
-          </Grid>
-          <WrapPanel x:Name="cont_Tags" Margin="5 0 0 0" ItemSpacing="5" LineSpacing="5"/>
-        </StackPanel>
-
         <!-- Collections -->
         <StackPanel Margin="8 0">
           <Grid>
-            <Label HorizontalAlignment="Left" Foreground="{DynamicResource TextColour}">Collections</Label>
+            <Label HorizontalAlignment="Left" Foreground="{DynamicResource TextColour}" Content="{DynamicResource LANG_Literal_Collections}"/>
 
             <controls:ButtonWrapper HorizontalAlignment="Right" Classes="Transparent" x:Name="btn_AddCollection">
               <controls:ButtonWrapper.Icon>
@@ -179,6 +163,22 @@
             </controls:ButtonWrapper>
           </Grid>
           <WrapPanel x:Name="cont_Collections" Margin="5 0 0 0" ItemSpacing="5" LineSpacing="5"/>
+        </StackPanel>
+
+        <!-- Tags -->
+        <StackPanel Margin="8 0">
+          <Grid>
+            <Label HorizontalAlignment="Left" Foreground="{DynamicResource TextColour}" Content="{DynamicResource LANG_Literal_Tags}"/>
+
+            <controls:ButtonWrapper HorizontalAlignment="Right" Classes="Transparent" x:Name="btn_AddTag">
+              <controls:ButtonWrapper.Icon>
+                <Viewbox Width="18" Height="18">
+                  <Path Fill="{DynamicResource TextColour}" Data="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                </Viewbox>
+              </controls:ButtonWrapper.Icon>
+            </controls:ButtonWrapper>
+          </Grid>
+          <WrapPanel x:Name="cont_Tags" Margin="5 0 0 0" ItemSpacing="5" LineSpacing="5"/>
         </StackPanel>
 
         <StackPanel Margin="8 0" Spacing="5">

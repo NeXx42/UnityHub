@@ -1,0 +1,16 @@
+{
+    "HomePage_MoreInfo_Open": "開く",
+    "HomePage_MoreInfo_OpenIDE": "IDEで開く",
+    "HomePage_MoreInfo_OpenBrowser": "ファイルブラウザで開く",
+    "HomePage_MoreInfo_NothingSelected": "何も選択されていません",
+    "HomePage_SideBar_AllProjects": "すべてのプロジェクト",
+    "HomePage_SideBar_FavouriteProjects": "お気に入り",
+    "HomePage_SideBar_Recent": "最近使った項目",
+    "HomePage_SearchBarPlaceholder": "プロジェクトを検索",
+    "HomePage_CreateProject": "プロジェクトを作成",
+    "Literal_Collections": "コレクション",
+    "Literal_Tags": "タグ",
+    "Literal_Projects": "プロジェクト",
+    "Literal_Project": "プロジェクト",
+    "LANG_Version": "0.0.1"
+}

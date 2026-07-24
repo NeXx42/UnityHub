@@ -48,7 +48,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
     private string? lastTextFilter;
     private ProjectInfo[]? cardInfo;
 
-    public string TotalProjectCountTxt => $"{projectCount} Project{(projectCount > 1 ? "s" : "")}";
+    public string TotalProjectCountTxt => $"{projectCount} {LanguageHelper.GetLanguageResource(projectCount > 1 ? "Literal_Project" : "Literal_Projects")}";
     public ProjectSearch activeSearch { private set; get; }
 
     private int selectedContentDisplayer = 0;

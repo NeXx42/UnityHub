@@ -38,7 +38,9 @@ public partial class MainWindow : Window, IUILinker
     public MainWindow()
     {
         instance = this;
+
         ThemeHelper.Startup().Wrap();
+        LanguageHelper.Startup().Wrap();
 
         InitializeComponent();
 

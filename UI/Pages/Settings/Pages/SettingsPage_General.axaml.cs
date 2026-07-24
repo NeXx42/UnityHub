@@ -19,6 +19,8 @@ namespace UI.Pages.Settings.Pages;
 public partial class SettingsPage_General : UserControl, ISettingsPage
 {
     public UserControl getControl => this;
+
+    private bool isActive = false;
     private ISettingsPageSetting[] settings;
 
     public SettingsPage_General()
@@ -26,6 +28,7 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
         InitializeComponent();
 
         btn_Projects_DeriveMissingMetadata.RegisterClick(DeriveMissingMetadata);
+        inp_LanguageDropdown.SelectionChanged += (_, __) => UpdateLanguage();
 
         settings = [
             setting_EditorCommand.Init(ConfigEntry.IDECommand),
@@ -36,10 +39,18 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
 
     public Task OnOpen()
     {
+        isActive = false;
+
         IConfigLogic logic = DependencyManager.GetService<IConfigLogic>()!;
         Task.WhenAll(settings.Select(s => s.Load(logic))).Wrap();
 
+        string[] langs = LanguageHelper.GetLanguages();
+        int currentLang = langs.ToList().IndexOf(LanguageHelper.currentLanguageName);
 
+        inp_LanguageDropdown.ItemsSource = langs;
+        inp_LanguageDropdown.SelectedIndex = currentLang == -1 ? 0 : currentLang;
+
+        isActive = true;
         return Task.CompletedTask;
     }
 
@@ -76,5 +87,14 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
             nameof(ProjectInfo.version),
             nameof(ProjectInfo.renderPipeline),
         ]);
+    }
+
+
+    private void UpdateLanguage()
+    {
+        if (!isActive)
+            return;
+
+        LanguageHelper.ChangeLanguage((string?)inp_LanguageDropdown.SelectedValue).Wrap();
     }
 }

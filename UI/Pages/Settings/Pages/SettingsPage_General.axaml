@@ -6,6 +6,12 @@
   xmlns:common="clr-namespace:UI.Pages.Settings.Pages.Common">
   <StackPanel Orientation="Vertical" Spacing="20">
     <StackPanel Spacing="5">
+      <Label FontSize="20">Language</Label>
+      <Grid ColumnDefinitions="Auto * 200">
+        <Label>Language</Label>
+        <ComboBox x:Name="inp_LanguageDropdown" Grid.Column="3"/>
+      </Grid>
+
       <Label FontSize="20">Projects</Label>
       <Grid ColumnDefinitions="* 5 200">
         <Label>Derive missing metadata</Label>

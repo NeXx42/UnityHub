@@ -10,7 +10,7 @@
       <StackPanel Orientation="Vertical" Spacing="15">
         <!-- Filtering -->
         <Grid Height="35" ColumnDefinitions="* 5 Auto">
-          <TextBox x:Name="inp_Text" HorizontalAlignment="Left" Width="300" Foreground="{DynamicResource TextColourMuted}" PlaceholderText="Search projects"/>
+          <TextBox x:Name="inp_Text" HorizontalAlignment="Left" Width="300" Foreground="{DynamicResource TextColourMuted}" PlaceholderText="{DynamicResource LANG_HomePage_SearchBarPlaceholder}"/>
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5" Grid.Column="2">
             <!-- Sort -->
             <controls:ButtonWrapper HorizontalAlignment="Right" Label="Sort" x:Name="btn_Sort" HasPopupIcon="True">
@@ -29,7 +29,7 @@
               </controls:ButtonWrapper.Icon>
             </controls:ButtonWrapper>
 
-            <controls:DropDownButton VerticalAlignment="Stretch" x:Name="btn_NewProject" ButtonLabel="New Project"/>
+            <controls:DropDownButton VerticalAlignment="Stretch" x:Name="btn_NewProject" ButtonLabel="{DynamicResource LANG_HomePage_CreateProject}"/>
           </StackPanel>
         </Grid>
 
