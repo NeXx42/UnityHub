@@ -20,6 +20,12 @@ public class SqliteDataRepo : IDataRepository
         await database.Init(Path.Combine(GlobalConfig.getDataFolder, "data.db"), ExceptionHandler);
     }
 
+    public async Task Setup_Test(string path)
+    {
+        database = new Database_Manager.DatabaseInstance();
+        await database.Init(path, ExceptionHandler);
+    }
+
     private void ExceptionHandler(Exception e, string? sql)
     {
         Console.WriteLine(sql);

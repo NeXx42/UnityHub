@@ -8,6 +8,9 @@ public class MockDataRepo : IDataRepository
 {
     public Dictionary<int, ProjectInfo>? lookup;
 
+    private List<TagData> tags = new List<TagData>();
+    private List<CollectionData> collections = new List<CollectionData>();
+
     public Task Setup()
     {
         lookup = new Dictionary<int, ProjectInfo>()
@@ -17,9 +20,7 @@ public class MockDataRepo : IDataRepository
             { 2, CreateCard(2, "test1", "/home/matth/Documents/Unity/SimpleMRPG", "") },
             { 3, CreateCard(3, "test1", "/home/matth/Documents/Unity/SimpleMRPG", "") },
             { 4, CreateCard(4, "test1", "/home/matth/Documents/Unity/SimpleMRPG", "") },
-        }
-        ;
-
+        };
 
         return Task.CompletedTask;
 
@@ -63,15 +64,8 @@ public class MockDataRepo : IDataRepository
         throw new NotImplementedException();
     }
 
-    public Task<TagData[]> GetTags()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<CollectionData[]> GetCollections()
-    {
-        throw new NotImplementedException();
-    }
+    public Task<TagData[]> GetTags() => Task.FromResult(tags.ToArray());
+    public Task<CollectionData[]> GetCollections() => Task.FromResult(collections.ToArray());
 
     public Task Migrate(IEnumerable<int> ids)
     {
@@ -90,12 +84,14 @@ public class MockDataRepo : IDataRepository
 
     public Task CreateTag(TagData src)
     {
-        throw new NotImplementedException();
+        tags.Add(src);
+        return Task.CompletedTask;
     }
 
     public Task CreateCollection(CollectionData src)
     {
-        throw new NotImplementedException();
+        collections.Add(src);
+        return Task.CompletedTask;
     }
 
     public Task<string[]> GetProjectVersions()

@@ -4,10 +4,17 @@ on:
   push:
     branches:
       - main
-      
+
 jobs:
-  build:
+  test:
     runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        test-project:
+          - Logic.Test/Logic.Test.csproj
+          - Data_Sqlite.Test/Data_Sqlite.Test.csproj
+          - UI.Test/UI.Test.csproj
 
     steps:
       - name: Checkout code
@@ -19,9 +26,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            libfuse2 \
-          
+            libfuse2
+
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
+
+      - name: Test
+        run: dotnet test ${{ matrix.test-project }} --configuration Release
