@@ -1,7 +1,10 @@
 <Solution>
   <Project Path="Data_Mock/Data_Mock.csproj" />
+  <Project Path="Data_Sqlite.Test/Data_Sqlite.Test.csproj" />
   <Project Path="Data_Sqlite/Data_Sqlite.csproj" />
+  <Project Path="Logic.Test/Logic.Test.csproj" />
   <Project Path="Logic/Logic.csproj" />
   <Project Path="Models/Models.csproj" />
+  <Project Path="UI.Test/UI.Test.csproj" />
   <Project Path="UI/UI.csproj" />
 </Solution>
