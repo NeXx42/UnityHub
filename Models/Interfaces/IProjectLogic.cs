@@ -11,10 +11,10 @@ public interface IProjectLogic
 
     public Task<string[]> GetProjectVersions();
 
-    public void OpenIDE(ProjectInfo info);
+    public Task OpenIDE(ProjectInfo info);
     public void BrowseTo(ProjectInfo info);
     public LoadRequest[] MoveProject(ProjectInfo info, string to);
-    public void BrowseTerminal(ProjectInfo info);
+    public Task BrowseTerminal(ProjectInfo info);
     public LoadRequest[] DuplicateProject(ProjectInfo info, string newName, string newDirectory);
 
     public Task<ProjectInfo[]> VerifyProjectPrimative(IEnumerable<string> folders);

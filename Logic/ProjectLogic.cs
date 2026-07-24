@@ -128,18 +128,54 @@ public class ProjectLogic : IProjectLogic
         process.Start();
     }
 
-    public void OpenIDE(ProjectInfo info)
+    public async Task OpenIDE(ProjectInfo info)
     {
-        throw new NotImplementedException();
+        string? command = await DependencyManager.GetService<IConfigLogic>()!.Get<string?>(ConfigEntry.IDECommand, null);
+
+        if (string.IsNullOrEmpty(command))
+        {
+            await DependencyManager.ui!.ShowMessageBox("No IDE Command", "Failed to open ide because there is no ide command set.\nThis can be done in the settings");
+            return;
+        }
+
+        string[] parts = command.Split(" ");
+
+        if (parts.Length == 0)
+            parts = [command];
+
+        ProcessStartInfo startInfo = new ProcessStartInfo()
+        {
+            FileName = parts[0],
+            UseShellExecute = false,
+        };
+
+        for (int i = 1; i < parts.Length; i++)
+            if (parts[i].Equals("$"))
+                startInfo.ArgumentList.Add(info.directory);
+            else
+                startInfo.ArgumentList.Add(parts[i]);
+
+        new Process()
+        {
+            StartInfo = startInfo
+        }.Start();
     }
 
-    public void BrowseTerminal(ProjectInfo info)
+    public async Task BrowseTerminal(ProjectInfo info)
     {
+        string? command = await DependencyManager.GetService<IConfigLogic>()!.Get<string?>(ConfigEntry.TerminalCommand, null);
+
+        if (GlobalConfig.isOnLinux && string.IsNullOrEmpty(command))
+        {
+            await DependencyManager.ui!.ShowMessageBox("No Terminal Command", "Failed to open the terminal because on linux the terminal couldnt be determined.\nSet one in the settings.");
+            return;
+        }
+
         new Process()
         {
             StartInfo = new ProcessStartInfo()
             {
-                FileName = GlobalConfig.isOnLinux ? "alacritty" : "cmd.exe",
+                FileName = command ?? "cmd.exe",
                 WorkingDirectory = info.directory,
                 UseShellExecute = true,
             }
@@ -148,6 +184,12 @@ public class ProjectLogic : IProjectLogic
 
     public LoadRequest[] DuplicateProject(ProjectInfo info, string newName, string newDir)
     {
+        if (Directory.Exists(newDir))
+            throw new Exception($"Path ({newDir} already exists).");
+
+        if (!Directory.Exists(info.directory))
+            throw new Exception($"Source project doesnt exist at the directory {info.directory}.");
+
         return [
             CopyFolderAndDescendants(info.directory, newDir, true),
             new LoadRequest("Saving", CreateNewEntry)
@@ -176,6 +218,12 @@ public class ProjectLogic : IProjectLogic
 
     public LoadRequest[] MoveProject(ProjectInfo info, string newDir)
     {
+        if (Directory.Exists(newDir))
+            throw new Exception($"Path '{newDir}' already exists.");
+
+        if (!Directory.Exists(info.directory))
+            throw new Exception($"Source project doesnt exist at the directory '{info.directory}'.");
+
         return [
             new LoadRequest("Moving", Move),
             new LoadRequest("Saving", UpdateEntry)
@@ -197,6 +245,7 @@ public class ProjectLogic : IProjectLogic
         {
             info.directory = newDir;
             await UpdateProperties(info, [nameof(ProjectInfo.directory)]);
+            cache.Remove(info.id);
         }
     }
 

@@ -61,7 +61,19 @@ public partial class MoveProject_Modal : UserControl, IModal
         if (await DependencyManager.ui!.ShowConfirmationBox("Are you sure?", $"Move project from '{info.directory}' to '{path}'", new ConfirmationButton("Cancel"), new ConfirmationButton("Move", true)) != 1)
             return;
 
-        Exception? error = await DependencyManager.ui!.LoadProgressive("Moving", DependencyManager.GetService<IProjectLogic>()!.MoveProject(info, path));
+        LoadRequest[] reqs;
+
+        try
+        {
+            reqs = DependencyManager.GetService<IProjectLogic>()!.MoveProject(info, path);
+        }
+        catch (Exception e)
+        {
+            await DependencyManager.ui.ShowMessageBox(e);
+            return;
+        }
+
+        Exception? error = await DependencyManager.ui!.LoadProgressive("Moving", reqs);
 
         if (error != null)
             await DependencyManager.ui.ShowMessageBox(error);

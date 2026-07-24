@@ -70,7 +70,19 @@ public partial class DuplicateProject_Modal : UserControl, IModal
         if (await DependencyManager.ui!.ShowConfirmationBox("Are you sure?", $"Duplicate project into '{path}'", new ConfirmationButton("Cancel"), new ConfirmationButton("Clone", true)) != 1)
             return;
 
-        Exception? error = await DependencyManager.ui!.LoadProgressive("Duplicating", DependencyManager.GetService<IProjectLogic>()!.DuplicateProject(info, name, path));
+        LoadRequest[] reqs;
+
+        try
+        {
+            reqs = DependencyManager.GetService<IProjectLogic>()!.DuplicateProject(info, name, path);
+        }
+        catch (Exception e)
+        {
+            await DependencyManager.ui.ShowMessageBox(e);
+            return;
+        }
+
+        Exception? error = await DependencyManager.ui!.LoadProgressive("Duplicating", reqs);
 
         if (error != null)
             await DependencyManager.ui.ShowMessageBox(error);

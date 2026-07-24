@@ -2,7 +2,8 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_General"
-  xmlns:controls="clr-namespace:UI.Controls">
+  xmlns:controls="clr-namespace:UI.Controls"
+  xmlns:common="clr-namespace:UI.Pages.Settings.Pages.Common">
   <StackPanel Orientation="Vertical" Spacing="20">
     <StackPanel Spacing="5">
       <Label FontSize="20">Projects</Label>
@@ -10,6 +11,10 @@
         <Label>Derive missing metadata</Label>
         <controls:ButtonWrapper Label="Derive" x:Name="btn_Projects_DeriveMissingMetadata" Classes="Primary" Grid.Column="2" HorizontalContentAlignment="Center"/>
       </Grid>
+
+      <common:SettingsPage_Common_Text x:Name="setting_EditorCommand" Label="Editor Command"/>
+      <common:SettingsPage_Common_Text x:Name="setting_TerminalCommand" Label="Terminal Command"/>
+
     </StackPanel>
   </StackPanel>
 </UserControl>

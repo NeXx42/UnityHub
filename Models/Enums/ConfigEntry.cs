@@ -4,6 +4,8 @@ public enum ConfigEntry
 {
     EditorPath,
     LastSaveLocation,
-    EditorCommand,
     ActiveTheme,
+
+    IDECommand,
+    TerminalCommand,
 }
