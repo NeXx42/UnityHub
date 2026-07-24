@@ -71,7 +71,7 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
     {
         IEditorLogic logic = DependencyManager.GetService<IEditorLogic>()!;
 
-        EditorInstallInfo[] installed = await logic.GetInstalledEditorVersionsMoreInfo(System.Threading.CancellationToken.None);
+        EditorInstallInfo[] installed = await logic.GetEditorMetadataForDownloadedVersions(System.Threading.CancellationToken.None);
         Dictionary<EditorInfo, DownloadStatus> downloading = logic.GetActiveInstalls();
 
         (EditorInfo, DownloadStatus?)[] installs = [.. installed.Select(i => (i, (DownloadStatus?)null)), .. downloading.Select(d => (d.Key, d.Value))];

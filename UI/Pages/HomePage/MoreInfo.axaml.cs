@@ -30,8 +30,11 @@ public partial class MoreInfo : UserControl
         btn_OpenProject.RegisterClick(() => DependencyManager.GetService<IEditorLogic>()!.LaunchProject(info!));
         btn_OpenProject.RegisterOptions(["Rederive Metadata", "Upload Icon"], OnLaunchOptionSelect);
 
-        btn_OpenExplorer.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.BrowseTo(info!));
+        btn_OpenIDE.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.OpenIDE(info!));
 
+        btn_Terminal.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.BrowseTerminal(info!));
+        btn_Move.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.MoveProject(info!));
+        btn_Clone.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.DuplicateProject(info!));
         btn_Delete.RegisterClick(DeleteProject);
 
         Popup_GenericList versionList = new Popup_GenericList();

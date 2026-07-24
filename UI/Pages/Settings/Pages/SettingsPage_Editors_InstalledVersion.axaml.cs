@@ -87,7 +87,7 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
         }
 
         popupOptions = new Popup_GenericList();
-        popupOptions.Draw(["Manage", "Delete"], OnExtraOptionCallback);
+        popupOptions.Draw(["Manage", "Browse", "Delete"], OnExtraOptionCallback);
         btn_Extra.RegisterPopup(popupOptions);
 
         cont_DownloadStatus.IsVisible = false;
@@ -113,6 +113,10 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
                     return;
 
                 await logic.Delete(ProductName);
+                break;
+
+            case "Browse":
+                DependencyManager.GetService<IEditorLogic>()!.BrowseToEditor(info);
                 break;
 
             case "Manage":

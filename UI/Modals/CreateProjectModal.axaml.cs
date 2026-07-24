@@ -52,7 +52,7 @@ public partial class CreateProjectModal : UserControl, IModal
         if (!string.IsNullOrEmpty(lastSaveLocation) && Directory.Exists(lastSaveLocation))
             inp_Location.Text = lastSaveLocation;
 
-        installedVersions = (await DependencyManager.GetService<IEditorLogic>()!.GetInstalledEditorVersionsMoreInfo(System.Threading.CancellationToken.None)).OrderByDescending(v => v.versionName).ToArray();
+        installedVersions = (await DependencyManager.GetService<IEditorLogic>()!.GetEditorMetadataForDownloadedVersions(System.Threading.CancellationToken.None)).OrderByDescending(v => v.versionName).ToArray();
 
         inp_Versions.ItemsSource = installedVersions.Select(v => v.versionName);
         inp_Versions.SelectedIndex = 0;

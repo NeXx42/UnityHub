@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
+using Logic;
 using UI.Helpers;
 using UI.Interfaces;
 
@@ -120,6 +121,14 @@ public partial class ButtonWrapper : UserControl
     private void ClickWrapper(Action callback)
     {
         MainWindow.ClearFocus();
-        callback?.Invoke();
+
+        try
+        {
+            callback?.Invoke();
+        }
+        catch (Exception e)
+        {
+            DependencyManager.ui!.ShowMessageBox(e).Wrap();
+        }
     }
 }

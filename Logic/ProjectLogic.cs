@@ -110,8 +110,7 @@ public class ProjectLogic : IProjectLogic
         return info;
     }
 
-    public async Task BrowseTo(int id) => await BrowseTo((await GetProjectInfo(id))!);
-    public async Task BrowseTo(ProjectInfo info)
+    public async void BrowseTo(ProjectInfo info)
     {
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
@@ -127,6 +126,34 @@ public class ProjectLogic : IProjectLogic
         };
 
         process.Start();
+    }
+
+    public void OpenIDE(ProjectInfo info)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void BrowseTerminal(ProjectInfo info)
+    {
+        new Process()
+        {
+            StartInfo = new ProcessStartInfo()
+            {
+                FileName = GlobalConfig.isOnLinux ? "alacritty" : "cmd.exe",
+                WorkingDirectory = info.directory,
+                UseShellExecute = true,
+            }
+        }.Start();
+    }
+
+    public void DuplicateProject(ProjectInfo info)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void MoveProject(ProjectInfo info)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<ProjectInfo[]> VerifyProjectPrimative(IEnumerable<string> folders)

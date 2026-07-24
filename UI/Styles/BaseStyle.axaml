@@ -33,4 +33,13 @@
     <Setter Property="CornerRadius" Value="8"/>
     <Setter Property="Padding" Value="10 0 0 0"/>
   </Style>
+
+  <Style Selector="ProgressBar">
+    <Setter Property="Foreground" Value="{DynamicResource AccentColour}"/>
+    <Setter Property="Background" Value="{DynamicResource BackgroundColour}"/>
+  </Style>
+
+  <Style Selector="CheckBox">
+
+  </Style>
 </Styles>

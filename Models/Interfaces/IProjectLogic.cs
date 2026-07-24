@@ -11,8 +11,11 @@ public interface IProjectLogic
 
     public Task<string[]> GetProjectVersions();
 
-    public Task BrowseTo(int id);
-    public Task BrowseTo(ProjectInfo info);
+    public void OpenIDE(ProjectInfo info);
+    public void BrowseTo(ProjectInfo info);
+    public void MoveProject(ProjectInfo info);
+    public void BrowseTerminal(ProjectInfo info);
+    public void DuplicateProject(ProjectInfo info);
 
     public Task<ProjectInfo[]> VerifyProjectPrimative(IEnumerable<string> folders);
     public Task<ProjectInfo?> VerifyProjectPrimative(ProjectInfo info);

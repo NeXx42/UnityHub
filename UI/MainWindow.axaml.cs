@@ -129,10 +129,18 @@ public partial class MainWindow : Window, IUILinker
 
     public async Task ShowMessageBox(string header, string paragraph)
     {
-        MessageBox msg = ShowModal<MessageBox>(out int pos);
-        await msg.Show(header, paragraph);
+        await ShowModalAndWait<MessageBox>(async m =>
+        {
+            await m.Show(header, paragraph);
+        });
+    }
 
-        await CloseModal(pos);
+    public async Task ShowMessageBox(Exception e)
+    {
+        await ShowModalAndWait<MessageBox>(async m =>
+        {
+            await m.Show(e);
+        });
     }
 
     public static async Task RequestPage(PageNames desired)
@@ -181,5 +189,25 @@ public partial class MainWindow : Window, IUILinker
     public static void ClearFocus()
     {
         instance!.FocusManager?.Focus(null);
+    }
+
+    public async Task RequestVersionInstall(string? version)
+    {
+        if (string.IsNullOrEmpty(version))
+        {
+            await ShowMessageBox("Invalid version", $"Cant open installer because the selected version ({version}) is invalid");
+            return;
+        }
+
+        IEditorLogic editorLogic = DependencyManager.GetService<IEditorLogic>()!;
+        EditorInfo? metadata = await editorLogic.GetEditorMetadata(version);
+
+        if (metadata == null)
+        {
+            await ShowMessageBox("Invalid version", $"Failed to find the metadata for the desired version {version}");
+            return;
+        }
+
+        await ShowModalAndWait<EditorManagerModal>(async m => await m.Open(metadata));
     }
 }

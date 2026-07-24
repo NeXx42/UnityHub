@@ -63,7 +63,7 @@
       <Label Content="{Binding name}" Grid.Column="1" VerticalAlignment="Center"/>
 
       <!-- Version -->
-      <StackPanel Orientation="Horizontal" x:Name="cont_Version" Grid.Column="2" Margin="8 0 0 0">
+      <StackPanel Orientation="Horizontal" x:Name="cont_Version" Grid.Column="2" Margin="8 0 0 0" ClipToBounds="True">
         <StackPanel.Styles>
           <Style Selector="Label">
             <Setter Property="Foreground" Value="{DynamicResource TextColourMuted}" />
@@ -86,7 +86,7 @@
       <Label Content="{Binding directory}" FontSize="11" Foreground="{DynamicResource TextColourMuted}" Grid.Column="3" VerticalAlignment="Center"/>
 
       <!-- Tags -->
-      <StackPanel Orientation="Horizontal" x:Name="cont_Tags" Grid.Column="4" Spacing="5" VerticalAlignment="Stretch" Height="30" />
+      <StackPanel Orientation="Horizontal" x:Name="cont_Tags" Grid.Column="4" Spacing="5" VerticalAlignment="Stretch" Height="30" ClipToBounds="True"/>
 
       <!-- Last used -->
       <Label x:Name="lbl_LastAccessed" Content="{Binding getLastOpenedTxt}" Foreground="{DynamicResource TextColourMuted}" FontSize="10" Grid.Column="5" VerticalAlignment="Center"/>

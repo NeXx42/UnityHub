@@ -16,21 +16,21 @@ public class EditorLogic_Linux : EditorLogic
     {
         string editorRoot = Path.Combine(path, version.versionName);
         string downloadPath = Path.Combine(editorRoot, "_temp", "editor.crdownload");
+        string intermediateStep = Path.Combine(editorRoot, "_temp", "editor.tar");
 
         return [
             new LoadRequest("Download", DownloadFile),
-            new LoadRequest("Unzip", Unzip),
+            new LoadRequest("Unzip", Unzip1),
+            new LoadRequest("Unzip", Unzip2),
         ];
 
         async Task DownloadFile(IProgress<float> subProgress, CancellationToken token)
             => await EditorInstallHelper.DownloadFile(version.download!.Value.url!, downloadPath, subProgress, token);
 
-        async Task Unzip(IProgress<float> subProgress, CancellationToken token)
-        {
-            string intermediateStep = Path.Combine(editorRoot, "_temp", "editor.tar");
+        async Task Unzip1(IProgress<float> subProgress, CancellationToken token)
+            => await EditorInstallHelper.Extract(downloadPath, intermediateStep, token, subProgress);
 
-            await EditorInstallHelper.Extract(downloadPath, intermediateStep, token, subProgress);
-            await EditorInstallHelper.Extract(intermediateStep, editorRoot, token, subProgress);
-        }
+        async Task Unzip2(IProgress<float> subProgress, CancellationToken token)
+            => await EditorInstallHelper.Extract(intermediateStep, editorRoot, token, subProgress);
     }
 }

@@ -1,12 +1,8 @@
 using System.Collections.Concurrent;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Net;
-using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
 using Logic.Editor;
 using Models;
 using Models.Data;
@@ -23,6 +19,32 @@ public abstract class EditorLogic : IEditorLogic
     private string[]? editorLocations;
     private Dictionary<int, ActiveInstances> activeInstances = new();
     private Dictionary<string, ActiveDownload> activeDownloads = new();
+
+    private Action<float?>? callbackGlobalDownloadProgress;
+
+    public void RegisterGlobalInstallProgressUpdate(Action<float?> callback) => callbackGlobalDownloadProgress += callback;
+
+    private void RecalculateGlobalInstallProgress()
+    {
+        float? total = null;
+        int entries = 0;
+
+        foreach (var download in activeDownloads)
+        {
+            if (download.Value.isDone)
+                continue;
+
+            entries++;
+
+            total ??= 0;
+            total += download.Value.currentValue;
+        }
+
+        if (entries == 0)
+            callbackGlobalDownloadProgress?.Invoke(null);
+        else
+            callbackGlobalDownloadProgress?.Invoke(total / entries);
+    }
 
     public async Task<bool> IsVersionInstalled(string? version) => !string.IsNullOrEmpty(await GetEditorInstall(version));
 
@@ -69,7 +91,7 @@ public abstract class EditorLogic : IEditorLogic
         return installs.ToArray();
     }
 
-    public async Task<EditorInstallInfo[]> GetInstalledEditorVersionsMoreInfo(CancellationToken token)
+    public async Task<EditorInstallInfo[]> GetEditorMetadataForDownloadedVersions(CancellationToken token)
     {
         List<EditorInstallInfo> results = new();
         string[] versions;
@@ -90,7 +112,13 @@ public abstract class EditorLogic : IEditorLogic
         return results.ToArray();
     }
 
-    public async Task<(EditorInfo[], int)> GetEditorDownloads(EditorFilterType filterType, string? filter, int page, int pageSize)
+    public async Task<EditorInfo?> GetEditorMetadata(string versionName)
+    {
+        (EditorInfo[] info, _) = await GetEditorInfoFromApi($"version={versionName}");
+        return info.FirstOrDefault();
+    }
+
+    public async Task<(EditorInfo[], int)> SearchEditorDownloads(EditorFilterType filterType, string? filter, int page, int pageSize)
     {
         List<string> filters = ["order=RELEASE_DATE_DESC", $"limit={pageSize}", $"offset={page * pageSize}"];
 
@@ -186,6 +214,11 @@ public abstract class EditorLogic : IEditorLogic
         await ParseEditorResponse(versionInfoJson.Values, versions);
     }
 
+    /// <summary>
+    /// this is bad, i need to make it more generic such that i can store the response per version in the db
+    /// </summary>
+    /// <param name="filters"></param>
+    /// <returns></returns>
     private async Task<(EditorInfo[], int)> GetEditorInfoFromApi(params IEnumerable<string> filters)
     {
         try
@@ -444,7 +477,11 @@ public abstract class EditorLogic : IEditorLogic
 
         if (!await IsVersionInstalled(info.version))
         {
-            await DependencyManager.ui!.ShowMessageBox("Version not found", $"Failed to launch the project because the unity editor version {info.version} was not found.");
+            if (await DependencyManager.ui!.ShowConfirmationBox("Version not found", $"Failed to launch the project because the unity editor version {info.version} was not found.\nYou can update the version or install the edtior.",
+                new ConfirmationButton("Cancel"), new ConfirmationButton("Install", true)) != 1)
+                return;
+
+            await DependencyManager.ui.RequestVersionInstall(info.version);
             return;
         }
 
@@ -591,7 +628,7 @@ public abstract class EditorLogic : IEditorLogic
             .Where(m => desiredModules.Contains(m.id))
             .ToArray();
 
-        activeDownloads[version.versionName] = new ActiveDownload(version, editorVersionRoot, [.. toInstall, .. InstallEditorSubModules(editorVersionRoot, modulesToInstall)]);
+        activeDownloads[version.versionName] = new ActiveDownload(version, editorVersionRoot, RecalculateGlobalInstallProgress, [.. toInstall, .. InstallEditorSubModules(editorVersionRoot, modulesToInstall)]);
 
         async Task EnsureManifestExists(string editorVersionRoot)
         {
@@ -737,6 +774,30 @@ public abstract class EditorLogic : IEditorLogic
             Directory.Delete(dir, true);
     }
 
+    public void BrowseToEditor(EditorInfo? info)
+    {
+        if (info == null)
+            return;
+
+        if (info is EditorInstallInfo installInfo)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo()
+            {
+                FileName = "xdg-open",
+                UseShellExecute = false,
+            };
+
+            startInfo.ArgumentList.Add(Path.Combine(installInfo.installLocation, installInfo.versionName));
+
+            Process process = new Process()
+            {
+                StartInfo = startInfo
+            };
+
+            process.Start();
+        }
+    }
+
     public struct ActiveInstances
     {
         private int id;
@@ -772,7 +833,7 @@ public abstract class EditorLogic : IEditorLogic
         public float mainProgressValue { private set; get; }
         public float secondaryProgressValue { private set; get; }
 
-        public ActiveDownload(EditorInfo editorInfo, string root, params LoadRequest[] loads)
+        public ActiveDownload(EditorInfo editorInfo, string root, Action updateGlobalProgress, params LoadRequest[] loads)
         {
             this.root = root;
             this.editorInfo = editorInfo;
@@ -780,11 +841,22 @@ public abstract class EditorLogic : IEditorLogic
             loadRequests = loads;
             cancellation = new CancellationTokenSource();
 
-            mainProgress = new Progress<float>(v => mainProgressValue = v);
+            mainProgress = new Progress<float>(v =>
+            {
+                mainProgressValue = v;
+                secondaryProgressValue = 0;
+
+                currentValue = mainProgressValue * (1 / (float)loadRequests.Length);
+                updateGlobalProgress();
+            });
+
             secondaryProgress = new Progress<float>(v =>
             {
                 secondaryProgressValue = v;
-                currentValue = v;
+
+                float interval = 1 / (float)loadRequests.Length;
+                currentValue = (mainProgressValue * interval) + (secondaryProgressValue * interval);
+                updateGlobalProgress();
             });
 
             thread = new Thread(() => _ = Run());
@@ -804,23 +876,19 @@ public abstract class EditorLogic : IEditorLogic
 
             try
             {
-                float interval = 1 / loadRequests.Length;
-                float curProgress = 0;
-
-                foreach (LoadRequest req in loadRequests)
+                for (int i = 0; i < loadRequests.Length; i++)
                 {
                     if (cancellation.IsCancellationRequested)
                         break;
 
-                    Exception? e = await req.Run(cancellation.Token, secondaryProgress);
+                    mainProgress.Report(i);
+                    Exception? e = await loadRequests[i].Run(cancellation.Token, secondaryProgress);
 
                     if (e != null)
                     {
                         error = e;
                         break;
                     }
-
-                    mainProgress.Report(curProgress += interval);
                 }
 
                 isDone = true;

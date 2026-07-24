@@ -1,4 +1,6 @@
+using System;
 using System.ComponentModel;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -24,6 +26,9 @@ public partial class MessageBox : UserControl, IModal, INotifyPropertyChanged
 
     public bool canDismiss => true;
     public ModalContainer setContainer { set => _ = value; }
+
+    public async Task Show(Exception e)
+        => await Show("Unexpeted error", e.Message);
 
     public Task Show(string header, string paragraph)
     {

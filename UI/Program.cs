@@ -25,8 +25,20 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        Setup().Wrap();
+        Setup().Wait();
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+
+        AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+        {
+            var exception = (Exception)args.ExceptionObject;
+            DependencyManager.ui!.ShowMessageBox(exception);
+        };
+
+        TaskScheduler.UnobservedTaskException += (sender, args) =>
+        {
+            DependencyManager.ui!.ShowMessageBox(args.Exception);
+            args.SetObserved();
+        };
 
         async Task Setup()
         {

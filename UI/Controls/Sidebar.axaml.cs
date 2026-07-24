@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Logic;
+using Models.Interfaces;
 using UI.Popups;
 
 namespace UI.Controls;
@@ -18,6 +20,16 @@ public partial class Sidebar : UserControl
         btn_Home.RegisterClick(() => MainWindow.RequestPage(PageNames.Home));
         btn_Settings.RegisterClick(() => MainWindow.RequestPage(PageNames.Settings));
         btn_Downloads.RegisterPopup<Popup_ActiveDownloads>();
+
+        DependencyManager.GetService<IEditorLogic>()!.RegisterGlobalInstallProgressUpdate(v =>
+        {
+            inp_DownloadProgress.IsVisible = v.HasValue;
+
+            if (v.HasValue)
+                inp_DownloadProgress.Value = v.Value;
+        });
+
+        inp_DownloadProgress.IsVisible = false;
     }
 
     public async Task Init()

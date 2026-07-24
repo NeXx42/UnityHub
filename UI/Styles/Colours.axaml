@@ -58,4 +58,7 @@
   <ControlTheme x:Key="{x:Type controls:ButtonWrapper}" TargetType="controls:ButtonWrapper">
     <Setter Property="CornerRadius" Value="{DynamicResource CornerRadius_Element}" />
   </ControlTheme>
+
+  <!-- Overrides -->
+  <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{DynamicResource Colour_AccentColour}" />
 </ResourceDictionary>

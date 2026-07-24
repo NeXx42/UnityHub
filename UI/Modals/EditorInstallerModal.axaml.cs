@@ -76,7 +76,7 @@ public partial class EditorInstallerModal : UserControl, IModal
 
         async Task<EditorInfo[]> GetPotentialInstalls()
         {
-            (EditorInfo[] info, int resultCount) = await DependencyManager.GetService<IEditorLogic>()!.GetEditorDownloads(selectedFilter, inp_VersionFilter.Text, currentPage, pageTake);
+            (EditorInfo[] info, int resultCount) = await DependencyManager.GetService<IEditorLogic>()!.SearchEditorDownloads(selectedFilter, inp_VersionFilter.Text, currentPage, pageTake);
             maxPages = (int)Math.Ceiling(resultCount / (float)pageTake);
 
             return info;
