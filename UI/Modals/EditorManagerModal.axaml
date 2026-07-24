@@ -9,10 +9,7 @@
       <Label FontSize="20" HorizontalAlignment="Center" Content="{Binding versionName}" />
       <StackPanel x:Name="cont_Tags" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center"/>
 
-      <Grid Margin="0 10">
-        <Label>Path</Label>
-        <ComboBox HorizontalAlignment="Right" Width="200" x:Name="inp_Path"></ComboBox>
-      </Grid>
+      <ComboBox Margin="0 10" Grid.Column="2" x:Name="inp_Path"></ComboBox>
 
       <!-- Modules -->
       <ScrollViewer MaxHeight="500">

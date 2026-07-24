@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.DuplicateProject_Modal"
+  xmlns:controls="clr-namespace:UI.Controls">
+  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="{DynamicResource CornerRadius_Menu}" MinWidth="400">
+    <StackPanel Margin="10" Spacing="5">
+      <Label FontSize="20" HorizontalAlignment="Center">Clone Project</Label>
+
+      <Label>Name</Label>
+      <TextBox x:Name="inp_Name"></TextBox>
+
+      <Label>Path</Label>
+      <Grid ColumnDefinitions="* 5 200 5 100">
+        <TextBox x:Name="inp_Path"></TextBox>
+        <TextBox x:Name="inp_FolderName" Grid.Column="2"></TextBox>
+        <controls:ButtonWrapper Label="Browse" Grid.Column="4" HorizontalContentAlignment="Center" x:Name="btn_Browse"/>
+      </Grid>
+
+      <controls:ButtonWrapper Label="Clone" HorizontalAlignment="Right" Classes="Primary" Margin="0 10 0 0" Width="100" HorizontalContentAlignment="Center" x:Name="btn_Clone"/>
+    </StackPanel>
+  </Border>
+</UserControl>

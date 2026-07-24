@@ -34,12 +34,6 @@ class Program
             DependencyManager.ui!.ShowMessageBox(exception);
         };
 
-        TaskScheduler.UnobservedTaskException += (sender, args) =>
-        {
-            DependencyManager.ui!.ShowMessageBox(args.Exception);
-            args.SetObserved();
-        };
-
         async Task Setup()
         {
             await DependencyManager.RegisterService<IDataRepository, SqliteDataRepo>(repo => repo.Setup());

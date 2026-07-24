@@ -146,14 +146,88 @@ public class ProjectLogic : IProjectLogic
         }.Start();
     }
 
-    public void DuplicateProject(ProjectInfo info)
+    public LoadRequest[] DuplicateProject(ProjectInfo info, string newName, string newDir)
     {
-        throw new NotImplementedException();
+        return [
+            CopyFolderAndDescendants(info.directory, newDir, true),
+            new LoadRequest("Saving", CreateNewEntry)
+        ];
+
+        async Task CreateNewEntry(CancellationToken token)
+        {
+            ProjectInfo newInfo = new ProjectInfo()
+            {
+                collectionId = info.id,
+                directory = newDir,
+                name = newName,
+                id = -1,
+                size = info.size,
+                favourited = false,
+                notes = info.notes,
+                packages = info.packages,
+                renderPipeline = info.renderPipeline,
+                tags = info.tags,
+                version = info.version,
+            };
+
+            await UploadCardsPrimitive([newInfo]);
+        }
     }
 
-    public void MoveProject(ProjectInfo info)
+    public LoadRequest[] MoveProject(ProjectInfo info, string newDir)
     {
-        throw new NotImplementedException();
+        return [
+            new LoadRequest("Moving", Move),
+            new LoadRequest("Saving", UpdateEntry)
+        ];
+
+        async Task Move(IProgress<float> progress, CancellationToken token)
+        {
+            try
+            {
+                Directory.Move(info.directory, newDir);
+            }
+            catch (IOException ex) when (ex.Message.Contains("Invalid cross-device link"))
+            {
+                await CopyFolderAndDescendants(info.directory, newDir, false).Run(token, progress);
+            }
+        }
+
+        async Task UpdateEntry(CancellationToken token)
+        {
+            info.directory = newDir;
+            await UpdateProperties(info, [nameof(ProjectInfo.directory)]);
+        }
+    }
+
+    private LoadRequest CopyFolderAndDescendants(string from, string to, bool copyOnly)
+    {
+        return new LoadRequest("Copying", Work);
+
+        async Task Work(IProgress<float> progress, CancellationToken token)
+        {
+            CopyFiles(from, to);
+
+            void CopyFiles(string existing, string destination)
+            {
+                Directory.CreateDirectory(destination);
+
+                foreach (var file in Directory.GetFiles(existing))
+                {
+                    var destFile = Path.Combine(destination, Path.GetFileName(file));
+                    File.Copy(file, destFile, overwrite: true);
+                }
+
+                foreach (var directory in Directory.GetDirectories(existing))
+                {
+                    var destSubDir = Path.Combine(destination, Path.GetFileName(directory));
+                    CopyFiles(directory, destSubDir);
+                }
+
+                if (!copyOnly)
+                    Directory.Delete(existing, recursive: true);
+            }
+        }
     }
 
     public async Task<ProjectInfo[]> VerifyProjectPrimative(IEnumerable<string> folders)
@@ -216,18 +290,12 @@ public class ProjectLogic : IProjectLogic
 
     public Task<string[]> GetProjectVersions() => data.GetProjectVersions();
 
-    public async Task DeleteCard(ProjectInfo info)
+    public LoadRequest[] DeleteCard(ProjectInfo info)
     {
-        try
-        {
-            await DependencyManager.ui!.LoadProgressive("Deleting",
-                new LoadRequest("Deleting files", DeleteFiles),
-                new LoadRequest("Removing data", RemoveInfo)
-            );
-
-            callback?.Invoke(nameof(DeleteCard));
-        }
-        catch { }
+        return [
+            new LoadRequest("Deleting files", DeleteFiles),
+            new LoadRequest("Removing data", RemoveInfo)
+        ];
 
         async Task DeleteFiles(CancellationToken token)
         {
@@ -238,6 +306,7 @@ public class ProjectLogic : IProjectLogic
         async Task RemoveInfo(CancellationToken token)
         {
             await data.DeleteCard([info.id]);
+            callback?.Invoke(nameof(DeleteCard));
         }
     }
 

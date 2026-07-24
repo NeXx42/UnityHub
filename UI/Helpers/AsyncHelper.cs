@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Logic;
 
 namespace UI.Helpers;
 
@@ -50,6 +51,7 @@ public static class AsyncHelper
         }
         catch (Exception e)
         {
+            DependencyManager.ui?.ShowMessageBox(e);
             Console.WriteLine($"Failed to execute\n{e.Message}");
         }
     }

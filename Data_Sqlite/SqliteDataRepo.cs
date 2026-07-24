@@ -249,6 +249,19 @@ public class SqliteDataRepo : IDataRepository
                 newIds[newItem.directory] = newItem.id;
         }
 
+        foreach (ProjectInfo newProj in cards)
+        {
+            if (newProj.tags.Count == 0)
+                continue;
+
+            int newId = newIds[newProj.directory];
+            await database!.InsertItem(newProj.tags.Select(t => new dbo_ProjectTag()
+            {
+                TagId = t,
+                ProjectId = newId
+            }));
+        }
+
         return newIds;
     }
 

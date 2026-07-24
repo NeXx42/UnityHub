@@ -47,7 +47,7 @@ public partial class LoadingModal : UserControl, IModal, INotifyPropertyChanged
 
             Exception? e = await task.Run(token.Token);
 
-            if (e == null)
+            if (e != null)
                 return e;
 
             inp_Progress.Value++;

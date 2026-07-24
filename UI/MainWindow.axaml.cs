@@ -174,16 +174,17 @@ public partial class MainWindow : Window, IUILinker
 
     public async Task<Exception?> LoadProgressive(string header, params IEnumerable<LoadRequest> tasks)
     {
-        await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
-        {
+        Exception? e = null;
 
+        await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            await ShowModalAndWait<LoadingModal>(async msg =>
+            {
+                e = await msg.LoadProgressive(header, tasks);
+            });
         });
 
-        LoadingModal msg = ShowModal<LoadingModal>(out int pos);
-        Exception? error = await msg.LoadProgressive(header, tasks);
-
-        await CloseModal(pos);
-        return error;
+        return e;
     }
 
     public static void ClearFocus()

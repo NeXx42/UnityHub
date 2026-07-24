@@ -13,9 +13,9 @@ public interface IProjectLogic
 
     public void OpenIDE(ProjectInfo info);
     public void BrowseTo(ProjectInfo info);
-    public void MoveProject(ProjectInfo info);
+    public LoadRequest[] MoveProject(ProjectInfo info, string to);
     public void BrowseTerminal(ProjectInfo info);
-    public void DuplicateProject(ProjectInfo info);
+    public LoadRequest[] DuplicateProject(ProjectInfo info, string newName, string newDirectory);
 
     public Task<ProjectInfo[]> VerifyProjectPrimative(IEnumerable<string> folders);
     public Task<ProjectInfo?> VerifyProjectPrimative(ProjectInfo info);
@@ -32,6 +32,6 @@ public interface IProjectLogic
     public Task UpdateProperties(ProjectInfo info, IEnumerable<string> props);
     public Task UpdateProperties(IEnumerable<ProjectInfo> elements, IEnumerable<string> props);
 
-    public Task DeleteCard(ProjectInfo info);
+    public LoadRequest[] DeleteCard(ProjectInfo info);
     public Task<bool> TrySwitchVersion(ProjectInfo info, string to);
 }

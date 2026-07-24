@@ -80,6 +80,17 @@ public partial class ButtonWrapper : UserControl
         set => SetValue(PopupPlacementTargetProperty, value);
     }
 
+    public static readonly StyledProperty<string> ToolTipProperty = AvaloniaProperty.Register<ButtonWrapper, string>(nameof(ToolTip));
+    public string ToolTip
+    {
+        get => GetValue(ToolTipProperty);
+        set
+        {
+            SetValue(ToolTipProperty, value);
+            Avalonia.Controls.ToolTip.SetTip(root, string.IsNullOrEmpty(value) ? null : value);
+        }
+    }
+
     private Action? onClick;
 
     public ButtonWrapper()

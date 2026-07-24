@@ -50,10 +50,13 @@ public partial class EditorManagerModal : UserControl, IModal
 
             inp_Path.ItemsSource = (string[])[installInfo.installLocation];
             inp_Path.SelectedIndex = 0;
+
+            inp_Path.IsEnabled = false;
         }
         else
         {
             FindRemotePaths().Wrap();
+            inp_Path.IsEnabled = true;
         }
 
         Dictionary<string, EditorInfo.Download.Module[]> modules = (info.download?.modules ?? [])

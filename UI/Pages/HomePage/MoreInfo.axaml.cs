@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -9,6 +10,7 @@ using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
+using UI.Modals;
 using UI.Popups;
 
 namespace UI.Pages.HomePage;
@@ -33,8 +35,8 @@ public partial class MoreInfo : UserControl
         btn_OpenIDE.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.OpenIDE(info!));
 
         btn_Terminal.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.BrowseTerminal(info!));
-        btn_Move.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.MoveProject(info!));
-        btn_Clone.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.DuplicateProject(info!));
+        btn_Move.RegisterClick(MoveProject);// () => DependencyManager.GetService<IProjectLogic>()!.MoveProject(info!));
+        btn_Clone.RegisterClick(CloneProject);  //() => DependencyManager.GetService<IProjectLogic>()!.DuplicateProject(info!));
         btn_Delete.RegisterClick(DeleteProject);
 
         Popup_GenericList versionList = new Popup_GenericList();
@@ -150,7 +152,11 @@ public partial class MoreInfo : UserControl
         )
             return;
 
-        await DependencyManager.GetService<IProjectLogic>()!.DeleteCard(info);
+        LoadRequest[] deleteTasks = DependencyManager.GetService<IProjectLogic>()!.DeleteCard(info);
+        Exception? e = await DependencyManager.ui!.LoadProgressive("Deleting", deleteTasks);
+
+        if (e != null)
+            await DependencyManager.ui!.ShowMessageBox(e);
     }
 
     private async Task OnLaunchOptionSelect(int id)
@@ -188,5 +194,21 @@ public partial class MoreInfo : UserControl
 
         IProjectLogic logic = DependencyManager.GetService<IProjectLogic>()!;
         await logic.UpdateProperties(info, [nameof(ProjectInfo.notes)]);
+    }
+
+    private async Task MoveProject()
+    {
+        if (info == null)
+            return;
+
+        await MainWindow.ShowModalAndWait<MoveProject_Modal>(async m => await m.Open(info));
+    }
+
+    private async Task CloneProject()
+    {
+        if (info == null)
+            return;
+
+        await MainWindow.ShowModalAndWait<DuplicateProject_Modal>(async m => await m.Open(info));
     }
 }
