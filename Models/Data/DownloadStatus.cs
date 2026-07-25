@@ -20,6 +20,8 @@ public class DownloadStatus : INotifyPropertyChanged
     public bool isDone { protected set; get; }
     public Exception? error { protected set; get; }
 
-    public string getPercentageName => $"{Math.Round(currentValue * 100)}%";
+    public bool hasNoError => error == null;
 
+    public string getErorrMessage => error?.Message ?? "";
+    public string getPercentageName => $"{Math.Round(currentValue * 100)}%";
 }

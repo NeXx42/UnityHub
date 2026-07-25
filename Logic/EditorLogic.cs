@@ -68,11 +68,13 @@ public abstract class EditorLogic : IEditorLogic
             path = Path.Combine(root, version);
 
             if (Directory.Exists(path))
-                return Path.Combine(path, "Editor", "Unity");
+                return GetEditorInstallBinary(path);
         }
 
         return null;
     }
+
+    protected abstract string GetEditorInstallBinary(string rootName);
 
     public async Task<string[]> GetInstalledEditorVersions()
     {
@@ -536,38 +538,34 @@ public abstract class EditorLogic : IEditorLogic
         await File.WriteAllTextAsync(handoverFile, projectId.ToString());
     }
 
-    public async Task<bool> CreateProject(ProjectCreationInfo creation)
+    public async Task<LoadRequest[]?> CreateProject(ProjectCreationInfo creation)
     {
         if (Directory.Exists(creation.info.directory))
         {
             await DependencyManager.ui!.ShowMessageBox("Project already exists", $"Failed to create project as an existing folder exists at the directory {creation.info.directory}.");
-            return false;
+            return null;
         }
 
         if (!await IsVersionInstalled(creation.info.version))
         {
             await DependencyManager.ui!.ShowMessageBox("Version not found", $"Failed to create the project because the unity editor version {creation.info.version} was not found.");
-            return false;
+            return null;
         }
 
-        Exception? e = await DependencyManager.ui!.LoadProgressive("Creating", [
+        return [
             new LoadRequest("Creating Project", StartProcess),
             new LoadRequest("Creating Packages", InjectPackages),
-        ]);
-
-        if (e != null)
-        {
-            await DependencyManager.ui!.ShowMessageBox("Error while creating project", $"Failed to create project due to the following error\n{e.Message}.");
-            return false;
-        }
-
-        return true;
+        ];
 
         async Task StartProcess(CancellationToken token)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo()
             {
-                FileName = await GetEditorInstall(creation.info.version!)
+                FileName = await GetEditorInstall(creation.info.version!),
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
             };
 
             startInfo.ArgumentList.Add("-batchmode");
@@ -575,13 +573,21 @@ public abstract class EditorLogic : IEditorLogic
             startInfo.ArgumentList.Add("-createProject");
             startInfo.ArgumentList.Add(creation.info.directory);
 
-            Process process = new Process()
+            using Process process = new Process
             {
                 StartInfo = startInfo
             };
 
             process.Start();
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync(token);
+
+            if (process.ExitCode != 0)
+            {
+                string output = await process.StandardOutput.ReadToEndAsync();
+                string error = await process.StandardError.ReadToEndAsync();
+
+                throw new Exception(output);
+            }
         }
 
         async Task InjectPackages(CancellationToken token)
@@ -756,7 +762,7 @@ public abstract class EditorLogic : IEditorLogic
 
         foreach (KeyValuePair<string, ActiveDownload> download in inDownloads)
         {
-            if (download.Value.isDone)
+            if (download.Value.isDone && download.Value.error == null)
             {
                 activeDownloads.Remove(download.Key);
                 continue;

@@ -18,6 +18,8 @@ public static class GlobalConfig
         }
     }
 
+    public static char GetLineEnding() => isOnLinux ? '/' : '\\';
+
     public static bool isOnLinux
     {
         get

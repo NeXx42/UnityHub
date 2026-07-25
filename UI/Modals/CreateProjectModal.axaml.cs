@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -95,8 +96,16 @@ public partial class CreateProjectModal : UserControl, IModal
         IEditorLogic editorLogic = DependencyManager.GetService<IEditorLogic>()!;
         IProjectLogic projectLogic = DependencyManager.GetService<IProjectLogic>()!;
 
-        if (!await editorLogic.CreateProject(info))
+        LoadRequest[]? tasks = await editorLogic.CreateProject(info);
+
+        if (tasks == null)
+            return;
+
+        Exception? e = await DependencyManager.ui!.LoadProgressive("Creating", tasks);
+
+        if (e != null)
         {
+            await DependencyManager.ui!.ShowMessageBox("Error while creating project", $"Failed to create project due to the following error\n{e.Message}.");
             return;
         }
 

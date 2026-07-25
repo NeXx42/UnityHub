@@ -312,8 +312,10 @@ public class ProjectLogic : IProjectLogic
 
         bool ValidateFolder(string folderName)
         {
-            if (!folderName.EndsWith("/"))
-                folderName = folderName + "/";
+            char lineEnding = GlobalConfig.GetLineEnding();
+
+            if (!folderName.EndsWith(lineEnding))
+                folderName = folderName + lineEnding;
 
             var subDirs = Directory.GetDirectories(folderName)
                 .Where(d => d.EndsWith("Assets") || d.EndsWith("ProjectSettings") || d.EndsWith("Packages"));

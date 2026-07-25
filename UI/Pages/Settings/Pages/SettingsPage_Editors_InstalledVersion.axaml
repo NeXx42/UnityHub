@@ -27,8 +27,10 @@
 
       <Grid>
         <Grid Grid.Row="1" x:Name="cont_DownloadStatus" ColumnDefinitions="* 50">
-          <ProgressBar Minimum="0" Maximum="1" Value="{Binding currentValue}" Margin="0 0 5 0" />
-          <Label Content="{Binding getPercentageName}" Grid.Column="1"/>
+          <Label Content="{Binding getErorrMessage}" HorizontalAlignment="Left"/>
+          <ProgressBar Minimum="0" Maximum="1" Value="{Binding currentValue}" Margin="0 0 5 0" IsVisible="{Binding hasNoError}"/>
+          
+          <Label Content="{Binding getPercentageName}" Grid.Column="1" IsVisible="{Binding hasNoError}"/>
         </Grid>
 
         <Label Grid.Row="1" Content="{Binding #root.InstallLocation}" Margin="5 0" Foreground="{DynamicResource TextColourMuted}" FontSize="12"/>

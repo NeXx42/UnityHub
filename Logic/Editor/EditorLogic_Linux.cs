@@ -33,4 +33,6 @@ public class EditorLogic_Linux : EditorLogic
         async Task Unzip2(IProgress<float> subProgress, CancellationToken token)
             => await EditorInstallHelper.Extract(intermediateStep, editorRoot, token, subProgress);
     }
+
+    protected override string GetEditorInstallBinary(string rootName) => Path.Combine(rootName, "Editor", "Unity");
 }

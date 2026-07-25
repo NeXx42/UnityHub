@@ -25,7 +25,7 @@ public interface IEditorLogic
     public Task LaunchProject(int id);
     public Task LaunchProject(ProjectInfo info);
 
-    public Task<bool> CreateProject(ProjectCreationInfo info);
+    public Task<LoadRequest[]?> CreateProject(ProjectCreationInfo info);
     public Task Delete(string versionName);
 
     public void BrowseToEditor(EditorInfo? info);
