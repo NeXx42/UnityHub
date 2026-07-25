@@ -35,7 +35,6 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         Add_Existing,
         Add_Folder,
     }
-    private int maxPages = 5;
 
     private int? currentSelectedCard;
     private Popup_Filter? filter;

@@ -28,15 +28,21 @@ public static class ExtensionMethods
     }
 
     public static string FormatSize(this long? size)
-        => size.HasValue ? FormatSize((ulong)size) : "Unknown";
+        => size.HasValue ? FormatSizeInternal((ulong)size) : "Unknown";
+
+    public static string FormatSize(this ulong size)
+        => FormatSizeInternal(size);
 
     public static string FormatSize(this ulong? size)
+        => FormatSizeInternal(size ?? 0);
+
+    private static string FormatSizeInternal(ulong size)
     {
-        if (!size.HasValue)
+        if (size == 0)
             return "Unknown";
 
         string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
-        double curSize = size.Value;
+        double curSize = size;
         int unit = 0;
 
         while (curSize >= 1024 && unit < units.Length - 1)

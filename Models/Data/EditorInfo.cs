@@ -12,6 +12,9 @@ public class EditorInfo
     public string? stream { get; set; }
     public Label? label { get; set; }
 
+    public string getDownloadSize => (download?.downloadSize ?? 0).FormatSize();
+    public string getReleaseDate => releaseDate.ToString();
+
     public TagData[] CreateTags()
     {
         List<TagData> tags = new(2);

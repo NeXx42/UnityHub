@@ -4,22 +4,32 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Models.Data;
+using UI.Controls;
+using UI.Helpers;
 
 namespace UI.Modals;
 
 public partial class EditorInstallerModal_Entry : UserControl
 {
-    private Func<Task>? onClick;
+    private ReusableList<CollectionItem> tagList;
 
     public EditorInstallerModal_Entry()
     {
         InitializeComponent();
-        btn_Install.RegisterClick(async () => await (onClick?.Invoke() ?? Task.CompletedTask));
+
+        tagList = new ReusableList<CollectionItem>(cont_Tags);
     }
 
-    public void Draw(EditorInfo info, Func<EditorInfo, Task> startInstall)
+    public void Draw(EditorInfo info, int pos, Func<EditorInfo, Task> startInstall)
     {
-        onClick = () => startInstall.Invoke(info);
+        if (pos % 2 == 0)
+            root.Classes.Remove("Odd");
+        else
+            root.Classes.Add("Odd");
+
         this.DataContext = info;
+
+        btn_Download.RegisterClick(() => startInstall(info));
+        tagList.Draw(info.CreateTags(), (ui, _, dat) => ui.Init(dat));
     }
 }

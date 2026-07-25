@@ -122,6 +122,17 @@ public abstract class EditorLogic : IEditorLogic
     {
         List<string> filters = ["order=RELEASE_DATE_DESC", $"limit={pageSize}", $"offset={page * pageSize}"];
 
+        if (GlobalConfig.isOnLinux)
+        {
+            filters.Add($"platform=LINUX");
+            filters.Add($"architecture=X86_64");
+        }
+        else
+        {
+            filters.Add($"platform=WINDOWS");
+            filters.Add($"architecture=X86_64");
+        }
+
         switch (filterType)
         {
             case EditorFilterType.LTS: filters.Add("stream=LTS"); break;
@@ -242,7 +253,7 @@ public abstract class EditorLogic : IEditorLogic
                 ConcurrentDictionary<string, EditorInfo> data = new ConcurrentDictionary<string, EditorInfo>();
                 int totalResults = await ParseEditorResponse([json], data);
 
-                return (data.Values.ToArray(), totalResults);
+                return (data.Values.OrderByDescending(v => v.versionName).ToArray(), totalResults);
             }
         }
         catch (Exception e)
@@ -285,6 +296,7 @@ public abstract class EditorLogic : IEditorLogic
 
     protected virtual void ParseEditorResponse(EditorInfo info, JsonElement result)
     {
+        info.releaseDate = TryParse<DateTime>(result, "releaseDate");
         info.stream = result.GetProperty("stream").GetString();
 
         if (result.TryGetProperty("label", out JsonElement lbl))

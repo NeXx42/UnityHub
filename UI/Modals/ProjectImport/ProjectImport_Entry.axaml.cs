@@ -16,12 +16,10 @@ public partial class ProjectImport_Entry : UserControl
 
     public void Draw(ProjectInfo info, int pos)
     {
-
         if (pos % 2 == 0)
             root.Classes.Remove("Odd");
         else
             root.Classes.Add("Odd");
-
 
         this.DataContext = info;
         inp_Checkbox.IsChecked = true;
