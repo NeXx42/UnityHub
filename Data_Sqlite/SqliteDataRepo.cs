@@ -116,9 +116,7 @@ public class SqliteDataRepo : IDataRepository
             innerJoinClauses.Add($"{dbo_ProjectTag.tableName} {joinName} on {joinName}.{nameof(dbo_ProjectTag.ProjectId)} = {projectLocalName}.{nameof(dbo_Project.id)}");
             whereClauses.Add($"{joinName}.{nameof(dbo_ProjectTag.TagId)} in ({string.Join(",", search.tags!)})");
 
-            if ((search.collections?.Count() ?? 0) == 0)
-                groupClauses.Add($"{projectLocalName}.{nameof(dbo_Project.id)}");
-
+            groupClauses.Add($"{projectLocalName}.{nameof(dbo_Project.id)}");
             havingClauses.Add($"COUNT(DISTINCT {joinName}.{nameof(dbo_ProjectTag.TagId)}) = {search.tags!.Count()}");
         }
 
