@@ -1,14 +1,13 @@
-using System.Collections;
+
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Models.Data;
+using Models.Helpers;
 using UI.Helpers;
 
 namespace UI.Pages.HomePage;
@@ -17,6 +16,7 @@ public partial class Sidebar_DriveUsage : UserControl, INotifyPropertyChanged
 {
     public new event PropertyChangedEventHandler? PropertyChanged;
     public string DriveName { get; set; } = "";
+    public string DriveSpaceTxt { get; set; } = "";
 
     private ReusableList<Border> sliceList;
     private static IBrush[]? sliceColours;
@@ -72,7 +72,9 @@ public partial class Sidebar_DriveUsage : UserControl, INotifyPropertyChanged
         }
 
         DriveName = drive.Name;
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DriveName)));
+        DriveSpaceTxt = $"{drive.TotalSize.FormatSize()}";
+
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
 
         double pixelsPerByte = (elementWidth ?? 150d) / drive.TotalSize;
 

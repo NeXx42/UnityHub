@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
 using Models.Data;
@@ -12,6 +13,9 @@ namespace UI.Pages.HomePage.ContentDisplays;
 
 public class HomePageLayout_Grid : HomePageLayoutBase<ImageCard>
 {
+    private const double ELEMENT_MIN_WIDTH = 280;
+    private const double ELEMENT_ASPECT_RATIO = 0.8125;
+
     private StackPanel wrapper;
     private ReusableList<ButtonWrapper> pageControls;
 
@@ -39,11 +43,12 @@ public class HomePageLayout_Grid : HomePageLayoutBase<ImageCard>
 
     protected override Panel GetWrapper()
     {
-        WrapPanel container = new WrapPanel();
-        container.ItemSpacing = 5;
-        container.LineSpacing = 5;
-        container.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
+        UniformGrid container = new UniformGrid()
+        {
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch
+        };
 
+        container.SizeChanged += OnContainerSizeChange;
         return container;
     }
 
@@ -56,7 +61,7 @@ public class HomePageLayout_Grid : HomePageLayoutBase<ImageCard>
     public override async Task Draw(ProjectInfo[] cardInfo, bool isPageIncrement, int currentPage, int resultCount, Func<int, Task> onSelect)
     {
         DrawPageControls(currentPage, resultCount);
-        await cards.DrawWhenAll(cardInfo, (c, i, dat) => c.Draw(dat, i, onSelect));
+        cards.Draw(cardInfo, (c, i, dat) => c.Draw(dat, i, onSelect).Wrap());
     }
 
     protected override void ToggleElementSelection(ImageCard element, bool to) => element.ToggleSelection(to);
@@ -113,5 +118,25 @@ public class HomePageLayout_Grid : HomePageLayoutBase<ImageCard>
     private async Task UpdatePage(int to)
     {
         onPageChangeCallback?.Invoke(to);
+    }
+
+    private void OnContainerSizeChange(object? sender, SizeChangedEventArgs args)
+    {
+        int maxElements = (int)Math.Floor(args.NewSize.Width / ELEMENT_MIN_WIDTH);
+        maxElements = Math.Max(maxElements, 1);
+
+        (args.Source as UniformGrid)!.Columns = maxElements;
+
+        const double spacing = 10;
+
+        double columnWidth = args.NewSize.Width / maxElements;
+        double widthPerElement = columnWidth - spacing;
+
+        foreach (var card in cards)
+        {
+            card.Margin = new Avalonia.Thickness(spacing / 2, spacing / 2);
+            card.Width = widthPerElement;
+            card.Height = widthPerElement * ELEMENT_ASPECT_RATIO;
+        }
     }
 }

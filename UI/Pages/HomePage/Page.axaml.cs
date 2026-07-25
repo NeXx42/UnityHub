@@ -96,8 +96,6 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
             }
         }
 
-        UpdateLayout(0).Wrap();
-
         btn_NewProject.RegisterOptions(((NewProjectOptions[])System.Enum.GetValues(typeof(NewProjectOptions))).Select(s => s.GetDisplayName()), SelectNewProjectOption);
         btn_NewProject.RegisterClick(CreateNewProject);
 
@@ -112,6 +110,8 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         inp_Text.TextChanged += (_, __) => UpdateTextFilter().Wrap();
 
         DependencyManager.GetService<IProjectLogic>()?.RegisterCallback(ProjectLogicCallback);
+
+        contentDisplayers[0].ToggleVisibility(true);
     }
 
 

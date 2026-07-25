@@ -30,6 +30,9 @@ public static class ExtensionMethods
     public static string FormatSize(this long? size)
         => size.HasValue ? FormatSizeInternal((ulong)size) : "Unknown";
 
+    public static string FormatSize(this long size)
+        => FormatSizeInternal((ulong)size);
+
     public static string FormatSize(this ulong size)
         => FormatSizeInternal(size);
 
@@ -53,5 +56,4 @@ public static class ExtensionMethods
 
         return $"{curSize:0.#} {units[unit]}";
     }
-
 }

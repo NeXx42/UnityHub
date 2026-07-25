@@ -1,8 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.Sidebar"
-  xmlns:local="clr-namespace:UI.Controls" Width="225">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.Sidebar"
+             xmlns:local="clr-namespace:UI.Controls" Width="225">
   <Border BorderThickness="0 0 1 0" BorderBrush="{DynamicResource ButtonBorder}">
     <Grid RowDefinitions="Auto 1 * 1 50" Background="{DynamicResource BackgroundColourDark}">
       <!-- icon -->
@@ -21,8 +21,10 @@
 
       <Border Background="{DynamicResource ButtonBorder}" Grid.Row="1" HorizontalAlignment="Stretch" Margin="8 0"/>
 
-      <!-- icon -->
-      <ContentPresenter x:Name="content" Grid.Row="2"/>
+      <!-- page sidebar -->
+      <ScrollViewer Grid.Row="2">
+        <ContentPresenter x:Name="content" />
+      </ScrollViewer>
 
       <Border Background="{DynamicResource ButtonBorder}" Grid.Row="3" HorizontalAlignment="Stretch" Margin="8 0"/>
 
