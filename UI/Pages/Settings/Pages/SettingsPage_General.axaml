@@ -27,6 +27,7 @@
     
       <Label FontSize="20">Behaviour</Label>
       <common:SettingsPage_Common_Dropdown x:Name="setting_LaunchBehaviour" Label="Launch Behaviour"/>
+      <common:SettingsPage_Common_Dropdown x:Name="setting_InjectLinker" Label="Inject linker package"/>
       <common:SettingsPage_Common_Text x:Name="setting_EditorCommand" Label="Editor Command"/>
       <common:SettingsPage_Common_Text x:Name="setting_TerminalCommand" Label="Terminal Command"/>
 

@@ -512,7 +512,7 @@ public abstract class EditorLogic : IEditorLogic
 
         IConfigLogic config = DependencyManager.GetService<IConfigLogic>()!;
 
-        if (await config.Get(ConfigEntry.InjectLinker, true))
+        if (await config.Get(ConfigEntry.InjectLinker, Config_EnabledStatus.Enabled) == Config_EnabledStatus.Enabled)
         {
             await CreateHandover(info.id);
             await CreateInjectorPackage(info);

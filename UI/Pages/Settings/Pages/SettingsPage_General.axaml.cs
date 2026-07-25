@@ -32,6 +32,7 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
 
         settings = [
             setting_LaunchBehaviour.RegisterType<Config_LaunchBehaviour>().Init(ConfigEntry.LaunchBehaviour),
+            setting_InjectLinker.RegisterType<Config_EnabledStatus>().Init(ConfigEntry.InjectLinker),
             setting_EditorCommand.Init(ConfigEntry.IDECommand),
             setting_TerminalCommand.Init(ConfigEntry.TerminalCommand)
         ];
