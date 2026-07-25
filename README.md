@@ -15,28 +15,25 @@ Open-source & cross-platform alternative to Unity's official Hub — for managin
 - **Unity-side integration** — the bundled `com.nexx.unityhublink` Unity package links a project's Editor back to the Hub.
 
 ## Screenshots
-<img alt="image" src="https://github.com/user-attachments/assets/17e1f3f9-ebc2-4c23-8bef-149587debc5d" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/5f59b09b-45f2-456e-843f-cdfb0bf56758" />
+<img width="7680" height="1080" alt="image" src="https://github.com/user-attachments/assets/f2f8179b-c5fd-449a-add5-37d3ba0e329d" />
 
-<p align="center">
-<img width="400" alt="image" src="https://github.com/user-attachments/assets/540e6165-05ee-41a1-b3e0-5502119c9ffc" />
-<img width="400"  alt="image" src="https://github.com/user-attachments/assets/c9c44ced-ad76-4637-a5cc-e2e1ff16a4d4" />
-<img width="400"  alt="image" src="https://github.com/user-attachments/assets/ffd48dcf-07e3-4a2a-9e84-9fcc0ad9f6c1" />
-<img width="400" alt="image" src="https://github.com/user-attachments/assets/a06f7abc-17b0-43f2-bc48-3eb05d96c8c5" />
-  </p>
-
+## Languages
+> ⚠️ Not completed & May be incorrect.
+- English (Native)
+- Japanese
 
 ## Requirements
 
-- [.NET SDK](https://dotnet.microsoft.com/) 9.0/10.0 or later
+- [.NET SDK](https://dotnet.microsoft.com/) 10.0 or later
 - `make` (for the provided build targets)
 - `appimagetool` on your `PATH` if building the Linux AppImage
 
 ## Building
 
-Clone the repository (it includes submodules):
+Clone the repository:
 
 ```bash
-git clone --recurse-submodules https://github.com/NeXx42/UnityHub.git
 cd UnityHub
 ```
 
