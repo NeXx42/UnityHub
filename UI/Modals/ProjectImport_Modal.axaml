@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.ProjectImport_Modal"
+  xmlns:controls="clr-namespace:UI.Controls">
+  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="{DynamicResource CornerRadius_Menu}" MinWidth="600">
+    <StackPanel Margin="10" Spacing="5">
+      <Label HorizontalAlignment="Center" FontSize="20" Content="{DynamicResource LANG_ProjectImport_Title}"/>
+
+      <Border CornerRadius="{DynamicResource CornerRadius_Element}" Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" ClipToBounds="True">
+        <Grid RowDefinitions="*">
+          <StackPanel x:Name="cont_Projects" MinHeight="50"/>
+        </Grid>
+      </Border>
+
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing ="5">
+        <controls:ButtonWrapper Label="{DynamicResource LANG_Literal_Cancel}" Width="100" HorizontalContentAlignment="Center" x:Name="btn_Cancel"/>
+        <controls:ButtonWrapper Label="{DynamicResource LANG_ProjectImport_Btn}" Classes="Primary" Width="100" HorizontalContentAlignment="Center" x:Name="btn_Import"/>
+      </StackPanel>
+    </StackPanel>
+  </Border>
+</UserControl>

@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.ProjectImport.ProjectImport_Entry"
+  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectInfo">
+  <Border x:Name="root">
+    <Border.Styles>
+      <Style Selector="Border.Odd">
+        <Setter Property="Background" Value="{DynamicResource BackgroundColourLight}"/>
+      </Style>
+    </Border.Styles>
+
+    <Grid ColumnDefinitions="Auto Auto * Auto" Margin="5">
+      <CheckBox VerticalAlignment="Center" x:Name="inp_Checkbox"/>
+      <Label Grid.Column="2" VerticalAlignment="Center" Content="{Binding name}"/>
+      <Label Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding directory}" Foreground="{DynamicResource TextColourMuted}" FontSize="12"/>
+    </Grid>
+  </Border>
+</UserControl>

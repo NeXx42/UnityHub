@@ -64,6 +64,9 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
             take = 0
         };
 
+        contentDisplayers = new List<IHomePageLayout>();
+        activeFilters = new ReusableList<CollectionItem>(cont_Filters);
+
         InitializeComponent();
 
         if (Design.IsDesignMode)
@@ -76,7 +79,6 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
             typeof(HomePageLayout_Table),
         };
         plugins.Execute(p => p.RegisterLayout(layouts));
-        contentDisplayers = new List<IHomePageLayout>();
 
         foreach (var layout in layouts)
         {
@@ -94,8 +96,6 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
                 layoutControl.ToggleVisibility(false);
             }
         }
-
-        activeFilters = new ReusableList<CollectionItem>(cont_Filters);
 
         UpdateLayout(0).Wrap();
 
@@ -187,10 +187,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
         async Task AttemptUploadOfDirectories(string[] toUpload)
         {
-            ProjectInfo[] cards = await DependencyManager.GetService<IProjectLogic>()!.VerifyProjectPrimative(toUpload);
-
-            // show popup to confirm each card (this code would be in there)
-            await DependencyManager.GetService<IProjectLogic>()!.UploadCardsPrimitive(cards);
+            await MainWindow.ShowModalAndWait<ProjectImport_Modal>(async m => await m.Show(toUpload));
         }
     }
 

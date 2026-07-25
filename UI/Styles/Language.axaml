@@ -5,7 +5,7 @@
   <Styles.Resources>
     <sys:String x:Key="LANG_HomePage_MoreInfo_Open">Open Project</sys:String>
     <sys:String x:Key="LANG_HomePage_MoreInfo_OpenIDE">Open in IDE</sys:String>
-    <sys:String x:Key="LANG_HomePage_MoreInfo_OpenBrower">Reveal in Explorer</sys:String>
+    <sys:String x:Key="LANG_HomePage_MoreInfo_OpenBrowser">Reveal in Explorer</sys:String>
     <sys:String x:Key="LANG_HomePage_MoreInfo_NothingSelected">Nothing Selected</sys:String>
 
     <sys:String x:Key="LANG_HomePage_SideBar_AllProjects">All Projects</sys:String>
@@ -14,9 +14,13 @@
     <sys:String x:Key="LANG_HomePage_SearchBarPlaceholder">Search Projects</sys:String>
     <sys:String x:Key="LANG_HomePage_CreateProject">Create Project</sys:String>
 
+    <sys:String x:Key="LANG_ProjectImport_Title">Import</sys:String>
+    <sys:String x:Key="LANG_ProjectImport_Btn">Import</sys:String>
+
     <sys:String x:Key="LANG_Literal_Collections">Collections</sys:String>
     <sys:String x:Key="LANG_Literal_Tags">Tags</sys:String>
     <sys:String x:Key="LANG_Literal_Projects">Projects</sys:String>
     <sys:String x:Key="LANG_Literal_Project">Project</sys:String>
+    <sys:String x:Key="LANG_Literal_Cancel">Cancel</sys:String>
   </Styles.Resources>
 </Styles>
