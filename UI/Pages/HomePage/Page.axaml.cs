@@ -57,6 +57,8 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
     public Page()
     {
+        InitializeComponent();
+
         activeSearch = new ProjectSearch()
         {
             page = 0,
@@ -65,8 +67,6 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
         contentDisplayers = new List<IHomePageLayout>();
         activeFilters = new ReusableList<CollectionItem>(cont_Filters);
-
-        InitializeComponent();
 
         if (Design.IsDesignMode)
             return;
@@ -209,6 +209,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         {
             collectionId = -1,
             collectionName = v,
+            colour = "#ffffff",
             customType = "version"
         }));
 

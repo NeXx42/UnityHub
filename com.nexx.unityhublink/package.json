@@ -1,7 +1,7 @@
 {
     "name": "com.nexx.unityhublink",
     "displayName": "Nexx Unity Hub Linker",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Provides tooling to link back to the unityhub.",
     "author": {
         "name": "Matthew",

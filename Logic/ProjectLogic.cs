@@ -46,7 +46,7 @@ public class ProjectLogic : IProjectLogic
                     return;
 
                 await DeriveProjectInfo(info, true).WhenAllProgressive(CancellationToken.None);
-                info.iconUrl = Path.Combine(GlobalConfig.getDataFolder, projectId.ToString(), "icon.png");
+                info.iconUrl = Path.Combine(GlobalConfig.getDataFolder, "ProjectData", projectId.ToString(), "icon.png");
 
                 updates.Add(info);
             }

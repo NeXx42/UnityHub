@@ -5,12 +5,11 @@
   xmlns:controls="clr-namespace:UI.Controls">
   <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="{DynamicResource CornerRadius_Menu}">
     <Grid Margin="10" ColumnDefinitions="* Auto">
-      <Grid RowDefinitions="* Auto">
+      <Grid RowDefinitions="*">
         <ScrollViewer >
           <StackPanel x:Name="cont_Packages">
           </StackPanel>
         </ScrollViewer>
-        <TextBox Grid.Row="1"/>
       </Grid>
 
       <Border BorderBrush="{DynamicResource ButtonBorder}" BorderThickness="1 0 0 0" Grid.Column="1" Width="400">

@@ -22,8 +22,9 @@ public partial class CollectionItem : UserControl, INotifyPropertyChanged
 
     public CollectionItem()
     {
+        DataContext = new TagData() { collectionId = 0, collectionName = "temp", colour = "#ffffff" };
+
         InitializeComponent();
-        DataContext = new TagData() { collectionId = 0, collectionName = "temp" };
 
         btn_Remove.PointerPressed += (_, e) =>
         {

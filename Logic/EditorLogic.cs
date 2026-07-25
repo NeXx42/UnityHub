@@ -718,14 +718,13 @@ public abstract class EditorLogic : IEditorLogic
 
     private async Task CreateInjectorPackage(ProjectInfo info)
     {
-        // need some way of determining the version to replace it on updates
         const string packageName = "com.nexx.unityhublink";
+
+        string referencePackage = Path.Combine(AppContext.BaseDirectory, packageName);
         string packageLocation = Path.Combine(GlobalConfig.getDataFolder, packageName);
 
         if (!Directory.Exists(packageLocation))
         {
-            string referencePackage = Path.Combine(AppContext.BaseDirectory, packageName);
-
             if (!Directory.Exists(referencePackage))
             {
                 Console.WriteLine("Failed to find injector package, skipping");
@@ -733,26 +732,46 @@ public abstract class EditorLogic : IEditorLogic
             }
 
             CopyFromReference(referencePackage, packageLocation);
-
-            void CopyFromReference(string existing, string destination)
+        }
+        else
+        {
+            using (StreamReader sourceReader = new StreamReader(Path.Combine(referencePackage, "package.json")))
+            using (StreamReader targetReader = new StreamReader(Path.Combine(packageLocation, "package.json")))
             {
-                Directory.CreateDirectory(destination);
+                JsonDocument srcManifest = await JsonDocument.ParseAsync(sourceReader.BaseStream);
+                JsonDocument targetManifest = await JsonDocument.ParseAsync(targetReader.BaseStream);
 
-                foreach (var file in Directory.GetFiles(existing))
-                {
-                    var destFile = Path.Combine(destination, Path.GetFileName(file));
-                    File.Copy(file, destFile, overwrite: true);
-                }
+                string srcVersion = srcManifest.RootElement.GetProperty("version").GetString()!;
+                string targetVersion = targetManifest.RootElement.GetProperty("version").GetString()!;
 
-                foreach (var directory in Directory.GetDirectories(existing))
+                if (!srcVersion.Equals(targetVersion))
                 {
-                    var destSubDir = Path.Combine(destination, Path.GetFileName(directory));
-                    CopyFromReference(directory, destSubDir);
+                    Console.WriteLine("Injector package version doesnt match, updating");
+
+                    Directory.Delete(packageLocation, true);
+                    CopyFromReference(referencePackage, packageLocation);
                 }
             }
         }
 
         await InjectPackagesIntoProject(info.directory, new Dictionary<string, string>() { { LINK_NAME, $"file:{packageLocation}" } });
+
+        void CopyFromReference(string existing, string destination)
+        {
+            Directory.CreateDirectory(destination);
+
+            foreach (var file in Directory.GetFiles(existing))
+            {
+                var destFile = Path.Combine(destination, Path.GetFileName(file));
+                File.Copy(file, destFile, overwrite: true);
+            }
+
+            foreach (var directory in Directory.GetDirectories(existing))
+            {
+                var destSubDir = Path.Combine(destination, Path.GetFileName(directory));
+                CopyFromReference(directory, destSubDir);
+            }
+        }
     }
 
     public Dictionary<EditorInfo, DownloadStatus> GetActiveInstalls()
