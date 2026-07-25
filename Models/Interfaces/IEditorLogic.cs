@@ -5,6 +5,7 @@ namespace Models.Interfaces;
 
 public interface IEditorLogic
 {
+    public void RegisterCallback(Action<string> callback);
     public Task<string[]> GetInstalledEditorVersions();
 
     public Task InstallEditor(EditorInfo version, HashSet<string> desiredModules, string? path);

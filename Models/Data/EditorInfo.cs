@@ -14,6 +14,19 @@ public class EditorInfo
 
     public string getDownloadSize => (download?.downloadSize ?? 0).FormatSize();
     public string getReleaseDate => releaseDate.ToString();
+    public string friendlyVersionName
+    {
+        get
+        {
+            if (versionName.StartsWith("6000"))
+            {
+                string[] parts = versionName.Split(".");
+                return $"6.{parts[1]} ({versionName})";
+            }
+
+            return versionName;
+        }
+    }
 
     public TagData[] CreateTags()
     {

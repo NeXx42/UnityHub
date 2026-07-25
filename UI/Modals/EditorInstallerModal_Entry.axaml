@@ -1,9 +1,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.EditorInstallerModal_Entry"
-  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:EditorInfo"
-  xmlns:controls="clr-namespace:UI.Controls">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.EditorInstallerModal_Entry"
+             xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:EditorInfo"
+             xmlns:controls="clr-namespace:UI.Controls">
   <Border x:Name="root" Cursor="Hand">
     <Border.Styles>
       <Style Selector="Border">
@@ -16,7 +16,7 @@
     </Border.Styles>
 
     <Grid ColumnDefinitions="Auto 5 * 5 Auto 5 Auto" Margin="5">
-      <Label Content="{Binding versionName}" VerticalAlignment="Center"/>
+      <Label Content="{Binding friendlyVersionName}" VerticalAlignment="Center"/>
       <StackPanel x:Name="cont_Tags" Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="2" Spacing="5" Height="25"/>
 
       <Label Content="{Binding getDownloadSize}" VerticalAlignment="Center" Grid.Column="4"/>

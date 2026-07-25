@@ -29,7 +29,18 @@ public partial class EditorInstallerModal_Entry : UserControl
 
         this.DataContext = info;
 
-        btn_Download.RegisterClick(() => startInstall(info));
+        if (info is EditorInstallInfo installedInfo)
+        {
+            btn_Download.IsEnabled = false;
+            btn_Download.Classes.Remove("Primary");
+        }
+        else
+        {
+            btn_Download.IsEnabled = true;
+            btn_Download.Classes.Add("Primary");
+            btn_Download.RegisterClick(() => startInstall(info));
+        }
+
         tagList.Draw(info.CreateTags(), (ui, _, dat) => ui.Init(dat));
     }
 }

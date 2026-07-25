@@ -20,8 +20,10 @@ public abstract class EditorLogic : IEditorLogic
     private Dictionary<int, ActiveInstances> activeInstances = new();
     private Dictionary<string, ActiveDownload> activeDownloads = new();
 
+    private Action<string>? callback;
     private Action<float?>? callbackGlobalDownloadProgress;
 
+    public void RegisterCallback(Action<string> callback) => this.callback += callback;
     public void RegisterGlobalInstallProgressUpdate(Action<float?> callback) => callbackGlobalDownloadProgress += callback;
 
     private void RecalculateGlobalInstallProgress()
@@ -29,16 +31,27 @@ public abstract class EditorLogic : IEditorLogic
         float? total = null;
         int entries = 0;
 
+        List<string> completedDownloads = new List<string>();
+
         foreach (var download in activeDownloads)
         {
             if (download.Value.isDone)
+            {
+                completedDownloads.Add(download.Key);
                 continue;
+            }
 
             entries++;
 
             total ??= 0;
             total += download.Value.currentValue;
         }
+
+        foreach (string completed in completedDownloads)
+            activeDownloads.Remove(completed);
+
+        if (completedDownloads.Count > 0)
+            callback?.Invoke(nameof(InstallEditor));
 
         if (entries == 0)
             callbackGlobalDownloadProgress?.Invoke(null);
@@ -65,10 +78,10 @@ public abstract class EditorLogic : IEditorLogic
 
         foreach (string root in await GetEditorLocations())
         {
-            path = Path.Combine(root, version);
+            path = GetEditorInstallBinary(Path.Combine(root, version));
 
-            if (Directory.Exists(path))
-                return GetEditorInstallBinary(path);
+            if (File.Exists(path))
+                return path;
         }
 
         return null;
@@ -282,10 +295,25 @@ public abstract class EditorLogic : IEditorLogic
 
                 if (info == null)
                 {
-                    info = new EditorInfo()
+                    string? installLocation = await GetEditorInstall(version);
+
+                    if (!string.IsNullOrEmpty(installLocation))
                     {
-                        versionName = version
-                    };
+                        info = new EditorInstallInfo()
+                        {
+                            installLocation = installLocation,
+                            versionName = version
+                        };
+                    }
+                    else
+                    {
+                        info = new EditorInfo()
+                        {
+                            versionName = version
+                        };
+                    }
+
+
                     versions[version] = info;
                 }
 
@@ -465,6 +493,9 @@ public abstract class EditorLogic : IEditorLogic
 
         foreach (string dir in dirs)
         {
+            if (!File.Exists(GetEditorInstallBinary(dir)))
+                continue;
+
             string versionName = Path.GetFileName(dir)!;
             res.Add(versionName);
         }
@@ -669,6 +700,7 @@ public abstract class EditorLogic : IEditorLogic
             .Where(m => desiredModules.Contains(m.id))
             .ToArray();
 
+        callback?.Invoke(nameof(InstallEditor));
         activeDownloads[version.versionName] = new ActiveDownload(version, editorVersionRoot, RecalculateGlobalInstallProgress, [.. toInstall, .. InstallEditorSubModules(editorVersionRoot, modulesToInstall)]);
 
         async Task EnsureManifestExists(string editorVersionRoot)
@@ -822,6 +854,8 @@ public abstract class EditorLogic : IEditorLogic
         {
             download.Stop();
             activeDownloads.Remove(version);
+
+            callback?.Invoke(nameof(StopActiveInstall));
         }
     }
 
@@ -921,13 +955,13 @@ public abstract class EditorLogic : IEditorLogic
                 updateGlobalProgress();
             });
 
-            thread = new Thread(() => _ = Run());
+            thread = new Thread(() => _ = Run(updateGlobalProgress));
             thread.Start();
 
             isDone = false;
         }
 
-        private async Task Run()
+        private async Task Run(Action progressUpdateCallback)
         {
             string tempDir = Path.Combine(root, "_temp");
 
@@ -952,12 +986,13 @@ public abstract class EditorLogic : IEditorLogic
                         break;
                     }
                 }
-
-                isDone = true;
             }
             finally
             {
                 Directory.Delete(tempDir, true);
+
+                isDone = true;
+                progressUpdateCallback?.Invoke();
             }
         }
 

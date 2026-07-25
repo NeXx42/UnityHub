@@ -30,6 +30,8 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
 
         btn_AddLocation.RegisterClick(() => UpdateLocation(null));
         btn_InstallVersion.RegisterClick(InstallNewEditor);
+
+        DependencyManager.GetService<IEditorLogic>()!.RegisterCallback(UpdateCallback);
     }
 
     public UserControl getControl => this;
@@ -86,5 +88,16 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
 
         await MainWindow.CloseModal(pos);
         await RedrawDownloaded();
+    }
+
+    private void UpdateCallback(string id)
+    {
+        switch (id)
+        {
+            case nameof(IEditorLogic.StopActiveInstall):
+            case nameof(IEditorLogic.InstallEditor):
+                RedrawDownloaded().Wrap();
+                break;
+        }
     }
 }

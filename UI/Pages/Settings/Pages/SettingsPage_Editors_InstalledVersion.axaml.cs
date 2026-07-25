@@ -21,6 +21,7 @@ namespace UI.Pages.Settings.Pages;
 public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotifyPropertyChanged
 {
     public string ProductName { get; set; } = "";
+    public string VersionNumber { get; set; } = "";
     public string InstallLocation { get; set; } = "";
 
     private ReusableList<CollectionItem> tagLines;
@@ -65,7 +66,8 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
         this.redrawRequest = redrawRequest;
         this.DataContext = downloadingStatus;
 
-        ProductName = info.versionName;
+        ProductName = info.friendlyVersionName;
+        VersionNumber = info.versionName;
 
         tagLines.Draw(info.CreateTags(), (lbl, _, dat) => lbl.Init(dat));
         Popup_GenericList popupOptions;
@@ -101,18 +103,18 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
         switch (value)
         {
             case "Cancel":
-                DependencyManager.GetService<IEditorLogic>()!.StopActiveInstall(ProductName);
+                DependencyManager.GetService<IEditorLogic>()!.StopActiveInstall(VersionNumber);
                 redrawRequest?.Invoke();
                 break;
 
             case "Delete":
                 IEditorLogic logic = DependencyManager.GetService<IEditorLogic>()!;
-                string? dir = Directory.GetParent((await logic.GetEditorInstall(ProductName))!)!.Parent!.FullName; // rather it fail then give back an invalid result
+                string? dir = Directory.GetParent((await logic.GetEditorInstall(VersionNumber))!)!.Parent!.FullName; // rather it fail then give back an invalid result
 
                 if (await DependencyManager.ui!.ShowConfirmationBox("Delete", $"Are you sure you want to delete\n{dir}?", new ConfirmationButton("Cancel"), new ConfirmationButton("Delete", true)) != 1)
                     return;
 
-                await logic.Delete(ProductName);
+                await logic.Delete(VersionNumber);
                 break;
 
             case "Browse":

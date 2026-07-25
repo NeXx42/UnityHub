@@ -205,6 +205,8 @@ public class SqliteDataRepo : IDataRepository
                 break;
         }
 
+        sql.Append($", {nameof(dbo_Project.id)}");
+
         if (search.take > 0)
             sql.AppendLine($" LIMIT {search.take} OFFSET {search.skip}");
 

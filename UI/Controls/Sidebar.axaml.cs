@@ -23,10 +23,13 @@ public partial class Sidebar : UserControl
 
         DependencyManager.GetService<IEditorLogic>()!.RegisterGlobalInstallProgressUpdate(v =>
         {
-            inp_DownloadProgress.IsVisible = v.HasValue;
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                inp_DownloadProgress.IsVisible = v.HasValue;
 
-            if (v.HasValue)
-                inp_DownloadProgress.Value = v.Value;
+                if (v.HasValue)
+                    inp_DownloadProgress.Value = v.Value;
+            });
         });
 
         inp_DownloadProgress.IsVisible = false;
