@@ -6,6 +6,13 @@
   xmlns:common="clr-namespace:UI.Pages.Settings.Pages.Common">
   <StackPanel Orientation="Vertical" Spacing="20">
     <StackPanel Spacing="5">
+      <StackPanel.Styles>
+        <Style Selector="StackPanel>Label">
+          <Setter Property="Margin" Value="0 10 0 0" />
+          <Setter Property="FontSize" Value="20" />
+        </Style>
+      </StackPanel.Styles>  
+    
       <Label FontSize="20">Language</Label>
       <Grid ColumnDefinitions="Auto * 200">
         <Label>Language</Label>
@@ -13,11 +20,13 @@
       </Grid>
 
       <Label FontSize="20">Projects</Label>
-      <Grid ColumnDefinitions="* 5 200">
+        <Grid ColumnDefinitions="* 5 200">
         <Label>Derive missing metadata</Label>
         <controls:ButtonWrapper Label="Derive" x:Name="btn_Projects_DeriveMissingMetadata" Classes="Primary" Grid.Column="2" HorizontalContentAlignment="Center"/>
       </Grid>
-
+    
+      <Label FontSize="20">Behaviour</Label>
+      <common:SettingsPage_Common_Dropdown x:Name="setting_LaunchBehaviour" Label="Launch Behaviour"/>
       <common:SettingsPage_Common_Text x:Name="setting_EditorCommand" Label="Editor Command"/>
       <common:SettingsPage_Common_Text x:Name="setting_TerminalCommand" Label="Terminal Command"/>
 

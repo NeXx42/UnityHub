@@ -16,6 +16,19 @@ public class ConfigLogic : IConfigLogic
         if (string.IsNullOrEmpty(firstValue))
             return defaultVal;
 
+        if (typeof(T).IsEnum)
+        {
+            string? enumName = JsonSerializer.Deserialize<string>(firstValue);
+
+            if (string.IsNullOrEmpty(enumName))
+                return defaultVal;
+
+            if (Enum.TryParse(typeof(T), enumName, out object? res) && res != null)
+                return (T)res;
+
+            return defaultVal;
+        }
+
         return JsonSerializer.Deserialize<T>(firstValue) ?? defaultVal;
     }
 

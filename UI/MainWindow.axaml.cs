@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Logic;
 using Models.Data;
@@ -212,5 +214,15 @@ public partial class MainWindow : Window, IUILinker
         }
 
         await ShowModalAndWait<EditorManagerModal>(async m => await m.Open(metadata));
+    }
+
+    public void Quit()
+    {
+        (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
+    }
+
+    public void Minimise()
+    {
+        WindowState = WindowState.Minimized;
     }
 }

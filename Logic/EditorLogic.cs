@@ -472,7 +472,18 @@ public abstract class EditorLogic : IEditorLogic
         return res.ToArray();
     }
 
-    public bool IsProjectRunning(int id) => activeInstances.ContainsKey(id);
+    public bool IsProjectRunning(int id)
+    {
+        if (activeInstances.TryGetValue(id, out ActiveInstances instance))
+        {
+            if (instance.isActive)
+                return true;
+
+            activeInstances.Remove(id);
+        }
+
+        return false;
+    }
 
     public async Task LaunchProject(int id) => await LaunchProject(await DependencyManager.GetService<IProjectLogic>()!.GetProjectInfo(id));
     public async Task LaunchProject(ProjectInfo? info)
@@ -499,11 +510,12 @@ public abstract class EditorLogic : IEditorLogic
             return;
         }
 
-        if (true)
+        IConfigLogic config = DependencyManager.GetService<IConfigLogic>()!;
+
+        if (await config.Get(ConfigEntry.InjectLinker, true))
         {
             await CreateHandover(info.id);
             await CreateInjectorPackage(info);
-
         }
 
         info.lastOpened = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -521,6 +533,17 @@ public abstract class EditorLogic : IEditorLogic
         activeInstances.Add(info.id, instance);
 
         instance.Start();
+
+        switch (await config.Get(ConfigEntry.LaunchBehaviour, Config_LaunchBehaviour.Minimise))
+        {
+            case Config_LaunchBehaviour.Exit:
+                DependencyManager.ui!.Quit();
+                return;
+
+            case Config_LaunchBehaviour.Minimise:
+                DependencyManager.ui!.Minimise();
+                break;
+        }
     }
 
     private void OnQuitEditor(int id)
@@ -839,6 +862,8 @@ public abstract class EditorLogic : IEditorLogic
     {
         private int id;
         private Process activeProcess;
+
+        public bool isActive => !activeProcess.HasExited;
 
         public ActiveInstances(int id, ProcessStartInfo info, Action<int> onExit)
         {

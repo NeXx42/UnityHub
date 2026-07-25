@@ -12,4 +12,7 @@ public interface IUILinker
     public Task<int?> ShowConfirmationBox(string msg, string paragraph, params IEnumerable<ConfirmationButton> btns);
 
     public Task<Exception?> LoadProgressive(string header, params IEnumerable<LoadRequest> tasks);
+
+    public void Quit();
+    public void Minimise();
 }

@@ -31,6 +31,7 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
         inp_LanguageDropdown.SelectionChanged += (_, __) => UpdateLanguage();
 
         settings = [
+            setting_LaunchBehaviour.RegisterType<Config_LaunchBehaviour>().Init(ConfigEntry.LaunchBehaviour),
             setting_EditorCommand.Init(ConfigEntry.IDECommand),
             setting_TerminalCommand.Init(ConfigEntry.TerminalCommand)
         ];

@@ -7,6 +7,9 @@ public enum ConfigEntry
     ActiveTheme,
     ActiveLanguage,
 
+    LaunchBehaviour,
     IDECommand,
     TerminalCommand,
+
+    InjectLinker,
 }
