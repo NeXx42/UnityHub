@@ -15,7 +15,7 @@ Open-source & cross-platform alternative to Unity's official Hub — for managin
 - **Unity-side integration** — the bundled `com.nexx.unityhublink` Unity package links a project's Editor back to the Hub.
 
 ## Screenshots
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/5f59b09b-45f2-456e-843f-cdfb0bf56758" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f876bbe3-08be-4776-8dd4-532f6fd42ac1" />
 <img width="7680" height="1080" alt="image" src="https://github.com/user-attachments/assets/f2f8179b-c5fd-449a-add5-37d3ba0e329d" />
 
 ## Languages
