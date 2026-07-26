@@ -21,7 +21,7 @@ publish-windows:
 		
 	dotnet build Installer.Wix/Installer.Wix.wixproj -c Release -p:Platform=x64 -o ${OUTPUT_DIR}/UnityHub_WindowsMSI
 		
-	zip -r $(OUTPUT_DIR)/UnityHub_Windows.zip ${OUTPUT_DIR}/UnityHub_Windows
+	powershell -Command "Compress-Archive -Path '$(OUTPUT_DIR)/UnityHub_Windows/*' -DestinationPath '$(OUTPUT_DIR)/UnityHub_Windows.zip' -Force"
 	rm -rf ${OUTPUT_DIR}/UnityHub_Windows
 
 publish-appimage:	
