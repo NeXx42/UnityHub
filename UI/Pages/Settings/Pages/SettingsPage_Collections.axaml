@@ -1,12 +1,12 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_Collections"
-  xmlns:controls="clr-namespace:UI.Controls">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_Collections"
+             xmlns:controls="clr-namespace:UI.Controls">
   <StackPanel Spacing="20">
     <StackPanel Spacing="5">
       <Grid>
-        <Label FontSize="20">Collections</Label>
+        <Label FontSize="20" Content="{DynamicResource LANG_Literal_Collections}"/>
 
         <controls:ButtonWrapper HorizontalAlignment="Right" Classes="Transparent" x:Name="btn_AddCollection">
           <controls:ButtonWrapper.Icon>
@@ -25,7 +25,7 @@
 
     <StackPanel Spacing="5">
       <Grid>
-        <Label FontSize="20">Tags</Label>
+        <Label FontSize="20" Content="{DynamicResource LANG_Literal_Tags}"/>
 
         <controls:ButtonWrapper HorizontalAlignment="Right" Classes="Transparent" x:Name="btn_AddTag">
           <controls:ButtonWrapper.Icon>

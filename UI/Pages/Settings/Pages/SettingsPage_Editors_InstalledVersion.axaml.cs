@@ -80,7 +80,7 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
                 cont_DownloadStatus.IsVisible = true;
 
                 popupOptions = new Popup_GenericList();
-                popupOptions.Draw(["Cancel"], OnExtraOptionCallback);
+                popupOptions.Draw([LanguageHelper.GetLanguageResource("Literal_Cancel")!], OnExtraOptionCallback_Downloading);
                 btn_Extra.RegisterPopup(popupOptions);
             }
 
@@ -89,7 +89,7 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
         }
 
         popupOptions = new Popup_GenericList();
-        popupOptions.Draw(["Manage", "Browse", "Delete"], OnExtraOptionCallback);
+        popupOptions.Draw([LanguageHelper.GetLanguageResource("Literal_Edit")!, "Browse", LanguageHelper.GetLanguageResource("Literal_Delete")!], OnExtraOptionCallback_Installed);
         btn_Extra.RegisterPopup(popupOptions);
 
         cont_DownloadStatus.IsVisible = false;
@@ -98,30 +98,17 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
     }
 
-    private async Task OnExtraOptionCallback(int _, string value)
+    private async Task OnExtraOptionCallback_Downloading(int _, string __)
+    {
+        DependencyManager.GetService<IEditorLogic>()!.StopActiveInstall(VersionNumber);
+        redrawRequest?.Invoke();
+    }
+
+    private async Task OnExtraOptionCallback_Installed(int value, string _)
     {
         switch (value)
         {
-            case "Cancel":
-                DependencyManager.GetService<IEditorLogic>()!.StopActiveInstall(VersionNumber);
-                redrawRequest?.Invoke();
-                break;
-
-            case "Delete":
-                IEditorLogic logic = DependencyManager.GetService<IEditorLogic>()!;
-                string? dir = Directory.GetParent((await logic.GetEditorInstall(VersionNumber))!)!.Parent!.FullName; // rather it fail then give back an invalid result
-
-                if (await DependencyManager.ui!.ShowConfirmationBox("Delete", $"Are you sure you want to delete\n{dir}?", new ConfirmationButton("Cancel"), new ConfirmationButton("Delete", true)) != 1)
-                    return;
-
-                await logic.Delete(VersionNumber);
-                break;
-
-            case "Browse":
-                DependencyManager.GetService<IEditorLogic>()!.BrowseToEditor(info);
-                break;
-
-            case "Manage":
+            case 0: // Edit
                 if (info == null)
                     return;
 
@@ -129,6 +116,20 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
                 {
                     await m.Open(info);
                 });
+                break;
+
+            case 1: // Browse
+                DependencyManager.GetService<IEditorLogic>()!.BrowseToEditor(info);
+                break;
+
+            case 2: // Delete
+                IEditorLogic logic = DependencyManager.GetService<IEditorLogic>()!;
+                string? dir = Directory.GetParent((await logic.GetEditorInstall(VersionNumber))!)!.Parent!.FullName; // rather it fail then give back an invalid result
+
+                if (await DependencyManager.ui!.ShowConfirmationBox(LanguageHelper.GetLanguageResource("Literal_Delete")!, $"Are you sure you want to delete\n{dir}?", LanguageHelper.Button_Cancel, LanguageHelper.Button_Delete) != 1)
+                    return;
+
+                await DependencyManager.ui!.LoadProgressive("Deleteing", new LoadRequest("Deleting", async (_, __) => await logic.Delete(VersionNumber)));
                 break;
         }
     }

@@ -1,9 +1,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_General"
-  xmlns:controls="clr-namespace:UI.Controls"
-  xmlns:common="clr-namespace:UI.Pages.Settings.Pages.Common">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.Settings.Pages.SettingsPage_General"
+             xmlns:controls="clr-namespace:UI.Controls"
+             xmlns:common="clr-namespace:UI.Pages.Settings.Pages.Common">
   <StackPanel Orientation="Vertical" Spacing="20">
     <StackPanel Spacing="5">
       <StackPanel.Styles>
@@ -11,27 +11,27 @@
           <Setter Property="Margin" Value="0 10 0 0" />
           <Setter Property="FontSize" Value="20" />
         </Style>
-      </StackPanel.Styles>  
-    
-      <Label FontSize="20">Language</Label>
+      </StackPanel.Styles>
+
+      <Label FontSize="20" Content="{DynamicResource LANG_Settings_General_Language}"/>
       <Grid ColumnDefinitions="Auto * 200">
-        <Label>Language</Label>
+        <Label Content="{DynamicResource LANG_Settings_General_Language}"/>
         <ComboBox x:Name="inp_LanguageDropdown" Grid.Column="3"/>
       </Grid>
 
-      <Label FontSize="20">Projects</Label>
-        <Grid ColumnDefinitions="* 5 200">
+      <Label FontSize="20" Content="{DynamicResource LANG_Literal_Projects}"/>
+      <Grid ColumnDefinitions="* 5 200">
         <Label>Derive missing metadata</Label>
         <controls:ButtonWrapper Label="Derive" x:Name="btn_Projects_DeriveMissingMetadata" Classes="Primary" Grid.Column="2" HorizontalContentAlignment="Center"/>
       </Grid>
-    
+
       <Label FontSize="20">Behaviour</Label>
       <common:SettingsPage_Common_Dropdown x:Name="setting_LaunchBehaviour" Label="Launch Behaviour"/>
       <common:SettingsPage_Common_Dropdown x:Name="setting_InjectLinker" Label="Inject linker package"/>
       <common:SettingsPage_Common_Text x:Name="setting_EditorCommand" Label="Editor Command"/>
       <common:SettingsPage_Common_Text x:Name="setting_TerminalCommand" Label="Terminal Command"/>
       <common:SettingsPage_Common_Dropdown x:Name="setting_WindowsSilentInstaller" Label="Silent Editor installs"/>
-      
+
       <Label FontSize="20">Version</Label>
       <Grid>
         <Label>Current Version</Label>

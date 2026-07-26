@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Metadata;
 using UI.Helpers;
 
@@ -40,6 +41,14 @@ public partial class SidebarEntry : UserControl, ISidebarControl
     public SidebarEntry()
     {
         InitializeComponent();
+        cont_Border.PointerPressed += (_, __) => onSelectCallback?.Invoke();
+    }
+
+    public SidebarEntry(string contentDynamicResource)
+    {
+        InitializeComponent();
+
+        Bind(LabelProperty, new DynamicResourceExtension(contentDynamicResource));
         cont_Border.PointerPressed += (_, __) => onSelectCallback?.Invoke();
     }
 

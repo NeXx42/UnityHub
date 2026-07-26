@@ -1,9 +1,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.CreateCollectionModal"
-  xmlns:controls="clr-namespace:UI.Controls"
-  xmlns:local="clr-namespace:UI.Modals" x:Name="root">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.CreateCollectionModal"
+             xmlns:controls="clr-namespace:UI.Controls"
+             xmlns:local="clr-namespace:UI.Modals" x:Name="root">
   <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}" Width="400" CornerRadius="{DynamicResource CornerRadius_Element}">
     <StackPanel Orientation="Vertical" Margin="10" Spacing="10">
       <Label FontSize="20" HorizontalAlignment="Center" Margin="0 0 0 10">Save Collection</Label>
@@ -33,8 +33,8 @@
       </Grid>
 
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
-        <controls:ButtonWrapper Label="Cancel" x:Name="btn_Cancel"/>
-        <controls:ButtonWrapper Label="Save" x:Name="btn_Save" Classes="Primary"/>
+        <controls:ButtonWrapper Label="{DynamicResource LANG_Literal_Cancel}" x:Name="btn_Cancel"/>
+        <controls:ButtonWrapper Label="{DynamicResource LANG_Literal_Save}" x:Name="btn_Save" Classes="Primary"/>
       </StackPanel>
     </StackPanel>
   </Border>

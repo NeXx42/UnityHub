@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using Logic;
 using Models.Data;
 using Models.Interfaces;
+using UI.Helpers;
 using UI.Modals;
 using UI.Popups;
 
@@ -19,7 +20,7 @@ public partial class SettingsPage_Collections_Container : UserControl
         InitializeComponent();
 
         Popup_GenericList options = new Popup_GenericList();
-        options.Draw(["Edit", "Delete"], OnOpen);
+        options.Draw([LanguageHelper.GetLanguageResource("Literal_Edit")!, LanguageHelper.GetLanguageResource("Literal_Delete")!], OnOpen);
 
         btn_Extra.RegisterPopup(options);
     }
@@ -42,13 +43,13 @@ public partial class SettingsPage_Collections_Container : UserControl
         cont_CollectionResult.Init(dat);
     }
 
-    private async Task OnOpen(int _, string option)
+    private async Task OnOpen(int optionIndex, string _)
     {
         ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
 
-        switch (option)
+        switch (optionIndex)
         {
-            case "Edit":
+            case 0: // edit
                 TagData? res = await MainWindow.ShowModalAndWait<CreateCollectionModal, TagData>(async d => await d.Init(activeData));
 
                 if (res == null || res.collectionId == -1)
@@ -61,27 +62,27 @@ public partial class SettingsPage_Collections_Container : UserControl
 
                 break;
 
-            case "Delete":
+            case 1: // delete
                 if (activeData == null)
                     return;
 
                 if (activeData is CollectionData)
                 {
                     if (await DependencyManager.ui!.ShowConfirmationBox(
-                        "Delete",
+                        LanguageHelper.GetLanguageResource("Literal_Delete")!,
                         "Are you sure you want to remove this Collection? Any project using it will have its collection reverted to \"In Development\".",
-                        new ConfirmationButton("Cancel"),
-                        new ConfirmationButton("Delete", true)
+                        LanguageHelper.Button_Cancel,
+                        LanguageHelper.Button_Delete
                     ) == 1)
                         await logic.DeleteCollection(activeData.collectionId);
                 }
                 else
                 {
                     if (await DependencyManager.ui!.ShowConfirmationBox(
-                        "Delete",
+                        LanguageHelper.GetLanguageResource("Literal_Delete")!,
                         "Are you sure you want to delete this tag? Any project using the tag will lose it.",
-                        new ConfirmationButton("Cancel"),
-                        new ConfirmationButton("Delete", true)
+                        LanguageHelper.Button_Cancel,
+                        LanguageHelper.Button_Delete
                     ) == 1)
                         await logic.DeleteTag(activeData.collectionId);
                 }

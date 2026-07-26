@@ -858,6 +858,8 @@ public abstract class EditorLogic : IEditorLogic
 
         if (Directory.Exists(dir))
             await Task.Run(() => Directory.Delete(dir, true));
+
+        callback?.Invoke(nameof(Delete));
     }
 
     public void BrowseToEditor(EditorInfo? info)

@@ -139,15 +139,11 @@ public partial class MoreInfo : UserControl
         if (info == null)
             return;
 
-        if (await MainWindow.instance!.ShowConfirmationBox("Delete Project", $"Are you sure you want to delete the project\n'{info.name}'?",
-            new ConfirmationButton()
-            {
-                label = "Cancel",
-            },
+        if (await MainWindow.instance!.ShowConfirmationBox("Delete Project", $"Are you sure you want to delete the project\n'{info.name}'?", LanguageHelper.Button_Cancel,
             new ConfirmationButton()
             {
                 className = "Primary",
-                label = "Delete",
+                label = LanguageHelper.GetLanguageResource("Literal_Delete")!,
             }) != 1
         )
             return;

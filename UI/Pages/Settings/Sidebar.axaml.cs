@@ -34,8 +34,7 @@ public partial class Sidebar : UserControl
         this.settingsPage = settingsPage;
 
         tabs = [
-            (new SidebarEntry(){
-                Label = "Editor",
+            (new SidebarEntry("LANG_Settings_Sidebar_Editor"){
                 Icon = new Viewbox(){
                     Height = 17,
                     Child = new Path(){
@@ -43,24 +42,21 @@ public partial class Sidebar : UserControl
                     }
                 }
             }, new SettingsPage_Editors()),
-            (new SidebarEntry(){
-                Label = "General",
+            (new SidebarEntry("LANG_Settings_Sidebar_General"){
                 Icon = new Viewbox(){
                     Child = new Path(){
                         Data = Geometry.Parse("M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z")
                     }
                 }
             }, new SettingsPage_General()),
-            (new SidebarEntry(){
-                Label = "Collections",
+            (new SidebarEntry("LANG_Settings_Sidebar_Collections"){
                 Icon = new Viewbox(){
                     Child = new Path(){
                         Data = Geometry.Parse("M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1zm2-2a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM0 13a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 16 13V6a1.5 1.5 0 0 0-1.5-1.5h-13A1.5 1.5 0 0 0 0 6zm1.5.5A.5.5 0 0 1 1 13V6a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5z")
                     }
                 }
             }, new SettingsPage_Collections()),
-            (new SidebarEntry(){
-                Label = "Themes",
+            (new SidebarEntry("LANG_Settings_Sidebar_Themes"){
                 Icon = new Viewbox(){
                     Child = new Path(){
                         Data = Geometry.Parse("M12.433 10.07C14.133 10.585 16 11.15 16 8a8 8 0 1 0-8 8c1.996 0 1.826-1.504 1.649-3.08-.124-1.101-.252-2.237.351-2.92.465-.527 1.42-.237 2.433.07M8 5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m4.5 3a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3M5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m.5 6.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3")

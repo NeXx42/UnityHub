@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia;
 using Logic;
+using Models.Data;
 using Models.Helpers;
 using Models.Interfaces;
 
@@ -87,4 +88,8 @@ public static class LanguageHelper
 
         return sb.ToString();
     }
+
+    public static ConfirmationButton Button_Save => new ConfirmationButton(GetLanguageResource("Literal_Save")!, true);
+    public static ConfirmationButton Button_Cancel => new ConfirmationButton(GetLanguageResource("Literal_Cancel")!);
+    public static ConfirmationButton Button_Delete => new ConfirmationButton(GetLanguageResource("Literal_Delete")!, true);
 }

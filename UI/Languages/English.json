@@ -10,9 +10,20 @@
   "HomePage_CreateProject": "Create Project",
   "ProjectImport_Title": "Import",
   "ProjectImport_Btn": "Import",
+  "Settings_Sidebar_Editor": "Editor",
+  "Settings_Sidebar_General": "General",
+  "Settings_Sidebar_Collections": "Collections",
+  "Settings_Sidebar_Themes": "Themes",
+  "Settings_General_Language": "Language",
+  "Settings_Themes_Header": "Themes",
   "Literal_Collections": "Collections",
   "Literal_Tags": "Tags",
   "Literal_Projects": "Projects",
   "Literal_Project": "Project",
-  "Literal_Cancel": "Cancel"
+  "Literal_Cancel": "Cancel",
+  "Literal_Editors": "Editors",
+  "Literal_Editor": "Editor",
+  "Literal_Save": "Save",
+  "Literal_Edit": "Edit",
+  "Literal_Delete": "Delete"
 }

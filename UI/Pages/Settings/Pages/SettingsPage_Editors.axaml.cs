@@ -96,6 +96,7 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
         {
             case nameof(IEditorLogic.StopActiveInstall):
             case nameof(IEditorLogic.InstallEditor):
+            case nameof(IEditorLogic.Delete):
                 RedrawDownloaded().Wrap();
                 break;
         }
