@@ -5,13 +5,6 @@ clean:
 	rm -rf ${OUTPUT_DIR}/*
 	find . -mindepth 2 -maxdepth 2 -type d \( -name bin -o -name obj \) -exec rm -rf {} +
 
-setup:
-	echo "Git Version - ${GIT_VERSION}"
-	echo "Git Sha - ${GIT_SHA}"
-	
-	chmod +x ./generateDefaultLanguage.sh
-	./generateDefaultLanguage.sh
-
 publish-windows:
 	rm -rf ${OUTPUT_DIR}/UnityHub_Windows
 	rm -rf ${OUTPUT_DIR}/UnityHub_WindowsMSI

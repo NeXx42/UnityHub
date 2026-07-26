@@ -30,9 +30,6 @@ jobs:
           echo "GIT_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
           echo "GIT_SHA=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
           
-      - name: Setup Project
-        run: make setup  
-        
       - name: Windows
         run: make publish-windows
           
@@ -72,9 +69,6 @@ jobs:
         run: |
           echo "GIT_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
           echo "GIT_SHA=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
-          
-      - name: Setup Project
-        run: make setup       
           
       - name: Download appimagetool
         run: |
