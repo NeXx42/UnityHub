@@ -39,7 +39,7 @@ jobs:
           name: UnityHub-Windows
           path: |
             ${{ env.OUTPUT_DIR }}/UnityHub_Windows.zip
-            ${{ env.OUTPUT_DIR }}/UnityHub_WindowsMSI/UnityHub.msi
+            ${{ env.OUTPUT_DIR }}/UnityHub.msi
         
           
   Build-Linux:
@@ -113,4 +113,4 @@ jobs:
             files: |
               ./output/UnityHub.appimage
               ./output/UnityHub_Windows.zip
-              ./output/UnityHub_Windows.msi
+              ./output/UnityHub.msi
