@@ -8,28 +8,22 @@ on:
         required: true
 
 jobs:
-  Build:
-    runs-on: ubuntu-22.04
-
+  Build-Windows:
+    runs-on: windows-latest
+    
     env:
       OUTPUT_DIR: ./Build/Output/
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libfuse2 \
-          
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '10.0.x'
           
       - name: Set version vars
         run: |
@@ -51,6 +45,36 @@ jobs:
             ${{ env.OUTPUT_DIR }}/UnityHub_WindowsMSI/UnityHub.msi
         
           
+  Build-Linux:
+    runs-on: ubuntu-22.04
+
+    env:
+      OUTPUT_DIR: ./Build/Output/
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libfuse2 \
+          
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          
+      - name: Set version vars
+        run: |
+          echo "GIT_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
+          echo "GIT_SHA=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          
+      - name: Setup Project
+        run: make setup       
           
       - name: Download appimagetool
         run: |
@@ -69,7 +93,7 @@ jobs:
           path: ${{ env.OUTPUT_DIR }}/UnityHub.appimage
           
   Release:
-    needs: Build
+    needs: [Build-Linux, Build-Windows]
     runs-on: ubuntu-22.04
     permissions:
       contents: write
