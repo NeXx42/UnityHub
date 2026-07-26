@@ -32,12 +32,7 @@
     <AssemblyMetadata Include="GitSha" Value="$(GitSha)" />
   </ItemGroup>
 
-  <Target Name="CopyPluginsToOutput" AfterTargets="Build;Publish">
-    <PropertyGroup>
-      <_CopyTargetDir Condition="'$(_CopyTargetDir)' == '' AND '$(PublishDir)' != ''">$(PublishDir)</_CopyTargetDir>
-      <_CopyTargetDir Condition="'$(_CopyTargetDir)' == ''">$(OutputPath)</_CopyTargetDir>
-    </PropertyGroup>
-
+  <Target Name="CopyToBuildOutput" AfterTargets="Build">
     <ItemGroup>
       <PluginFiles Include="Plugins\**\*.*" />
       <ThemeFiles Include="Themes\**\*.*" />
@@ -45,13 +40,31 @@
       <PackageFolder Include="..\com.nexx.unityhublink\**\*.*" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(_CopyTargetDir)Plugins\%(RecursiveDir)" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(ThemeFiles)" DestinationFolder="$(_CopyTargetDir)Themes\%(RecursiveDir)" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(_CopyTargetDir)Languages\%(RecursiveDir)" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(PackageFolder)" DestinationFolder="$(_CopyTargetDir)com.nexx.unityhublink\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(TargetDir)Plugins\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ThemeFiles)" DestinationFolder="$(TargetDir)Themes\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(TargetDir)Languages\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(PackageFolder)" DestinationFolder="$(TargetDir)com.nexx.unityhublink\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CopyToPublishOutput" AfterTargets="Publish">
+    <ItemGroup>
+      <PluginFiles Include="Plugins\**\*.*" />
+      <ThemeFiles Include="Themes\**\*.*" />
+      <LanguageFiles Include="Languages\**\*.*" />
+      <PackageFolder Include="..\com.nexx.unityhublink\**\*.*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PublishDir)Plugins\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ThemeFiles)" DestinationFolder="$(PublishDir)Themes\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PublishDir)Languages\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(PackageFolder)" DestinationFolder="$(PublishDir)com.nexx.unityhublink\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
 
   <PropertyGroup>
     <ApplicationIcon>./Assets/icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="com.nexx.unityhublink\**\*.cs" />
+  </ItemGroup>
 </Project>

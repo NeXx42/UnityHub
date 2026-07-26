@@ -12,4 +12,5 @@ public enum ConfigEntry
     TerminalCommand,
 
     InjectLinker,
+    Windows_InstallSilent,
 }

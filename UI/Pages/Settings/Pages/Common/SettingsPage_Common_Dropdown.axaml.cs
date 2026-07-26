@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Logic;
+using Models;
 using Models.Enums;
 using Models.Interfaces;
 
@@ -19,7 +20,10 @@ public partial class SettingsPage_Common_Dropdown : UserControl, INotifyProperty
         set => SetValue(LabelProperty, value);
     }
 
+    private bool isSupported = true;
+
     private ConfigEntry? key;
+    private string? fallbackVal;
     private bool isActive = false;
 
     public SettingsPage_Common_Dropdown()
@@ -30,13 +34,29 @@ public partial class SettingsPage_Common_Dropdown : UserControl, INotifyProperty
     }
 
 
-    public ISettingsPageSetting Init(ConfigEntry key)
+    public ISettingsPageSetting Init(ConfigEntry key, bool supportWindows = true, bool supportLinux = true)
     {
+        if (GlobalConfig.isOnLinux && !supportLinux)
+        {
+            IsVisible = false;
+            isSupported = false;
+
+            return this;
+        }
+
+        if (!GlobalConfig.isOnLinux && !supportWindows)
+        {
+            IsVisible = false;
+            isSupported = false;
+
+            return this;
+        }
+
         this.key = key;
         return this;
     }
 
-    public SettingsPage_Common_Dropdown RegisterType<T>() where T : Enum
+    public SettingsPage_Common_Dropdown RegisterType<T>(string? fallbackVal = null) where T : Enum
     {
         string[] values = Enum.GetNames(typeof(T));
         return RegisterType(values);
@@ -56,9 +76,12 @@ public partial class SettingsPage_Common_Dropdown : UserControl, INotifyProperty
 
     public async Task Load(IConfigLogic configProvider)
     {
+        if (!isSupported)
+            return;
+
         isActive = false;
 
-        string res = await configProvider.Get(key!.Value, "");
+        string res = await configProvider.Get(key!.Value, fallbackVal ?? "");
         inp_Options.SelectedValue = res;
 
         if (inp_Options.SelectedIndex == -1)

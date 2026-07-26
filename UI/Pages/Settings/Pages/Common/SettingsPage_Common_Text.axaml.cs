@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Logic;
+using Models;
 using Models.Enums;
 using Models.Interfaces;
 
@@ -17,8 +18,9 @@ public partial class SettingsPage_Common_Text : UserControl, ISettingsPageSettin
         set => SetValue(LabelProperty, value);
     }
 
-    private ConfigEntry? key;
     private string? curVal;
+    private ConfigEntry? key;
+    private bool isSupported = true;
 
     public SettingsPage_Common_Text()
     {
@@ -32,14 +34,33 @@ public partial class SettingsPage_Common_Text : UserControl, ISettingsPageSettin
         btn_Save.RegisterClick(Save);
     }
 
-    public ISettingsPageSetting Init(ConfigEntry key)
+    public ISettingsPageSetting Init(ConfigEntry key, bool supportWindows = true, bool supportLinux = true)
     {
+        if (GlobalConfig.isOnLinux && !supportLinux)
+        {
+            IsVisible = false;
+            isSupported = false;
+
+            return this;
+        }
+
+        if (!GlobalConfig.isOnLinux && !supportWindows)
+        {
+            IsVisible = false;
+            isSupported = false;
+
+            return this;
+        }
+
         this.key = key;
         return this;
     }
 
     public async Task Load(IConfigLogic configProvider)
     {
+        if (!isSupported)
+            return;
+
         ToggleButtonAvability(false);
 
         if (!key.HasValue)

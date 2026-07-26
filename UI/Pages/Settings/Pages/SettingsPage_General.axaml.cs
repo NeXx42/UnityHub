@@ -34,7 +34,8 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
             setting_LaunchBehaviour.RegisterType<Config_LaunchBehaviour>().Init(ConfigEntry.LaunchBehaviour),
             setting_InjectLinker.RegisterType<Config_EnabledStatus>().Init(ConfigEntry.InjectLinker),
             setting_EditorCommand.Init(ConfigEntry.IDECommand),
-            setting_TerminalCommand.Init(ConfigEntry.TerminalCommand)
+            setting_TerminalCommand.Init(ConfigEntry.TerminalCommand),
+            setting_WindowsSilentInstaller.RegisterType<Config_EnabledStatus>(Config_EnabledStatus.Enabled.ToString()).Init(ConfigEntry.Windows_InstallSilent, supportLinux: false),
         ];
     }
 

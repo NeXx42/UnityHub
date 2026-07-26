@@ -52,7 +52,7 @@ public class ProjectLogic : IProjectLogic
             }
         });
 
-        File.Delete(dirtyFile);
+        await Task.Run(() => File.Delete(dirtyFile));
 
         // may update more?
         await data.UpdateProjectProperties(updates, [
@@ -114,8 +114,8 @@ public class ProjectLogic : IProjectLogic
     {
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
-            FileName = "xdg-open",
-            UseShellExecute = false,
+            FileName = GlobalConfig.isOnLinux ? "xdg-open" : "explorer.exe",
+            UseShellExecute = GlobalConfig.isOnLinux ? false : true,
         };
 
         startInfo.ArgumentList.Add(info.directory);
@@ -255,7 +255,7 @@ public class ProjectLogic : IProjectLogic
 
         async Task Work(IProgress<float> progress, CancellationToken token)
         {
-            CopyFiles(from, to);
+            await Task.Run(() => CopyFiles(from, to));
 
             void CopyFiles(string existing, string destination)
             {
@@ -351,7 +351,7 @@ public class ProjectLogic : IProjectLogic
         async Task DeleteFiles(CancellationToken token)
         {
             if (Directory.Exists(info.directory))
-                Directory.Delete(info.directory, true);
+                await Task.Run(() => Directory.Delete(info.directory, true));
         }
 
         async Task RemoveInfo(CancellationToken token)

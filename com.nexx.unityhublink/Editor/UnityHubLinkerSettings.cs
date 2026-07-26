@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.IO;
 using Nexx.HubLinker;
 using UnityEditor;
@@ -120,3 +121,4 @@ public class UnityHubLinkerSettings : EditorWindow
         Repaint();
     }
 }
+#endif

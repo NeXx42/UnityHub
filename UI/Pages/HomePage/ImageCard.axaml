@@ -31,7 +31,7 @@
 
     <Grid>
       <!-- Icon -->
-      <Border VerticalAlignment="Top" HorizontalAlignment="Stretch" CornerRadius="{DynamicResource CornerRadius_Menu}" ClipToBounds ="True">
+      <Border VerticalAlignment="Stretch" HorizontalAlignment="Stretch" CornerRadius="{DynamicResource CornerRadius_Menu}" ClipToBounds ="True">
         <Image x:Name="img" VerticalAlignment="Top" HorizontalAlignment="Stretch" StretchDirection="DownOnly"/>
       </Border>
 

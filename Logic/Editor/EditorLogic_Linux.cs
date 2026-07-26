@@ -35,4 +35,25 @@ public class EditorLogic_Linux : EditorLogic
     }
 
     protected override string GetEditorInstallBinary(string rootName) => Path.Combine(rootName, "Editor", "Unity");
+
+    protected override async Task DownloadEditorModuleInternal(EditorInfo.Download.Module module, string destination, string tempDir, IProgress<float> progress, CancellationToken token)
+    {
+        switch (module.category)
+        {
+            case "LANGUAGE_PACK":
+            case "Language packs":
+            case "Language packs (Preview)":
+                await InstallLanguagePack(module, progress, token);
+                break;
+        }
+
+        async Task InstallLanguagePack(EditorInfo.Download.Module module, IProgress<float> progress, CancellationToken token)
+        {
+            string languagePackName = $"{module.id!.Replace("language-", "")}.po";
+            await EditorInstallHelper.DownloadFile(module.url!, Path.Combine(tempDir, languagePackName), progress, token);
+
+            Directory.CreateDirectory(destination);
+            File.Move(Path.Combine(tempDir, languagePackName), Path.Combine(destination, languagePackName));
+        }
+    }
 }

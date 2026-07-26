@@ -11,8 +11,8 @@ public class CollectionHandler_Archive : CollectionHandler_Base
     public override LoadRequest[] GetTransformations(ProjectInfo info)
     {
         return [
-            new LoadRequest("Removing cache", DeleteCacheForProject),
-            new LoadRequest("Update project", RederiveInfo),
+            new LoadRequest("Removing cache", DeleteCacheForProject, true),
+            new LoadRequest("Update project", RederiveInfo, true),
         ];
 
         async Task DeleteCacheForProject(CancellationToken token)

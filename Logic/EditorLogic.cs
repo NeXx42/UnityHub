@@ -725,28 +725,12 @@ public abstract class EditorLogic : IEditorLogic
         async Task Install(EditorInfo.Download.Module module, IProgress<float> progress, CancellationToken token)
         {
             string destination = module.destination!.Replace("{UNITY_PATH}", editorRoot);
-
-            switch (module.category)
-            {
-                case "LANGUAGE_PACK":
-                case "Language packs":
-                case "Language packs (Preview)":
-                    await InstallLanguagePack(module, progress, token);
-                    break;
-            }
-
-            async Task InstallLanguagePack(EditorInfo.Download.Module module, IProgress<float> progress, CancellationToken token)
-            {
-                string languagePackName = $"{module.id!.Replace("language-", "")}.po";
-                await EditorInstallHelper.DownloadFile(module.url!, Path.Combine(tempDir, languagePackName), progress, token);
-
-                Directory.CreateDirectory(destination);
-                File.Move(Path.Combine(tempDir, languagePackName), Path.Combine(destination, languagePackName));
-            }
+            await DownloadEditorModuleInternal(module, destination, tempDir, progress, token);
         }
     }
 
     protected abstract LoadRequest[] DownloadEditorInternal(EditorInfo download, string path);
+    protected abstract Task DownloadEditorModuleInternal(EditorInfo.Download.Module module, string destination, string tempDir, IProgress<float> progress, CancellationToken token);
 
     private async Task InjectPackagesIntoProject(string projectRoot, Dictionary<string, string> packages)
     {
@@ -806,7 +790,7 @@ public abstract class EditorLogic : IEditorLogic
 
                     try
                     {
-                        Directory.Delete(packageLocation, true);
+                        await Task.Run(() => Directory.Delete(packageLocation, true));
                         CopyFromReference(referencePackage, packageLocation);
                     }
                     catch (Exception e)
@@ -873,7 +857,7 @@ public abstract class EditorLogic : IEditorLogic
         string dir = Directory.GetParent(path)!.Parent!.FullName;
 
         if (Directory.Exists(dir))
-            Directory.Delete(dir, true);
+            await Task.Run(() => Directory.Delete(dir, true));
     }
 
     public void BrowseToEditor(EditorInfo? info)
@@ -885,8 +869,8 @@ public abstract class EditorLogic : IEditorLogic
         {
             ProcessStartInfo startInfo = new ProcessStartInfo()
             {
-                FileName = "xdg-open",
-                UseShellExecute = false,
+                FileName = GlobalConfig.isOnLinux ? "xdg-open" : "explorer.exe",
+                UseShellExecute = GlobalConfig.isOnLinux ? false : true,
             };
 
             startInfo.ArgumentList.Add(Path.Combine(installInfo.installLocation, installInfo.versionName));
@@ -974,7 +958,7 @@ public abstract class EditorLogic : IEditorLogic
             string tempDir = Path.Combine(root, "_temp");
 
             if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+                await Task.Run(() => Directory.Delete(tempDir, true));
 
             Directory.CreateDirectory(tempDir);
 
@@ -997,7 +981,7 @@ public abstract class EditorLogic : IEditorLogic
             }
             finally
             {
-                Directory.Delete(tempDir, true);
+                await Task.Run(() => Directory.Delete(tempDir, true));
 
                 isDone = true;
                 progressUpdateCallback?.Invoke();
