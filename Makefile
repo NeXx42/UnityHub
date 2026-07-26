@@ -15,8 +15,8 @@ publish-windows:
 		-p:GitVersion="$(GIT_VERSION)" \
 		-p:GitSha="$(GIT_SHA)" \
 		--self-contained true \
-		/p:PublishSingleFile=false \
-		/p:IncludeAllContentForSelfExtract=true \
+		-p:PublishSingleFile=false \
+		-p:IncludeAllContentForSelfExtract=true \
 		-o ${OUTPUT_DIR}/UnityHub_Windows
 		
 	dotnet build Installer.Wix/Installer.Wix.wixproj -c Release -p:Platform=x64 -o ${OUTPUT_DIR}/UnityHub_WindowsMSI
