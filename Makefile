@@ -9,6 +9,7 @@ setup:
 	echo "Git Version - ${GIT_VERSION}"
 	echo "Git Sha - ${GIT_SHA}"
 	
+	chmod +x ./generateDefaultLanguage.sh
 	./generateDefaultLanguage.sh
 
 publish-windows:
