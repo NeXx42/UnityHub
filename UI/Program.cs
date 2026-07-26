@@ -44,6 +44,8 @@ class Program
         async Task Setup()
         {
             IEnumerable<AssemblyMetadataAttribute>? applicationMetadata = Assembly.GetEntryAssembly()?.GetCustomAttributes<AssemblyMetadataAttribute>();
+
+            DependencyManager.RegisterService<IConfigLogic, ConfigLogic>();
             await DependencyManager.RegisterService<IDataRepository, SqliteDataRepo>(repo => repo.Setup());
 
             if (GlobalConfig.isOnLinux)
@@ -57,7 +59,6 @@ class Program
                 DependencyManager.RegisterService<IVersionLogic, Versioning_Windows>(applicationMetadata);
             }
 
-            DependencyManager.RegisterService<IConfigLogic, ConfigLogic>();
             DependencyManager.RegisterService<ITaggingLogic, TaggingLogic>();
             await DependencyManager.RegisterService<IProjectLogic, ProjectLogic>(logic => logic.Migrate());
 

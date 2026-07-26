@@ -36,6 +36,7 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
             setting_EditorCommand.Init(ConfigEntry.IDECommand),
             setting_TerminalCommand.Init(ConfigEntry.TerminalCommand),
             setting_WindowsSilentInstaller.RegisterType<Config_EnabledStatus>(Config_EnabledStatus.Enabled.ToString()).Init(ConfigEntry.Windows_InstallSilent, supportLinux: false),
+            setting_AutoCheckUpdates.RegisterType<Config_EnabledStatus>(Config_EnabledStatus.Enabled.ToString()).Init(ConfigEntry.AutoCheckUpdates),
         ];
     }
 
@@ -53,7 +54,9 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
         inp_LanguageDropdown.ItemsSource = langs;
         inp_LanguageDropdown.SelectedIndex = currentLang == -1 ? 0 : currentLang;
 
-        lbl_CurrentVersion.Content = DependencyManager.GetService<IVersionLogic>()!.getCurrentVersion ?? "Uknown";
+        IVersionLogic versionLogic = DependencyManager.GetService<IVersionLogic>()!;
+        lbl_CurrentVersion.Content = versionLogic.getCurrentVersion ?? "Uknown";
+        lbl_HasUpdate.IsVisible = versionLogic.hasUpdateAvailable;
 
         isActive = true;
         return Task.CompletedTask;
