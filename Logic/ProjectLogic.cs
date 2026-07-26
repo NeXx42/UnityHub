@@ -333,7 +333,7 @@ public class ProjectLogic : IProjectLogic
             if (res.TryGetValue(card.directory, out int databaseId))
                 card.id = databaseId;
             else
-                Console.WriteLine($"Failed to create project - {card.directory}");
+                LoggingHelper.LogError($"Failed to create project - {card.directory}");
         }
 
         callback?.Invoke(nameof(UploadCardsPrimitive));

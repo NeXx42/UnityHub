@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Models.Helpers;
 
 namespace UI.Helpers;
 
@@ -46,7 +47,7 @@ public class ReusableList<T> : IEnumerable<T> where T : Control
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            LoggingHelper.LogError(e);
             throw new Exception("failed to load data for draw");
         }
 

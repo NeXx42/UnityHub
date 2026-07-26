@@ -1,0 +1,15 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+
+  <PropertyGroup>
+    <OutputType>Package</OutputType>
+    <TargetName>UnityHub</TargetName>
+    <Platform>x64</Platform>
+
+    <PublishDir>$(MSBuildProjectDirectory)\..\Build\Output\UnityHub_Windows</PublishDir>
+
+    <DefineConstants>
+      PublishDir=$(PublishDir)
+    </DefineConstants>
+  </PropertyGroup>
+
+</Project>

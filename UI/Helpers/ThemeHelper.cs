@@ -9,6 +9,7 @@ using Avalonia.Controls.Embedding.Offscreen;
 using Avalonia.Media;
 using Logic;
 using Models;
+using Models.Helpers;
 using Models.Interfaces;
 
 namespace UI.Helpers;
@@ -90,7 +91,7 @@ public static class ThemeHelper
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Failed to apply theme part - {el.Name}\n{e.Message}");
+                    LoggingHelper.LogError($"Failed to apply theme part - {el.Name}\n{e.Message}");
                 }
             }
         }

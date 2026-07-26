@@ -30,7 +30,12 @@
       <common:SettingsPage_Common_Dropdown x:Name="setting_InjectLinker" Label="Inject linker package"/>
       <common:SettingsPage_Common_Text x:Name="setting_EditorCommand" Label="Editor Command"/>
       <common:SettingsPage_Common_Text x:Name="setting_TerminalCommand" Label="Terminal Command"/>
-
+      
+      <Label FontSize="20">Version</Label>
+      <Grid>
+        <Label>Current Version</Label>
+        <Label HorizontalAlignment="Right" x:Name="lbl_CurrentVersion" />
+      </Grid>
     </StackPanel>
   </StackPanel>
 </UserControl>

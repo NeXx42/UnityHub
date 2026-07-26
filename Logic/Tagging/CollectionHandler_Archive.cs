@@ -53,7 +53,7 @@ public class CollectionHandler_Archive : CollectionHandler_Base
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Failed to delete {file} - {e.Message}");
+                    LoggingHelper.LogError($"Failed to delete {file} - {e.Message}");
                 }
             }
 
@@ -65,7 +65,7 @@ public class CollectionHandler_Archive : CollectionHandler_Base
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Failed to delete {dir} - {e.Message}");
+                    LoggingHelper.LogError($"Failed to delete {dir} - {e.Message}");
                 }
             }
         }

@@ -52,6 +52,8 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
         inp_LanguageDropdown.ItemsSource = langs;
         inp_LanguageDropdown.SelectedIndex = currentLang == -1 ? 0 : currentLang;
 
+        lbl_CurrentVersion.Content = DependencyManager.GetService<IVersionLogic>()!.getCurrentVersion ?? "Uknown";
+
         isActive = true;
         return Task.CompletedTask;
     }
@@ -71,13 +73,11 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
             {
                 try
                 {
-                    Console.WriteLine("Starting - " + project.name);
                     await projectLogic.DeriveProjectInfo(project, false).WhenAllProgressive(token);
-                    Console.WriteLine("Done - " + project.name);
                 }
                 catch
                 {
-                    Console.WriteLine("Failed to derive");
+                    LoggingHelper.LogError("Failed to derive");
                 }
             }
         }

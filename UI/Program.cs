@@ -9,7 +9,9 @@ using Data.DataRepos;
 using Data_Sqlite;
 using Logic;
 using Logic.Editor;
+using Logic.Versioning;
 using Models;
+using Models.Helpers;
 using Models.Interfaces;
 using UI.Helpers;
 
@@ -25,26 +27,34 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        LoggingHelper.ClearLog();
+        LoggingHelper.Log("App startup");
+
         Setup().Wait();
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
         AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
         {
             var exception = (Exception)args.ExceptionObject;
-            DependencyManager.ui!.ShowMessageBox(exception);
+
+            LoggingHelper.LogError(exception);
+            DependencyManager.ui!.ShowMessageBox(exception!);
         };
 
         async Task Setup()
         {
+            IEnumerable<AssemblyMetadataAttribute>? applicationMetadata = Assembly.GetEntryAssembly()?.GetCustomAttributes<AssemblyMetadataAttribute>();
             await DependencyManager.RegisterService<IDataRepository, SqliteDataRepo>(repo => repo.Setup());
 
             if (GlobalConfig.isOnLinux)
             {
                 DependencyManager.RegisterService<IEditorLogic, EditorLogic_Linux>();
+                DependencyManager.RegisterService<IVersionLogic, Versioning_AppImage>(applicationMetadata);
             }
             else
             {
                 DependencyManager.RegisterService<IEditorLogic, EditorLogic_Windows>();
+                DependencyManager.RegisterService<IVersionLogic, Versioning_Windows>(applicationMetadata);
             }
 
             DependencyManager.RegisterService<IConfigLogic, ConfigLogic>();
@@ -81,7 +91,7 @@ class Program
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Failed to load plugin\n{e.Message}");
+                    LoggingHelper.LogError($"Failed to load plugin\n{e.Message}");
                 }
             }
         }

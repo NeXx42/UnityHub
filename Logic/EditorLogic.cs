@@ -7,6 +7,7 @@ using Logic.Editor;
 using Models;
 using Models.Data;
 using Models.Enums;
+using Models.Helpers;
 using Models.Interfaces;
 
 namespace Logic;
@@ -218,7 +219,7 @@ public abstract class EditorLogic : IEditorLogic
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine("Failed fetch - " + e.Message);
+                            LoggingHelper.LogError(e);
                         }
                         finally
                         {
@@ -273,7 +274,7 @@ public abstract class EditorLogic : IEditorLogic
         }
         catch (Exception e)
         {
-            Console.WriteLine("Failed fetch - " + e.Message);
+            LoggingHelper.LogError(e);
         }
 
         return ([], 0);
@@ -411,7 +412,7 @@ public abstract class EditorLogic : IEditorLogic
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    LoggingHelper.LogError(e);
                 }
             }
 
@@ -753,7 +754,7 @@ public abstract class EditorLogic : IEditorLogic
 
         if (!File.Exists(manifestFile))
         {
-            Console.WriteLine("Failed to find manifest file? invalid project");
+            LoggingHelper.LogError("Failed to find manifest file? invalid project");
             return;
         }
 
@@ -782,7 +783,7 @@ public abstract class EditorLogic : IEditorLogic
         {
             if (!Directory.Exists(referencePackage))
             {
-                Console.WriteLine("Failed to find injector package, skipping");
+                LoggingHelper.LogError("Failed to find injector package, skipping");
                 return;
             }
 
@@ -801,10 +802,17 @@ public abstract class EditorLogic : IEditorLogic
 
                 if (!srcVersion.Equals(targetVersion))
                 {
-                    Console.WriteLine("Injector package version doesnt match, updating");
+                    LoggingHelper.Log("Injector package version doesnt match, updating");
 
-                    Directory.Delete(packageLocation, true);
-                    CopyFromReference(referencePackage, packageLocation);
+                    try
+                    {
+                        Directory.Delete(packageLocation, true);
+                        CopyFromReference(referencePackage, packageLocation);
+                    }
+                    catch (Exception e)
+                    {
+                        LoggingHelper.LogError(e);
+                    }
                 }
             }
         }

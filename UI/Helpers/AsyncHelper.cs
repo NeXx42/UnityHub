@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Logic;
+using Models.Helpers;
 
 namespace UI.Helpers;
 
@@ -52,7 +53,7 @@ public static class AsyncHelper
         catch (Exception e)
         {
             DependencyManager.ui?.ShowMessageBox(e);
-            Console.WriteLine($"Failed to execute\n{e.Message}");
+            LoggingHelper.LogError($"Failed to execute\n{e.Message}");
         }
     }
 }

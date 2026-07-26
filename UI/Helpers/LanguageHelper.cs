@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia;
 using Logic;
+using Models.Helpers;
 using Models.Interfaces;
 
 namespace UI.Helpers;
@@ -51,7 +52,7 @@ public static class LanguageHelper
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Failed to apply language part - {el.Name}\n{e.Message}");
+                    LoggingHelper.LogError($"Failed to apply language part - {el.Name}\n{e.Message}");
                 }
             }
         }

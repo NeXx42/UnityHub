@@ -1,0 +1,32 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+    <Package Name="NexxUnityHub" Manufacturer="NeXx" Version="1.0.0" UpgradeCode="14960385-52da-4ffe-a154-f9f3f8825fcd" Scope="perMachine" InstallerVersion="500">
+        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+        <MediaTemplate EmbedCab="yes" />
+
+        <StandardDirectory Id="ProgramFiles64Folder">
+            <Directory Id="INSTALLFOLDER" Name="NexxUnityHub" />
+        </StandardDirectory>
+
+        <StandardDirectory Id="ProgramMenuFolder">
+            <Directory Id="ApplicationProgramsFolder" Name="NexxUnityHub">
+                <Component Id="StartMenuShortcutComponent" Guid="*">
+                    <Shortcut Id="ApplicationStartMenuShortcut" Name="NexxUnityHub" Target="[INSTALLFOLDER]UI.exe" WorkingDirectory="INSTALLFOLDER" />
+                    <RemoveFolder Id="RemoveApplicationProgramsFolder" On="uninstall" />
+                    <RegistryValue Root="HKCU" Key="Software\NeXx\UnityHub" Name="ShortcutInstalled" Type="integer" Value="1" KeyPath="yes" />
+                </Component>
+            </Directory>
+        </StandardDirectory>
+
+        <Feature Id="MainFeature" Title="NexxUnityHub" Level="1">
+            <ComponentGroupRef Id="PublishedFiles" />
+            <ComponentRef Id="StartMenuShortcutComponent" />
+        </Feature>
+    </Package>
+
+    <Fragment>
+        <ComponentGroup Id="PublishedFiles" Directory="INSTALLFOLDER">
+            <Files Include="$(var.PublishDir)\**" />
+        </ComponentGroup>
+    </Fragment>
+</Wix>

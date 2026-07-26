@@ -31,19 +31,24 @@ jobs:
         with:
           dotnet-version: '9.0.x'
           
-      - name: Build
-        run: make build
+      - name: Set version vars
+        run: |
+          echo "GIT_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
+          echo "GIT_SHA=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          
+      - name: Setup Project
+        run: make setup  
         
-        
-        
-      - name: Build Windows
-        run: make build-windows
+      - name: Windows
+        run: make publish-windows
           
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: UnityHub-Windows
-          path: ${{ env.OUTPUT_DIR }}/UnityHub_Windows.zip
+          path: |
+            ${{ env.OUTPUT_DIR }}/UnityHub_Windows.zip
+            ${{ env.OUTPUT_DIR }}/UnityHub_WindowsMSI/UnityHub.msi
         
           
           
@@ -54,8 +59,8 @@ jobs:
             chmod +x appimagetool
             sudo mv appimagetool /usr/local/bin/appimagetool
         
-      - name: Build Appimage
-        run: make build-appimage
+      - name: Linux Appimage
+        run: make publish-appimage
           
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v4
@@ -90,3 +95,4 @@ jobs:
             files: |
               ./output/UnityHub.appimage
               ./output/UnityHub_Windows.zip
+              ./output/UnityHub_Windows.msi

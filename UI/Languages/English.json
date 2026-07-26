@@ -1,1 +1,18 @@
-{}
+{
+  "HomePage_MoreInfo_Open": "Open Project",
+  "HomePage_MoreInfo_OpenIDE": "Open in IDE",
+  "HomePage_MoreInfo_OpenBrowser": "Reveal in Explorer",
+  "HomePage_MoreInfo_NothingSelected": "Nothing Selected",
+  "HomePage_SideBar_AllProjects": "All Projects",
+  "HomePage_SideBar_FavouriteProjects": "Favourites",
+  "HomePage_SideBar_Recent": "Faviourte",
+  "HomePage_SearchBarPlaceholder": "Search Projects",
+  "HomePage_CreateProject": "Create Project",
+  "ProjectImport_Title": "Import",
+  "ProjectImport_Btn": "Import",
+  "Literal_Collections": "Collections",
+  "Literal_Tags": "Tags",
+  "Literal_Projects": "Projects",
+  "Literal_Project": "Project",
+  "Literal_Cancel": "Cancel"
+}

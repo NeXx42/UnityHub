@@ -1,32 +1,46 @@
+.PHONY: build
 OUTPUT_DIR = ./Build/Output/
 
-build:
+clean:
 	rm -rf ${OUTPUT_DIR}/*
+	find . -mindepth 2 -maxdepth 2 -type d \( -name bin -o -name obj \) -exec rm -rf {} +
 
-	# app
-	dotnet publish UI/UI.csproj \
-		-c Release \
-		-r linux-x64 \
-		--self-contained true \
-		/p:PublishSingleFile=false \
-		/p:IncludeAllContentForSelfExtract=true \
-		-o ${OUTPUT_DIR}/UnityHub
+setup:
+	echo "Git Version - ${GIT_VERSION}"
+	echo "Git Sha - ${GIT_SHA}"
+	
+	./generateDefaultLanguage.sh
 
-build-windows:
+publish-windows:
 	rm -rf ${OUTPUT_DIR}/UnityHub_Windows
+	rm -rf ${OUTPUT_DIR}/UnityHub_WindowsMSI
 
 	dotnet publish UI/UI.csproj \
 		-c Release \
 		-r win-x64 \
+		-p:GitVersion="$(GIT_VERSION)" \
+		-p:GitSha="$(GIT_SHA)" \
 		--self-contained true \
 		/p:PublishSingleFile=false \
 		/p:IncludeAllContentForSelfExtract=true \
 		-o ${OUTPUT_DIR}/UnityHub_Windows
 		
+	dotnet build Installer.Wix/Installer.Wix.wixproj -c Release -p:Platform=x64 -o ${OUTPUT_DIR}/UnityHub_WindowsMSI
+		
 	zip -r $(OUTPUT_DIR)/UnityHub_Windows.zip ${OUTPUT_DIR}/UnityHub_Windows
 	rm -rf ${OUTPUT_DIR}/UnityHub_Windows
 
-build-appimage:	
+publish-appimage:	
+	dotnet publish UI/UI.csproj \
+		-c Release \
+		-r linux-x64 \
+		-p:GitVersion="$(GIT_VERSION)" \
+		-p:GitSha="$(GIT_SHA)" \
+		--self-contained true \
+		/p:PublishSingleFile=false \
+		/p:IncludeAllContentForSelfExtract=true \
+		-o ${OUTPUT_DIR}/UnityHub
+
 	rm -rf ${OUTPUT_DIR}/UnityHub.appimage
 	
 	chmod +x ./Build/AppImageData/AppRun

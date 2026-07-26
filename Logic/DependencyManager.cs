@@ -16,15 +16,23 @@ public static class DependencyManager
     public static void RegisterService<TServiceType, TServiceImplementation>()
         where TServiceType : class
         where TServiceImplementation : class, TServiceType
-    {
-        _ = RegisterService<TServiceType, TServiceImplementation>(_ => Task.CompletedTask);
-    }
+        => _ = RegisterService<TServiceType, TServiceImplementation>(_ => Task.CompletedTask, []);
 
-    public static async Task RegisterService<TServiceType, TServiceImplementation>(Func<TServiceImplementation, Task> factory)
+    public static void RegisterService<TServiceType, TServiceImplementation>(params object?[] args)
+        where TServiceType : class
+        where TServiceImplementation : class, TServiceType
+        => _ = RegisterService<TServiceType, TServiceImplementation>(_ => Task.CompletedTask, args);
+
+    public static Task RegisterService<TServiceType, TServiceImplementation>(Func<TServiceImplementation, Task> factory)
+        where TServiceType : class
+        where TServiceImplementation : class, TServiceType
+        => RegisterService<TServiceType, TServiceImplementation>(factory, []);
+
+    public static async Task RegisterService<TServiceType, TServiceImplementation>(Func<TServiceImplementation, Task> factory, params object?[] args)
         where TServiceType : class
         where TServiceImplementation : class, TServiceType
     {
-        TServiceImplementation service = Activator.CreateInstance<TServiceImplementation>();
+        TServiceImplementation service = (TServiceImplementation)Activator.CreateInstance(typeof(TServiceImplementation), args)!;
         await factory(service);
 
         activeServices[typeof(TServiceType)] = service;
