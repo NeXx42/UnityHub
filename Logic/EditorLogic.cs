@@ -701,6 +701,10 @@ public abstract class EditorLogic : IEditorLogic
             .Where(m => desiredModules.Contains(m.id))
             .ToArray();
 
+        // until i actually implement logic for others
+        if (modulesToInstall.Any(m => !((m.type ?? "")?.Equals("po", StringComparison.CurrentCultureIgnoreCase) ?? false)))
+            await DependencyManager.ui!.ShowMessageBox("Warning", "Currently only language packs can be downloaded.\nI hope to implement rest in the future.");
+
         callback?.Invoke(nameof(InstallEditor));
         activeDownloads[version.versionName] = new ActiveDownload(version, editorVersionRoot, RecalculateGlobalInstallProgress, [.. toInstall, .. InstallEditorSubModules(editorVersionRoot, modulesToInstall)]);
 

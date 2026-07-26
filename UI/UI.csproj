@@ -22,7 +22,6 @@
     <ProjectReference Include="..\Data_Mock\Data_Mock.csproj" />
     <ProjectReference Include="..\Data_Sqlite\Data_Sqlite.csproj" />
   </ItemGroup>
-
   <PropertyGroup>
     <GitVersion Condition="'$(GitVersion)' == ''">Unknown</GitVersion>
     <GitSha />
@@ -31,7 +30,6 @@
     <AssemblyMetadata Include="GitVersion" Value="$(GitVersion)" />
     <AssemblyMetadata Include="GitSha" Value="$(GitSha)" />
   </ItemGroup>
-
   <Target Name="CopyToBuildOutput" AfterTargets="Build">
     <ItemGroup>
       <PluginFiles Include="Plugins\**\*.*" />
@@ -39,13 +37,11 @@
       <LanguageFiles Include="Languages\**\*.*" />
       <PackageFolder Include="..\com.nexx.unityhublink\**\*.*" />
     </ItemGroup>
-
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(TargetDir)Plugins\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(ThemeFiles)" DestinationFolder="$(TargetDir)Themes\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(TargetDir)Languages\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(PackageFolder)" DestinationFolder="$(TargetDir)com.nexx.unityhublink\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
-
   <Target Name="CopyToPublishOutput" AfterTargets="Publish">
     <ItemGroup>
       <PluginFiles Include="Plugins\**\*.*" />
@@ -53,17 +49,14 @@
       <LanguageFiles Include="Languages\**\*.*" />
       <PackageFolder Include="..\com.nexx.unityhublink\**\*.*" />
     </ItemGroup>
-
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PublishDir)Plugins\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(ThemeFiles)" DestinationFolder="$(PublishDir)Themes\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PublishDir)Languages\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(PackageFolder)" DestinationFolder="$(PublishDir)com.nexx.unityhublink\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
-
   <PropertyGroup>
     <ApplicationIcon>./Assets/icon.ico</ApplicationIcon>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="com.nexx.unityhublink\**\*.cs" />
   </ItemGroup>

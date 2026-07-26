@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080" x:Class="UI.Pages.HomePage.Page"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="1080" x:Class="UI.Pages.HomePage.Page"
              xmlns:local="clr-namespace:UI.Pages.HomePage"
              xmlns:controls="clr-namespace:UI.Controls" x:Name="root">
   <Grid ColumnDefinitions="* Auto">
@@ -9,11 +9,12 @@
       <!-- Searching -->
       <StackPanel Orientation="Vertical" Spacing="15">
         <!-- Filtering -->
-        <Grid Height="35" ColumnDefinitions="* 5 Auto">
-          <TextBox x:Name="inp_Text" HorizontalAlignment="Left" Width="300" Foreground="{DynamicResource TextColourMuted}" PlaceholderText="{DynamicResource LANG_HomePage_SearchBarPlaceholder}"/>
-          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5" Grid.Column="2">
+        <Grid Height="35" ClipToBounds="True">
+          <TextBox x:Name="inp_Text" HorizontalAlignment="Left" Width="250"  Foreground="{DynamicResource TextColourMuted}" PlaceholderText="{DynamicResource LANG_HomePage_SearchBarPlaceholder}" ZIndex="1"/>
+
+          <Grid ColumnDefinitions="Auto Auto Auto" HorizontalAlignment="Right">
             <!-- Sort -->
-            <controls:ButtonWrapper HorizontalAlignment="Right" Label="Sort" x:Name="btn_Sort" HasPopupIcon="True">
+            <controls:ButtonWrapper HorizontalAlignment="Right" Label="Sort" x:Name="btn_Sort" HasPopupIcon="True" Margin="0 0 5 0">
               <controls:ButtonWrapper.Icon>
                 <Viewbox Height="16" Margin="0 0 5 0">
                   <Path Fill="{DynamicResource TextColour}" Data="M2 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
@@ -21,7 +22,7 @@
               </controls:ButtonWrapper.Icon>
             </controls:ButtonWrapper>
             <!-- Filter -->
-            <controls:ButtonWrapper HorizontalAlignment="Right" Label="Filters" x:Name="btn_Filters" HasPopupIcon="True">
+            <controls:ButtonWrapper HorizontalAlignment="Right" Label="Filters" x:Name="btn_Filters" HasPopupIcon="True" Grid.Column="1" Margin="0 0 5 0">
               <controls:ButtonWrapper.Icon>
                 <Viewbox Height="16" Margin="0 0 5 0">
                   <Path Fill="{DynamicResource TextColour}" Data="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z"/>
@@ -29,8 +30,8 @@
               </controls:ButtonWrapper.Icon>
             </controls:ButtonWrapper>
 
-            <controls:DropDownButton VerticalAlignment="Stretch" x:Name="btn_NewProject" ButtonLabel="{DynamicResource LANG_HomePage_CreateProject}"/>
-          </StackPanel>
+            <controls:DropDownButton VerticalAlignment="Stretch" x:Name="btn_NewProject" ButtonLabel="{DynamicResource LANG_HomePage_CreateProject}" Grid.Column="2"/>
+          </Grid>
         </Grid>
 
         <!-- Info / layouts -->

@@ -1,9 +1,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="250" x:Class="UI.Pages.HomePage.ListCard" Height="100"
-  xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectInfo" x:Name="root" Cursor="Hand" ClipToBounds="False"
-  xmlns:controls="clr-namespace:UI.Controls">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="250" x:Class="UI.Pages.HomePage.ListCard" Height="100"
+             xmlns:models="clr-namespace:Models.Data;assembly=Models" x:DataType="models:ProjectInfo" x:Name="root" Cursor="Hand" ClipToBounds="False"
+             xmlns:controls="clr-namespace:UI.Controls">
   <UserControl.Styles>
     <Style Selector="Border#border_Main">
       <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorder}"/>
@@ -31,12 +31,8 @@
 
     <Grid ColumnDefinitions="150 1* .5* 1* 1* .5*" VerticalAlignment="Stretch" Margin="5">
       <!-- Icon -->
-      <Border VerticalAlignment="Stretch" HorizontalAlignment="Stretch" CornerRadius="15" ClipToBounds ="True" Background="{DynamicResource BackgroundColourDark}">
-        <Image x:Name="img">
-          <Image.Effect>
-            <BlurEffect Radius="0"/>
-          </Image.Effect>
-        </Image>
+      <Border VerticalAlignment="Stretch" HorizontalAlignment="Stretch" CornerRadius="{DynamicResource CornerRadius_Menu}" ClipToBounds ="True" Background="{DynamicResource BackgroundColourDark}">
+        <Image x:Name="img"/>
       </Border>
 
       <!-- Fav btn -->

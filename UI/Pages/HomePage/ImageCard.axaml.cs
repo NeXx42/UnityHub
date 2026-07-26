@@ -1,11 +1,9 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Logic;
-using Microsoft.VisualBasic;
 using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
@@ -64,7 +62,7 @@ public partial class ImageCard : UserControl
         this.onSelect = onClick;
 
         UpdateFavStatus();
-        await DrawTags();
+        await SharedCardLogic.DrawTagList(info, tags);
 
         cont_Version.Classes.RemoveRange(0, cont_Version.Classes.Count);
 
@@ -102,18 +100,7 @@ public partial class ImageCard : UserControl
         if (!projectId.HasValue || activeCard == null || activeCard.id != projectId)
             return;
 
-        DrawTags().Wrap();
-    }
-
-    private async Task DrawTags()
-    {
-        ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
-
-        TagData[] data = [.. await logic.MapCollections([activeCard!.collectionId]), .. await logic.MapTags(activeCard!.tags)];
-        tags.Draw(data, (ui, _, dat) =>
-        {
-            ui.Init(dat);
-        }, 3);
+        SharedCardLogic.DrawTagList(activeCard, tags).Wrap();
     }
 
     private void ToggleFav(object? _, PointerEventArgs args)

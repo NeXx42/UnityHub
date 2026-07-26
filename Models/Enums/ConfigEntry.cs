@@ -10,6 +10,7 @@ public enum ConfigEntry
     LaunchBehaviour,
     IDECommand,
     TerminalCommand,
+    IncludeCollectionInTagList,
 
     InjectLinker,
     Windows_InstallSilent,

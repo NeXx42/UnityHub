@@ -202,52 +202,57 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
         ITaggingLogic tagService = DependencyManager.GetService<ITaggingLogic>()!;
 
-        List<TagData> filters = new List<TagData>();
-        filters.AddRange(await tagService.MapCollections(activeSearch.collections ?? []));
-        filters.AddRange(await tagService.MapTags(activeSearch.tags ?? []));
-        filters.AddRange(activeSearch.versions.Select(v => new SearchFilterCollectionStandIn()
-        {
-            collectionId = -1,
-            collectionName = v,
-            colour = "#ffffff",
-            customType = "version"
-        }));
+        List<TagData> filters =
+        [
+            .. await tagService.MapCollections(activeSearch.collections ?? []),
+            .. await tagService.MapTags(activeSearch.tags ?? []),
+            .. activeSearch.versions.Select(v => new SearchFilterCollectionStandIn()
+            {
+                collectionId = -1,
+                collectionName = v,
+                colour = "#ffffff",
+                customType = "version"
+            }),
+        ];
 
         activeFilters.Draw(filters, (ui, _, dat) => ui.Init(dat, () => RemoveFilter(dat), () => RemoveFilter(dat)));
 
-        Task RemoveFilter(TagData data)
+        async Task RemoveFilter(TagData data)
         {
             if (data is CollectionData)
             {
-
+                activeSearch.collections = [.. activeSearch.collections?.Where(c => c != data.collectionId) ?? []];
             }
             else if (data is SearchFilterCollectionStandIn standIn)
             {
                 switch (standIn.customType)
                 {
                     case "version":
-
+                        activeSearch.versions = [.. activeSearch.versions?.Where(c => c != data.collectionName) ?? []];
                         break;
                 }
             }
             else
             {
-
+                activeSearch.tags = [.. activeSearch.tags?.Where(c => c != data.collectionId) ?? []];
             }
 
-            return Task.CompletedTask;
+            await SearchCards(false);
         }
     }
 
     private void ProjectLogicCallback(string name)
     {
-        switch (name)
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
-            case nameof(IProjectLogic.DeleteCard):
-            case nameof(IProjectLogic.UploadCardsPrimitive):
-                SearchCards(false).Wrap();
-                break;
-        }
+            switch (name)
+            {
+                case nameof(IProjectLogic.DeleteCard):
+                case nameof(IProjectLogic.UploadCardsPrimitive):
+                    SearchCards(false).Wrap();
+                    break;
+            }
+        });
     }
 
     private async Task UpdateTextFilter()

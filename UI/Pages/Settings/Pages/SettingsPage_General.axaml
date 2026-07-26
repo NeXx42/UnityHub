@@ -31,6 +31,7 @@
       <common:SettingsPage_Common_Text x:Name="setting_EditorCommand" Label="Editor Command"/>
       <common:SettingsPage_Common_Text x:Name="setting_TerminalCommand" Label="Terminal Command"/>
       <common:SettingsPage_Common_Dropdown x:Name="setting_WindowsSilentInstaller" Label="Silent Editor installs"/>
+      <common:SettingsPage_Common_Dropdown x:Name="settings_IncludeCollecionInTags" Label="Include Collection in Tag list"/>
 
       <Label FontSize="20">Version</Label>
       <Grid>

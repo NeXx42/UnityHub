@@ -64,7 +64,7 @@ public partial class ListCard : UserControl
         this.onSelect = onClick;
 
         UpdateFavStatus();
-        await DrawTags();
+        await SharedCardLogic.DrawTagList(activeCard, tags);
 
         cont_Version.Classes.RemoveRange(0, cont_Version.Classes.Count);
 
@@ -102,18 +102,7 @@ public partial class ListCard : UserControl
         if (!projectId.HasValue || activeCard == null || activeCard.id != projectId)
             return;
 
-        DrawTags().Wrap();
-    }
-
-    private async Task DrawTags()
-    {
-        ITaggingLogic logic = DependencyManager.GetService<ITaggingLogic>()!;
-
-        TagData[] data = [.. await logic.MapCollections([activeCard!.collectionId]), .. await logic.MapTags(activeCard!.tags)];
-        tags.Draw(data, (ui, _, dat) =>
-        {
-            ui.Init(dat);
-        }, 3);
+        SharedCardLogic.DrawTagList(activeCard, tags).Wrap();
     }
 
     private void ToggleFav(object? _, PointerEventArgs args)

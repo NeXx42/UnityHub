@@ -71,17 +71,20 @@ public partial class SettingsPage_Collections : UserControl, ISettingsPage
 
     private void OnChange(int? _, string msg)
     {
-        switch (msg)
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
-            case nameof(ITaggingLogic.CreateOrUpdateCollection):
-            case nameof(ITaggingLogic.DeleteCollection):
-                RedrawCollections().Wrap();
-                break;
+            switch (msg)
+            {
+                case nameof(ITaggingLogic.CreateOrUpdateCollection):
+                case nameof(ITaggingLogic.DeleteCollection):
+                    RedrawCollections().Wrap();
+                    break;
 
-            case nameof(ITaggingLogic.CreateOrUpdateTag):
-            case nameof(ITaggingLogic.DeleteTag):
-                RedrawTags().Wrap();
-                break;
-        }
+                case nameof(ITaggingLogic.CreateOrUpdateTag):
+                case nameof(ITaggingLogic.DeleteTag):
+                    RedrawTags().Wrap();
+                    break;
+            }
+        });
     }
 }

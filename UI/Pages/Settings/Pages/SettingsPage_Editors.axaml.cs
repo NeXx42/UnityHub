@@ -92,13 +92,16 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
 
     private void UpdateCallback(string id)
     {
-        switch (id)
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
-            case nameof(IEditorLogic.StopActiveInstall):
-            case nameof(IEditorLogic.InstallEditor):
-            case nameof(IEditorLogic.Delete):
-                RedrawDownloaded().Wrap();
-                break;
-        }
+            switch (id)
+            {
+                case nameof(IEditorLogic.StopActiveInstall):
+                case nameof(IEditorLogic.InstallEditor):
+                case nameof(IEditorLogic.Delete):
+                    RedrawDownloaded().Wrap();
+                    break;
+            }
+        });
     }
 }

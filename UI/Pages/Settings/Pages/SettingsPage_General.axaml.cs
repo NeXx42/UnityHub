@@ -37,6 +37,7 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
             setting_TerminalCommand.Init(ConfigEntry.TerminalCommand),
             setting_WindowsSilentInstaller.RegisterType<Config_EnabledStatus>(Config_EnabledStatus.Enabled.ToString()).Init(ConfigEntry.Windows_InstallSilent, supportLinux: false),
             setting_AutoCheckUpdates.RegisterType<Config_EnabledStatus>(Config_EnabledStatus.Enabled.ToString()).Init(ConfigEntry.AutoCheckUpdates),
+            settings_IncludeCollecionInTags.RegisterType<Config_EnabledStatus>(Config_EnabledStatus.Enabled.ToString()).Init(ConfigEntry.IncludeCollectionInTagList),
         ];
     }
 

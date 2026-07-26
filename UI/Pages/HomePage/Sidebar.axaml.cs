@@ -83,18 +83,21 @@ public partial class Sidebar : UserControl
         if (projId.HasValue)
             return;
 
-        switch (msg)
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
-            case nameof(ITaggingLogic.DeleteCollection):
-            case nameof(ITaggingLogic.CreateOrUpdateCollection):
-                DrawCollections().Wrap();
-                break;
+            switch (msg)
+            {
+                case nameof(ITaggingLogic.DeleteCollection):
+                case nameof(ITaggingLogic.CreateOrUpdateCollection):
+                    DrawCollections().Wrap();
+                    break;
 
-            case nameof(ITaggingLogic.DeleteTag):
-            case nameof(ITaggingLogic.CreateOrUpdateTag):
-                DrawTags().Wrap();
-                break;
-        }
+                case nameof(ITaggingLogic.DeleteTag):
+                case nameof(ITaggingLogic.CreateOrUpdateTag):
+                    DrawTags().Wrap();
+                    break;
+            }
+        });
     }
 
     private async Task DrawTags() => await entry_Tags.Init((cId) => UpdateSelection(4, cId), DependencyManager.GetService<ITaggingLogic>()!.GetTags);

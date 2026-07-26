@@ -28,15 +28,16 @@ public struct LoadRequest
     {
         try
         {
-            Task operation = RunInternal(token, secondaryProgress);
+            var self = this;
+            Func<Task> operation = () => self.RunInternal(token, secondaryProgress);
 
             if (runInBackground)
             {
-                await Task.Run(() => operation, token);
+                await Task.Run(operation, token);
             }
             else
             {
-                await operation;
+                await operation();
             }
         }
         catch (Exception e)
