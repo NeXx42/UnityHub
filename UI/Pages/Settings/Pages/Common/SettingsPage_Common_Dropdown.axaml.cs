@@ -58,6 +58,8 @@ public partial class SettingsPage_Common_Dropdown : UserControl, INotifyProperty
 
     public SettingsPage_Common_Dropdown RegisterType<T>(string? fallbackVal = null) where T : Enum
     {
+        this.fallbackVal = fallbackVal;
+
         string[] values = Enum.GetNames(typeof(T));
         return RegisterType(values);
     }
