@@ -200,4 +200,9 @@ public class MockDataRepo : IDataRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<string[]> GetProjectRoots()
+    {
+        throw new NotImplementedException();
+    }
 }

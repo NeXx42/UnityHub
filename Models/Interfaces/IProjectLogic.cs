@@ -10,6 +10,7 @@ public interface IProjectLogic
     public Task<ProjectInfo?> GetProjectInfo(int? id);
 
     public Task<string[]> GetProjectVersions();
+    public Task<string[]> GetProjectDrives();
 
     public Task OpenIDE(ProjectInfo info);
     public void BrowseTo(ProjectInfo info);

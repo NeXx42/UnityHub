@@ -54,6 +54,7 @@ public partial class Popup_Filter : UserControl, IPopup
             LoadTags,
             LoadCollections,
             LoadVersions,
+            LoadDrives
         ];
 
         filters.Draw(groups, (ui, pos, caller) => caller(ui, pos).Wrap());
@@ -144,6 +145,28 @@ public partial class Popup_Filter : UserControl, IPopup
                     break;
             }
 
+            await (search?.Invoke() ?? Task.CompletedTask);
+        }
+    }
+
+    private async Task LoadDrives(Popup_FilterGroup ui, int pos)
+    {
+        string[] drives = await DependencyManager.GetService<IProjectLogic>()!.GetProjectDrives();
+        List<int> selectedOptions = new List<int>();
+
+        if (activeSearch?.drives != null)
+            foreach (string drive in activeSearch.drives)
+            {
+                for (int i = 0; i < drives.Length; i++)
+                    if (drives[i].Equals(drive))
+                        selectedOptions.Add(i);
+            }
+
+        ui.Init("Drives", drives, selectedOptions, true, () => selectedGroup = pos, OnUpdateSelection);
+
+        async Task OnUpdateSelection(IEnumerable<int> selectedOptions)
+        {
+            activeSearch?.drives = selectedOptions.Select(pos => drives[pos]);
             await (search?.Invoke() ?? Task.CompletedTask);
         }
     }

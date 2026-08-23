@@ -36,17 +36,16 @@
             <!-- Controls -->
             <StackPanel Spacing="5">
               <StackPanel.Styles>
-                <Style Selector="Button">
-                  <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                  <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                  <Setter Property="Padding" Value="0 10"/>
+                <Style Selector="#cont_Actions Border">
+                  <Setter Property="Height" Value="45"/>
                 </Style>
               </StackPanel.Styles>
 
-              <controls:DropDownButton x:Name="btn_OpenProject" ButtonLabel="{DynamicResource LANG_HomePage_MoreInfo_Open}" Height="45"/>
-
-              <controls:ButtonWrapper x:Name="btn_OpenIDE" Label="{DynamicResource LANG_HomePage_MoreInfo_OpenIDE}" Height="45"/>
-              <controls:ButtonWrapper x:Name="btn_OpenExplorer" Label="{DynamicResource LANG_HomePage_MoreInfo_OpenBrowser}" Height="45"/>
+              <StackPanel Spacing="5" x:Name="cont_Actions">
+                <controls:DropDownButton x:Name="btn_OpenProject" ButtonLabel="{DynamicResource LANG_HomePage_MoreInfo_Open}"/>
+                <controls:ButtonWrapper x:Name="btn_OpenIDE" Label="{DynamicResource LANG_HomePage_MoreInfo_OpenIDE}"/>
+                <controls:ButtonWrapper x:Name="btn_OpenExplorer" Label="{DynamicResource LANG_HomePage_MoreInfo_OpenBrowser}"/>
+              </StackPanel>
 
               <!-- Terminal -->
               <Grid ColumnDefinitions="* * * *" Height="45">

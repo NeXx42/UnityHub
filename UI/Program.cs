@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia;
-using Data.DataRepos;
 using Data_Sqlite;
 using Logic;
 using Logic.Editor;
@@ -13,7 +12,6 @@ using Logic.Versioning;
 using Models;
 using Models.Helpers;
 using Models.Interfaces;
-using UI.Helpers;
 
 namespace UI;
 
@@ -30,8 +28,21 @@ class Program
         LoggingHelper.ClearLog();
         LoggingHelper.Log("App startup");
 
-        Setup().Wait();
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        try
+        {
+            LoggingHelper.Log("Running setup");
+            Setup().Wait();
+            LoggingHelper.Log("Completed setup");
+
+            LoggingHelper.Log("Starting avalonia");
+            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            LoggingHelper.Log("Ending avalonia");
+        }
+        catch (Exception e)
+        {
+            LoggingHelper.LogError(e);
+        }
+
 
         AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
         {

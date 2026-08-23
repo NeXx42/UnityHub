@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -78,7 +79,7 @@ public partial class Sidebar_DriveUsage : UserControl, INotifyPropertyChanged
 
         double pixelsPerByte = (elementWidth ?? 150d) / drive.TotalSize;
 
-        List<(string, long)> slices = new List<(string, long)>();
+        List<(string, long size)> slices = new List<(string, long)>();
 
         long unknownSpace = drive.TotalSize - drive.TotalFreeSpace;
         long groupedSpace = 0;
@@ -96,9 +97,9 @@ public partial class Sidebar_DriveUsage : UserControl, INotifyPropertyChanged
         slices.Add(("Other Projects", groupedSpace));
         slices.Add(("Filesystem", unknownSpace));
 
-        sliceList.Draw(slices, (ui, pos, dat) =>
+        sliceList.Draw(slices.Where(s => s.size > 0), (ui, pos, dat) =>
         {
-            ui.Width = dat.Item2 * pixelsPerByte;
+            ui.Width = dat.size * pixelsPerByte;
             ToolTip.SetTip(ui, dat.Item1);
 
             ui.Background = sliceColours![pos % sliceColours.Length];

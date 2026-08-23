@@ -9,6 +9,7 @@ public interface IDataRepository
 
     public Task<(int[], int)> Search(ProjectSearch search);
 
+    public Task<string[]> GetProjectRoots();
     public Task<ProjectInfo?> GetProjectInfo(int id);
     public Task<ProjectInfo[]> GetProjectInfo(IEnumerable<int> ids);
 

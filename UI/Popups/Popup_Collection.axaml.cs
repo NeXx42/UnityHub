@@ -27,7 +27,13 @@ public partial class Popup_Collection : UserControl, IPopup
     {
         InitializeComponent();
 
-        items = new ReusableList<CollectionItem>(Entries);
+        items = new ReusableList<CollectionItem>(Entries, () =>
+        {
+            return new CollectionItem
+            {
+                Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand)
+            };
+        });
     }
 
     public async Task<Popup_Collection> Init<T>(Func<Task<T[]>> fetchTask, Func<T, Task> onSelectEntry, Action closer) where T : TagData

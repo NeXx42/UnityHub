@@ -120,12 +120,10 @@ public class ProjectLogic : IProjectLogic
 
         startInfo.ArgumentList.Add(info.directory);
 
-        Process process = new Process()
+        new Process()
         {
             StartInfo = startInfo
-        };
-
-        process.Start();
+        }.Start();
     }
 
     public async Task OpenIDE(ProjectInfo info)
@@ -351,7 +349,7 @@ public class ProjectLogic : IProjectLogic
         async Task DeleteFiles(CancellationToken token)
         {
             if (Directory.Exists(info.directory))
-                await Task.Run(() => Directory.Delete(info.directory, true));
+                Directory.Delete(info.directory, true);
         }
 
         async Task RemoveInfo(CancellationToken token)
@@ -506,5 +504,33 @@ public class ProjectLogic : IProjectLogic
                     cache.Remove(i);
                 break;
         }
+    }
+
+    public async Task<string[]> GetProjectDrives()
+    {
+        string[] roots = await data.GetProjectRoots();
+
+        HashSet<string> drivesWithProjects = new();
+        DriveInfo[] allDrives = DriveInfo.GetDrives();
+
+        foreach (string proj in roots)
+        {
+            DriveInfo? mostComplexMatch = allDrives.Where(d => proj.StartsWith(d.Name))
+                .OrderByDescending(d => d.Name.Length)
+                .FirstOrDefault();
+
+            if (mostComplexMatch == null)
+                continue;
+
+            string drivePath = mostComplexMatch.RootDirectory.FullName;
+
+            if (!drivePath.EndsWith("/"))
+                drivePath = $"{mostComplexMatch.RootDirectory.FullName}/";
+
+            if (!drivesWithProjects.Contains(drivePath))
+                drivesWithProjects.Add(drivePath);
+        }
+
+        return drivesWithProjects.ToArray();
     }
 }

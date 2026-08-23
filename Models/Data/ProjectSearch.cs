@@ -7,6 +7,7 @@ public class ProjectSearch
     public string? text;
 
     public IEnumerable<int> tags = [];
+    public IEnumerable<string> drives = [];
     public IEnumerable<int> collections = [];
     public IEnumerable<string> versions = [];
 
@@ -25,6 +26,7 @@ public class ProjectSearch
         page = 0;
 
         tags = [];
+        drives = [];
         versions = [];
         collections = [];
 

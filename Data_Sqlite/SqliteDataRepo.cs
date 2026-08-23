@@ -125,6 +125,15 @@ public class SqliteDataRepo : IDataRepository
             whereClauses.Add($"p.{nameof(dbo_Project.version)} in ({string.Join(",", search.versions.Select(v => $"'{v}'"))})");
         }
 
+        if (search.drives.Count() > 0)
+        {
+            StringBuilder driveSearch = new StringBuilder("(");
+            driveSearch.Append(string.Join(" OR ", search.drives.Select(drive => $"p.{nameof(dbo_Project.directory)} like '{drive}%'")));
+            driveSearch.Append(")");
+
+            whereClauses.Add(driveSearch.ToString());
+        }
+
         if (!string.IsNullOrEmpty(search.text))
         {
             whereClauses.Add($"p.{nameof(dbo_Project.name)} like '{search.text}%'");
@@ -447,5 +456,13 @@ public class SqliteDataRepo : IDataRepository
         }, SQLFilter.Equal(nameof(dbo_Project.collectionId), id), [nameof(dbo_Project.collectionId)]);
 
         await database!.Delete<dbo_Collection>(SQLFilter.Equal(nameof(dbo_Collection.Id), id));
+    }
+
+    public async Task<string[]> GetProjectRoots()
+    {
+        string[] roots = await database!.ExecuteSQLQuery($"SELECT {nameof(dbo_Project.directory)} FROM {dbo_Project.tableName}", Deserialize, CancellationToken.None);
+        return roots;
+
+        Task<string> Deserialize(SQLiteDataReader reader) => Task.FromResult(reader[nameof(dbo_Project.directory)].ToString())!;
     }
 }

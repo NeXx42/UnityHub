@@ -10,15 +10,22 @@ public class CollectionHandler_Archive : CollectionHandler_Base
 
     public override LoadRequest[] GetTransformations(ProjectInfo info)
     {
+        IProjectLogic projectLogic = DependencyManager.GetService<IProjectLogic>()!;
+
         return [
             new LoadRequest("Removing cache", DeleteCacheForProject, true),
-            new LoadRequest("Update project", RederiveInfo, true),
+            ..projectLogic.DeriveProjectInfo(info, true)
         ];
 
-        async Task DeleteCacheForProject(CancellationToken token)
+        async Task DeleteCacheForProject(IProgress<float> progress, CancellationToken token)
         {
+            progress.Report(0);
+
             string[] filesToDelete = Directory.GetFiles(info.directory);
             string[] foldersToDelete = Directory.GetDirectories(info.directory);
+
+            float totalToDelete = filesToDelete.Length + foldersToDelete.Length;
+            int deletedCount = 0;
 
             foreach (string file in filesToDelete)
             {
@@ -30,6 +37,7 @@ public class CollectionHandler_Archive : CollectionHandler_Base
                 }
 
                 TryToDeleteFile(file);
+                IncrementProgress();
             }
 
             foreach (string folder in foldersToDelete)
@@ -43,6 +51,7 @@ public class CollectionHandler_Archive : CollectionHandler_Base
                 }
 
                 TryToDeleteFolder(folder);
+                IncrementProgress();
             }
 
             void TryToDeleteFile(string file)
@@ -68,12 +77,12 @@ public class CollectionHandler_Archive : CollectionHandler_Base
                     LoggingHelper.LogError($"Failed to delete {dir} - {e.Message}");
                 }
             }
-        }
 
-        async Task RederiveInfo(CancellationToken token)
-        {
-            IProjectLogic projectLogic = DependencyManager.GetService<IProjectLogic>()!;
-            await projectLogic.DeriveProjectInfo(info, true).WhenAllProgressive(token);
+            void IncrementProgress()
+            {
+                deletedCount++;
+                progress.Report(deletedCount / totalToDelete);
+            }
         }
     }
 }

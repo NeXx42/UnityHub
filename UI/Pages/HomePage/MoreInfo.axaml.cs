@@ -1,19 +1,23 @@
 using System;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Logic;
 using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
+using UI.Interfaces;
 using UI.Modals;
 using UI.Popups;
 
 namespace UI.Pages.HomePage;
+
+public interface MoreInfo_Plugin : IFrontendPlugin
+{
+    public void Setup(MoreInfo source);
+    public void UpdateSelected(ProjectInfo? info);
+}
 
 public partial class MoreInfo : UserControl
 {
@@ -21,6 +25,12 @@ public partial class MoreInfo : UserControl
 
     private ReusableList<CollectionItem> tags;
     private ReusableList<CollectionItem> collections;
+
+    public static FrontendPluginHandler<MoreInfo_Plugin> plugins = new FrontendPluginHandler<MoreInfo_Plugin>();
+
+    public StackPanel getActionsContainer => cont_Actions;
+    public StackPanel getContentContainer => cont_Main;
+    public StackPanel getMetadataContentContainer => cont_MetaData;
 
     public MoreInfo()
     {
@@ -33,10 +43,11 @@ public partial class MoreInfo : UserControl
         btn_OpenProject.RegisterOptions(["Rederive Metadata", "Upload Icon"], OnLaunchOptionSelect);
 
         btn_OpenIDE.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.OpenIDE(info!));
-
         btn_Terminal.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.BrowseTerminal(info!));
-        btn_Move.RegisterClick(MoveProject);// () => DependencyManager.GetService<IProjectLogic>()!.MoveProject(info!));
-        btn_Clone.RegisterClick(CloneProject);  //() => DependencyManager.GetService<IProjectLogic>()!.DuplicateProject(info!));
+        btn_OpenExplorer.RegisterClick(() => DependencyManager.GetService<IProjectLogic>()!.BrowseTo(info!));
+
+        btn_Move.RegisterClick(MoveProject);
+        btn_Clone.RegisterClick(CloneProject);
         btn_Delete.RegisterClick(DeleteProject);
 
         Popup_GenericList versionList = new Popup_GenericList();
@@ -51,6 +62,8 @@ public partial class MoreInfo : UserControl
             cont_Main.IsVisible = false;
             cont_Message.IsVisible = true;
         }
+
+        plugins.Execute(p => p.Setup(this));
     }
 
     public async Task Show(int? id)
@@ -67,7 +80,10 @@ public partial class MoreInfo : UserControl
         cont_Main.IsVisible = info != null;
 
         if (info == null)
+        {
+            plugins.Execute(p => p.UpdateSelected(info));
             return;
+        }
 
         inp_Notes.Text = info.notes;
         btn_SaveNotes.IsVisible = false;
@@ -91,6 +107,8 @@ public partial class MoreInfo : UserControl
             ChangeCollection,
             () => btn_AddCollection.IsOpen = false)
         );
+
+        plugins.Execute(p => p.UpdateSelected(info));
     }
 
     private async Task AddTag(TagData data)
