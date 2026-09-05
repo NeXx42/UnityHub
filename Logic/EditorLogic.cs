@@ -4,6 +4,7 @@ using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logic.Editor;
+using Logic.Helpers;
 using Models;
 using Models.Data;
 using Models.Enums;
@@ -555,16 +556,20 @@ public abstract class EditorLogic : IEditorLogic
 
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
-            FileName = await GetEditorInstall(info.version!)
+            FileName = await GetEditorInstall(info.version!),
+            UseShellExecute = false,
+            RedirectStandardError = true,
+            RedirectStandardOutput = true,
         };
 
         startInfo.ArgumentList.Add("-projectPath");
         startInfo.ArgumentList.Add(info.directory);
 
-        ActiveInstances instance = new ActiveInstances(info.id, startInfo, OnQuitEditor);
+        ActiveInstances instance = new ActiveInstances(info.id, startInfo.UpdateProcessStartInfoForEnv(), OnQuitEditor);
         activeInstances.Add(info.id, instance);
 
-        instance.Start();
+        if (!instance.Start())
+            await DependencyManager.ui!.ShowMessageBox("Failed to start editor", "The editor failed to start, check the logs within the settings to determine why.");
 
         switch (await config.Get(ConfigEntry.LaunchBehaviour, Config_LaunchBehaviour.Minimise))
         {
@@ -578,7 +583,7 @@ public abstract class EditorLogic : IEditorLogic
         }
     }
 
-    private void OnQuitEditor(int id)
+    private void OnQuitEditor(object? obj, EventArgs e, int id)
     {
         activeInstances.Remove(id);
     }
@@ -630,7 +635,7 @@ public abstract class EditorLogic : IEditorLogic
 
             using Process process = new Process
             {
-                StartInfo = startInfo
+                StartInfo = startInfo.UpdateProcessStartInfoForEnv()
             };
 
             process.Start();
@@ -880,13 +885,7 @@ public abstract class EditorLogic : IEditorLogic
             };
 
             startInfo.ArgumentList.Add(Path.Combine(installInfo.installLocation, installInfo.versionName));
-
-            Process process = new Process()
-            {
-                StartInfo = startInfo
-            };
-
-            process.Start();
+            ProcessHelper.Run(startInfo).Start();
         }
     }
 
@@ -897,17 +896,36 @@ public abstract class EditorLogic : IEditorLogic
 
         public bool isActive => !activeProcess.HasExited;
 
-        public ActiveInstances(int id, ProcessStartInfo info, Action<int> onExit)
+        public ActiveInstances(int id, ProcessStartInfo info, Action<object?, EventArgs, int> onExit)
         {
             this.id = id;
 
             activeProcess = new Process() { StartInfo = info };
-            activeProcess.Exited += (_, __) => onExit(id);
+            activeProcess.Exited += (obj, e) => onExit(obj, e, id);
         }
 
-        public void Start()
+        public bool Start()
         {
-            activeProcess.Start();
+            if (activeProcess.Start())
+            {
+                _ = Monitor();
+                return true;
+            }
+
+            return false;
+        }
+
+        private async Task Monitor()
+        {
+            var stderrTask = activeProcess.StandardError.ReadToEndAsync();
+            await activeProcess.WaitForExitAsync();
+            var stderr = await stderrTask;
+
+            if (activeProcess.ExitCode != 0)
+            {
+                LoggingHelper.LogError($"Unity exited with code {activeProcess.ExitCode}");
+                LoggingHelper.LogError(stderr);
+            }
         }
     }
 

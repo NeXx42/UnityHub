@@ -59,4 +59,21 @@ public static class LoggingHelper
         }
         catch { Console.WriteLine("Failed to write to log"); }
     }
+
+    public static async Task<List<string?>> ReadLog()
+    {
+        using (FileStream stream = new FileStream(getLogFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (StreamReader reader = new StreamReader(stream))
+        {
+            var lines = new List<string?>();
+
+            string? line;
+            while ((line = await reader.ReadLineAsync()) != null)
+            {
+                lines.Add(line);
+            }
+
+            return lines;
+        }
+    }
 }

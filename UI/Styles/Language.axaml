@@ -3,8 +3,8 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
   <Styles.Resources>
-    
-    <!-- Home page -->    
+
+    <!-- Home page -->
     <sys:String x:Key="LANG_HomePage_MoreInfo_Open">Open Project</sys:String>
     <sys:String x:Key="LANG_HomePage_MoreInfo_OpenIDE">Open in IDE</sys:String>
     <sys:String x:Key="LANG_HomePage_MoreInfo_OpenBrowser">Reveal in Explorer</sys:String>
@@ -16,21 +16,22 @@
     <sys:String x:Key="LANG_HomePage_SearchBarPlaceholder">Search Projects</sys:String>
     <sys:String x:Key="LANG_HomePage_CreateProject">Create Project</sys:String>
 
-    <!-- Import modal-->    
+    <!-- Import modal-->
     <sys:String x:Key="LANG_ProjectImport_Title">Import</sys:String>
     <sys:String x:Key="LANG_ProjectImport_Btn">Import</sys:String>
 
-    <!-- Settings page -->    
+    <!-- Settings page -->
     <sys:String x:Key="LANG_Settings_Sidebar_Editor">Editor</sys:String>
     <sys:String x:Key="LANG_Settings_Sidebar_General">General</sys:String>
     <sys:String x:Key="LANG_Settings_Sidebar_Collections">Collections</sys:String>
     <sys:String x:Key="LANG_Settings_Sidebar_Themes">Themes</sys:String>
+    <sys:String x:Key="LANG_Settings_Sidebar_Logs">Logs</sys:String>
 
     <sys:String x:Key="LANG_Settings_General_Language">Language</sys:String>
     <sys:String x:Key="LANG_Settings_Themes_Header">Themes</sys:String>
 
 
-    <!-- Literals -->    
+    <!-- Literals -->
     <sys:String x:Key="LANG_Literal_Collections">Collections</sys:String>
     <sys:String x:Key="LANG_Literal_Tags">Tags</sys:String>
     <sys:String x:Key="LANG_Literal_Projects">Projects</sys:String>

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using Logic.Helpers;
 
 namespace Logic.Editor;
 
@@ -58,8 +59,7 @@ public static class EditorInstallHelper
         info.ArgumentList.Add("-y");
         info.ArgumentList.Add("-bsp1");
 
-        Process p = new Process();
-        p.StartInfo = info;
+        Process p = ProcessHelper.Run(info);
 
         p.Start();
         await ReadProgressOfExtraction(p);

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Logic.Helpers;
 using Models.Data;
 using Models.Enums;
 using Models.Interfaces;
@@ -39,10 +40,7 @@ public class EditorLogic_Windows : EditorLogic
 
             info.ArgumentList.Add($"/D={editorRoot}");
 
-            Process installProcess = new Process()
-            {
-                StartInfo = info
-            };
+            Process installProcess = ProcessHelper.Run(info);
 
             installProcess.Start();
             await installProcess.WaitForExitAsync(c);
@@ -95,10 +93,7 @@ public class EditorLogic_Windows : EditorLogic
                 Verb = "runas"
             };
 
-            Process p = new Process()
-            {
-                StartInfo = info
-            };
+            Process p = ProcessHelper.Run(info);
             p.Start();
 
             await p.WaitForExitAsync();

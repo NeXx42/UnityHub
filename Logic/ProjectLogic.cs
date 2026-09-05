@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text.Json;
+using Logic.Helpers;
 using Models;
 using Models.Data;
 using Models.Enums;
@@ -119,11 +120,7 @@ public class ProjectLogic : IProjectLogic
         };
 
         startInfo.ArgumentList.Add(info.directory);
-
-        new Process()
-        {
-            StartInfo = startInfo
-        }.Start();
+        ProcessHelper.Run(startInfo).Start();
     }
 
     public async Task OpenIDE(ProjectInfo info)
@@ -153,10 +150,7 @@ public class ProjectLogic : IProjectLogic
             else
                 startInfo.ArgumentList.Add(parts[i]);
 
-        new Process()
-        {
-            StartInfo = startInfo
-        }.Start();
+        ProcessHelper.Run(startInfo).Start();
     }
 
     public async Task BrowseTerminal(ProjectInfo info)
@@ -169,15 +163,12 @@ public class ProjectLogic : IProjectLogic
             return;
         }
 
-        new Process()
+        ProcessHelper.Run(new ProcessStartInfo()
         {
-            StartInfo = new ProcessStartInfo()
-            {
-                FileName = command ?? "cmd.exe",
-                WorkingDirectory = info.directory,
-                UseShellExecute = true,
-            }
-        }.Start();
+            FileName = command ?? "cmd.exe",
+            WorkingDirectory = info.directory,
+            UseShellExecute = true,
+        }).Start();
     }
 
     public LoadRequest[] DuplicateProject(ProjectInfo info, string newName, string newDir)

@@ -1,0 +1,32 @@
+app-id: com.nexx.UnityHub
+runtime: org.freedesktop.Platform
+runtime-version: "24.08"
+sdk: org.freedesktop.Sdk
+command: UI
+
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=x11
+  - --socket=wayland
+  - --device=dri
+  - --filesystem=home
+  - --talk-name=org.freedesktop.Flatpak
+
+modules:
+  - name: UnityHub
+    buildsystem: simple
+
+    build-commands:
+      - mkdir -p /app/bin
+      - cp -r * /app/bin/
+      - install -Dm644 UnityHub.desktop /app/share/applications/com.nexx.UnityHub.desktop
+      - install -Dm644 Icon-512.png /app/share/icons/hicolor/256x256/apps/com.nexx.UnityHub.png
+
+    sources:
+      - type: dir
+        path: ../Output/UnityHub
+      - type: file
+        path: ../Flatpak/UnityHub.desktop
+      - type: file
+        path: ../_Shared/Icon-512.png

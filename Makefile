@@ -50,3 +50,24 @@ publish-appimage:
 	
 	ARCH=x86_64 appimagetool ${OUTPUT_DIR}/UnityHub.AppDir ${OUTPUT_DIR}/UnityHub.appimage
 	chmod +x ${OUTPUT_DIR}/UnityHub.appimage
+	
+publish-flatpak:
+	dotnet publish UI/UI.csproj \
+		-c Release \
+		-r linux-x64 \
+		-p:GitVersion="$(GIT_VERSION)" \
+		-p:GitSha="$(GIT_SHA)" \
+		--self-contained true \
+		/p:PublishSingleFile=false \
+		/p:IncludeAllContentForSelfExtract=true \
+		-o ${OUTPUT_DIR}/UnityHub
+
+	# -----------------------------[ flatpak ]-----------------------------
+	mkdir -p ${OUTPUT_DIR}/${PROGRAM_NAME}
+	
+	flatpak-builder \
+		--force-clean \
+		--user \
+		--install \
+		flatpak-build \
+		./Build/Flatpak/com.nexx.UnityHub.yml	
