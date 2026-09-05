@@ -40,6 +40,8 @@ public class SqliteDataRepo : IDataRepository
             renderPipeline = (RenderPipelineTypes?)dbData.pipelineType,
 
             tags = dbData.tags.Distinct().ToHashSet(),
+            metadata = dbData.metadata,
+
             collectionId = dbData.collectionId,
 
             lastOpened = dbData.lastOpened == 0 ? null : dbData.lastOpened,
@@ -65,6 +67,7 @@ public class SqliteDataRepo : IDataRepository
             pipelineType = (int?)info.renderPipeline,
 
             tags = info.tags.ToList(),
+            metadata = info.metadata,
 
             lastOpened = info.lastOpened ?? 0,
             created = info.created ?? 0,
@@ -181,33 +184,33 @@ public class SqliteDataRepo : IDataRepository
 
         switch (search.order)
         {
-            case Models.Enums.ProjectOrder.NameAsc:
-            case Models.Enums.ProjectOrder.NameDesc:
+            case ProjectOrder.NameAsc:
+            case ProjectOrder.NameDesc:
                 sql.Append(nameof(dbo_Project.name));
                 break;
 
-            case Models.Enums.ProjectOrder.LastOpenedAsc:
-            case Models.Enums.ProjectOrder.LastOpenedDesc:
+            case ProjectOrder.LastOpenedAsc:
+            case ProjectOrder.LastOpenedDesc:
                 sql.Append(nameof(dbo_Project.lastOpened));
                 break;
 
-            case Models.Enums.ProjectOrder.CreatedAsc:
-            case Models.Enums.ProjectOrder.CreatedDesc:
+            case ProjectOrder.CreatedAsc:
+            case ProjectOrder.CreatedDesc:
                 sql.Append(nameof(dbo_Project.created));
                 break;
 
-            case Models.Enums.ProjectOrder.SizeAsc:
-            case Models.Enums.ProjectOrder.SizeDesc:
+            case ProjectOrder.SizeAsc:
+            case ProjectOrder.SizeDesc:
                 sql.Append(nameof(dbo_Project.size));
                 break;
         }
 
         switch (search.order)
         {
-            case Models.Enums.ProjectOrder.NameDesc:
-            case Models.Enums.ProjectOrder.LastOpenedDesc:
-            case Models.Enums.ProjectOrder.CreatedDesc:
-            case Models.Enums.ProjectOrder.SizeDesc:
+            case ProjectOrder.NameDesc:
+            case ProjectOrder.LastOpenedDesc:
+            case ProjectOrder.CreatedDesc:
+            case ProjectOrder.SizeDesc:
                 sql.Append(" DESC ");
                 break;
         }
@@ -226,12 +229,20 @@ public class SqliteDataRepo : IDataRepository
     private async Task<T[]> FetchInternal<T>(IEnumerable<int> ids, Func<dbo_Project, T> mapper)
     {
         Dictionary<int, dbo_Project> projects = (await database!.GetItems<dbo_Project>(SQLFilter.In(nameof(dbo_Project.id), ids))).ToDictionary(p => p.id, p => p);
+
         dbo_ProjectTag[] tags = await database!.GetItems<dbo_ProjectTag>(SQLFilter.In(nameof(dbo_ProjectTag.ProjectId), ids));
+        dbo_ProjectMetadata[] metadata = await database!.GetItems<dbo_ProjectMetadata>(SQLFilter.In(nameof(dbo_ProjectMetadata.ProjectId), ids));
 
         foreach (dbo_ProjectTag tag in tags)
         {
             if (projects.TryGetValue(tag.ProjectId, out dbo_Project? proj) && proj != null)
                 proj.tags.Add(tag.TagId);
+        }
+
+        foreach (dbo_ProjectMetadata dat in metadata)
+        {
+            if (projects.TryGetValue(dat.ProjectId, out dbo_Project? proj) && proj != null)
+                proj.metadata[dat.Key] = dat.Value;
         }
 
         return projects.Values.Select(mapper).ToArray();

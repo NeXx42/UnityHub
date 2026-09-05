@@ -67,17 +67,17 @@ public class ProjectLogic : IProjectLogic
         (int[] results, int total) = await data.Search(search);
 
         List<int> missingCardIds = new List<int>();
-        List<ProjectInfo> cards = new List<ProjectInfo>();
+        Dictionary<int, ProjectInfo> cards = new();
 
-        foreach (int card in results)
+        foreach (int cardId in results)
         {
-            if (cache.TryGetValue(card, out ProjectInfo? cachedItem) && cachedItem != null)
+            if (cache.TryGetValue(cardId, out ProjectInfo? cachedItem) && cachedItem != null)
             {
-                cards.Add(cachedItem);
+                cards.Add(cardId, cachedItem);
                 continue;
             }
 
-            missingCardIds.Add(card);
+            missingCardIds.Add(cardId);
         }
 
         if (missingCardIds.Count > 0)
@@ -87,11 +87,11 @@ public class ProjectLogic : IProjectLogic
             foreach (ProjectInfo card in missingCards)
             {
                 cache[card.id] = card;
-                cards.Add(card);
+                cards.Add(card.id, card);
             }
         }
 
-        return (cards.ToArray(), total);
+        return (results.Select(c => cards[c]).ToArray(), total);
     }
 
     public async Task<ProjectInfo?> GetProjectInfo(int? id)

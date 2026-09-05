@@ -12,6 +12,7 @@ using Logic.Versioning;
 using Models;
 using Models.Helpers;
 using Models.Interfaces;
+using UI.Helpers;
 
 namespace UI;
 
@@ -83,29 +84,34 @@ class Program
 
         if (Directory.Exists(root))
         {
-            string[] dlls = Directory.GetFiles(root, "*.dll", SearchOption.AllDirectories);
-
-            foreach (string dll in dlls)
+            foreach (string pluginFolder in Directory.GetDirectories(root))
             {
-                Assembly assembly = Assembly.LoadFrom(dll);
-
-                try
+                foreach (string dll in Directory.GetFiles(pluginFolder, "*.dll"))
                 {
-                    var entryPointType = assembly.GetTypes().FirstOrDefault(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
+                    try
+                    {
+                        PluginLoader loader = new PluginLoader(dll);
+                        Assembly assembly = loader.LoadFromAssemblyPath(Path.GetFullPath(dll));
 
-                    if (entryPointType == null)
-                        continue;
+                        var entryPointType = assembly.GetTypes().FirstOrDefault(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
 
-                    IPlugin plugin = (IPlugin)Activator.CreateInstance(entryPointType)!;
+                        if (entryPointType == null)
+                            continue;
 
-                    await plugin.Register();
-                    loadedPlugins.Add(plugin);
-                }
-                catch (Exception e)
-                {
-                    LoggingHelper.LogError($"Failed to load plugin\n{e.Message}");
+                        IPlugin plugin = (IPlugin)Activator.CreateInstance(entryPointType)!;
+
+                        await plugin.Register();
+                        loadedPlugins.Add(plugin);
+
+                        break; // only expect one plugin per folder
+                    }
+                    catch (Exception e)
+                    {
+                        LoggingHelper.LogError($"Failed to load plugin\n{e.Message}");
+                    }
                 }
             }
+
         }
     }
 

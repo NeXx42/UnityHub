@@ -26,7 +26,9 @@ public class dbo_Project : IDatabase_Table
     public required int collectionId { get; set; }
     public required bool favourited { get; set; }
 
+    // mapped
     public List<int> tags = [];
+    public Dictionary<string, string> metadata = new();
 
     public static Database_Column[] getColumns => [
         new Database_Column { columnName = nameof(id), columnType = Database_ColumnType.INTEGER, isPrimaryKey = true, autoIncrement = true, allowNull = false },

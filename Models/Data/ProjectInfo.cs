@@ -41,6 +41,8 @@ public class ProjectInfo
     public HashSet<int> tags { get; set; } = [];
     public required int collectionId { get; set; }
 
+    public Dictionary<string, string> metadata = new();
+
     public static ProjectInfo Test => new ProjectInfo()
     {
         name = "Test",
