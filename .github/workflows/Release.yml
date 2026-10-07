@@ -41,8 +41,7 @@ jobs:
           path: |
             ${{ env.OUTPUT_DIR }}/UnityHub_Windows.zip
             ${{ env.OUTPUT_DIR }}/UnityHub.msi
-        
-          
+       
   Build-Linux:
     runs-on: ubuntu-22.04
 
@@ -87,6 +86,56 @@ jobs:
           name: UnityHub-AppImage
           path: ${{ env.OUTPUT_DIR }}/UnityHub.appimage
           
+  Build-Linux-Flatpak:
+    runs-on: ubuntu-22.04
+
+    env:
+      OUTPUT_DIR: ./Build/Output/
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libfuse2 \
+            desktop-file-utils \
+            libglib2.0-dev \
+            libgtk-3-dev \
+            libgtk-layer-shell-dev \
+            flatpak \
+            flatpak-builder
+          
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          
+      - name: Set version vars
+        run: |
+          echo "GIT_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
+          echo "GIT_SHA=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          
+      - name: Download flatpak SDK
+        run: |
+          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak install --user -y flathub \
+            org.freedesktop.Platform//24.08 \
+            org.freedesktop.Sdk//24.08
+        
+      - name: Build
+        run: make publish-flatpak
+          
+      - name: Upload Flatpak artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: UnityHub-Flatpak
+          path: ${{ env.OUTPUT_DIR }}/UnityHub.flatpak
+          
   Release:
     needs: [Build-Linux, Build-Windows]
     runs-on: ubuntu-22.04
@@ -98,6 +147,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
             name: UnityHub-AppImage
+            path: ./output
+            
+      - name: Download Flatpak artifact
+        uses: actions/download-artifact@v4
+        with:
+            name: UnityHub-Flatpak
             path: ./output
             
       - name: Download Windows artifact
@@ -113,5 +168,6 @@ jobs:
             name: v${{ github.event.inputs.version }}
             files: |
               ./output/UnityHub.appimage
+              ./output/UnityHub.flatpak
               ./output/UnityHub_Windows.zip
               ./output/UnityHub.msi

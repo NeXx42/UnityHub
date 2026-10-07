@@ -63,11 +63,15 @@ publish-flatpak:
 		-o ${OUTPUT_DIR}/UnityHub
 
 	# -----------------------------[ flatpak ]-----------------------------
-	mkdir -p ${OUTPUT_DIR}/${PROGRAM_NAME}
+	mkdir -p ${OUTPUT_DIR}/UnityHub
 	
 	flatpak-builder \
 		--force-clean \
-		--user \
-		--install \
+		--repo=${OUTPUT_DIR}/UnityHub.Flatpak \
 		flatpak-build \
 		./Build/Flatpak/com.nexx.UnityHub.yml	
+		
+	flatpak build-bundle \
+		${OUTPUT_DIR}/UnityHub.Flatpak \
+		${OUTPUT_DIR}/UnityHub.flatpak \
+		com.nexx.UnityHub
