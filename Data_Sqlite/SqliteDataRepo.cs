@@ -12,17 +12,17 @@ namespace Data_Sqlite;
 
 public class SqliteDataRepo : IDataRepository
 {
-    private Database_Manager.DatabaseInstance? database;
+    private Database_Instance? database;
 
     public async Task Setup()
     {
-        database = new Database_Manager.DatabaseInstance();
+        database = new Database_Instance();
         await database.Init(Path.Combine(GlobalConfig.getDataFolder, "data.db"));
     }
 
     public async Task Setup_Test(string path)
     {
-        database = new Database_Manager.DatabaseInstance();
+        database = new Database_Instance();
         await database.Init(path);
     }
 
@@ -253,16 +253,9 @@ public class SqliteDataRepo : IDataRepository
     public async Task<Dictionary<string, int>> CreateCards(IEnumerable<ProjectInfo> cards)
     {
         dbo_Project[] dbObjs = cards.Select(MapToDto).ToArray();
-        await database!.InsertItem(dbObjs);
-
-        // .. need to implement something in my sql orm to get the ids for new items
+        dbo_Project[] dboItems = await database!.InsertItem(dbObjs);
 
         Dictionary<string, int> newIds = new Dictionary<string, int>();
-
-        dbo_Project[] dboItems = await database!.GetItems<dbo_Project>(SQLFilter
-            .In(nameof(dbo_Project.directory), cards.Select(c => c.directory))
-            .OrderDesc(nameof(dbo_Project.id))
-            .Limit(cards.Count()));
 
         foreach (dbo_Project newItem in dboItems)
         {
