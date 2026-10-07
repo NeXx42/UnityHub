@@ -137,7 +137,7 @@ jobs:
           path: ${{ env.OUTPUT_DIR }}/UnityHub.flatpak
           
   Release:
-    needs: [Build-Linux, Build-Windows]
+    needs: [Build-Linux, Build-Linux-Flatpak, Build-Windows]
     runs-on: ubuntu-22.04
     permissions:
       contents: write
