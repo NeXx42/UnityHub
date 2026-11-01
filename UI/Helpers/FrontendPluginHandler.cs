@@ -9,6 +9,11 @@ public class FrontendPluginHandler<T> where T : IFrontendPlugin
 {
     private List<T> plugins = new List<T>();
 
+    public void Register<NEWTYPE>() where NEWTYPE : T
+    {
+        plugins.Add(Activator.CreateInstance<NEWTYPE>());
+    }
+
     public void Register<NEWTYPE>(NEWTYPE plugin) where NEWTYPE : T
     {
         plugins.Add(plugin);

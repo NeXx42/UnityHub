@@ -12,6 +12,7 @@ using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
 using UI.Modals;
+using UnityHub.UI.Modals;
 
 namespace UI;
 
@@ -56,9 +57,24 @@ public partial class MainWindow : Window, IUILinker
 
         activeModals = new Stack<ModalContainer>();
 
+        CheckForStartup().Wrap();
         RequestPage(PageNames.Home).Wrap();
-
     }
+
+    private async Task CheckForStartup()
+    {
+        bool isSetup = await DependencyManager.GetService<IConfigLogic>()!.Get(Models.Enums.ConfigEntry.IsSetup, false);
+
+        if (!isSetup)
+        {
+            await ShowModalAndWait<Startup_Modal>(m => m.Launch(true));
+        }
+        else if (DependencyManager.GetService<IVersionLogic>()!.GetUpdateInfo(out string updateMessage))
+        {
+
+        }
+    }
+
 
     public static T ShowModal<T>(out int pos) where T : UserControl, IModal
     {
@@ -70,6 +86,19 @@ public partial class MainWindow : Window, IUILinker
         instance.cont_Modals.Children.Add(container);
 
         return container.ShowModal<T>(pos, CloseModal);
+    }
+
+    public static async Task ShowModalAndAutoWait<T>() where T : UserControl, IModalAutoWait
+    {
+        T modal = ShowModal<T>(out int pos);
+
+        try
+        {
+            await modal.Launch();
+        }
+        catch (TaskCanceledException) { }
+
+        await CloseModal(pos);
     }
 
     public static async Task ShowModalAndWait<T>(Func<T, Task> handler) where T : UserControl, IModal

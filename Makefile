@@ -75,3 +75,24 @@ publish-flatpak:
 		${OUTPUT_DIR}/UnityHub.Flatpak \
 		${OUTPUT_DIR}/UnityHub.flatpak \
 		com.nexx.UnityHub
+		
+install-flatpak:
+	dotnet publish UI/UI.csproj \
+		-c Release \
+		-r linux-x64 \
+		-p:GitVersion="$(GIT_VERSION)" \
+		-p:GitSha="$(GIT_SHA)" \
+		--self-contained true \
+		/p:PublishSingleFile=false \
+		/p:IncludeAllContentForSelfExtract=true \
+		-o ${OUTPUT_DIR}/UnityHub
+
+	# -----------------------------[ flatpak ]-----------------------------
+	mkdir -p ${OUTPUT_DIR}/UnityHub
+	
+	flatpak-builder \
+		--force-clean \
+		--user \
+		--install \
+		flatpak-build \
+		./Build/Flatpak/com.nexx.UnityHub.yml	

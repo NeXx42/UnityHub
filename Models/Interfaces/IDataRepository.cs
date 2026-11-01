@@ -1,3 +1,4 @@
+using System.Reflection;
 using Models.Data;
 using Models.Enums;
 
@@ -40,6 +41,11 @@ public interface IDataRepository
     public Task SetEditorInfo(Dictionary<string, string> versionJson);
     public Task<Dictionary<string, string>> GetEditorInfo(IEnumerable<string> versions);
 
+    /// <summary>
+    /// Only for config abstraction, dont use
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
     public Task<string?[]> GetConfigValue(string key);
     public Task SetConfigValue(string key, string? value);
     public Task DeleteConfigValue(string key);

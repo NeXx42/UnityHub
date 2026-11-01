@@ -1,5 +1,4 @@
 using Logic.Tagging;
-using Microsoft.VisualBasic;
 using Models.Data;
 using Models.Enums;
 using Models.Interfaces;
@@ -8,7 +7,7 @@ namespace Logic;
 
 public class TaggingLogic : ITaggingLogic
 {
-    private static CollectionData[] defaultCollections = [
+    private static List<CollectionData> defaultCollections = [
         new CollectionData(){
             isDefault = true,
             collectionId = (int)DefaultCollectionIds.InDevelopment,
@@ -31,6 +30,8 @@ public class TaggingLogic : ITaggingLogic
             handlingType = CollectionHandlingTypes.Release,
         },
     ];
+
+    public void RegisterDefaultCollection(CollectionData dat) => defaultCollections.Add(dat);
 
     private IDataRepository data => DependencyManager.GetService<IDataRepository>()!;
 

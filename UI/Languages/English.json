@@ -26,5 +26,6 @@
   "Literal_Editor": "Editor",
   "Literal_Save": "Save",
   "Literal_Edit": "Edit",
-  "Literal_Delete": "Delete"
+  "Literal_Delete": "Delete",
+  "Literal_Browse": "Browse"
 }

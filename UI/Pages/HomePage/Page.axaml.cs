@@ -24,17 +24,12 @@ namespace UI.Pages.HomePage;
 public interface IPlugin_HomePage : IFrontendPlugin
 {
     public void RegisterLayout(List<Type> displays);
+    public void RegisterCreateButtons(List<(string title, Func<Task> callback)> options);
 }
 
 public partial class Page : UserControl, IPage, INotifyPropertyChanged
 {
     public static FrontendPluginHandler<IPlugin_HomePage> plugins = new();
-
-    private enum NewProjectOptions
-    {
-        Add_Existing,
-        Add_Folder,
-    }
 
     private int? currentSelectedCard;
     private Popup_Filter? filter;
@@ -96,7 +91,13 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
             }
         }
 
-        btn_NewProject.RegisterOptions(((NewProjectOptions[])System.Enum.GetValues(typeof(NewProjectOptions))).Select(s => s.GetDisplayName()), SelectNewProjectOption);
+        List<(string title, Func<Task> callback)> createProjectSubOptions = [
+            ("Add Existing", AddExistingProject),
+            ("Add Folder", AddFolderOfProjects)
+        ];
+        plugins.Execute(p => p.RegisterCreateButtons(createProjectSubOptions));
+
+        btn_NewProject.RegisterOptions(createProjectSubOptions);
         btn_NewProject.RegisterClick(CreateNewProject);
 
         filter = new Popup_Filter();
@@ -160,34 +161,25 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         await MainWindow.CloseModal(id);
     }
 
-    private async Task SelectNewProjectOption(int id)
+    private async Task AddFolderOfProjects()
     {
-        switch ((NewProjectOptions)id)
-        {
-            case NewProjectOptions.Add_Folder:
-                string? root = await MainWindow.OpenFolderDialog("Select Folder");
+        string? root = await MainWindow.OpenFolderDialog("Select Folder");
 
-                if (string.IsNullOrEmpty(root))
-                    return;
+        if (string.IsNullOrEmpty(root))
+            return;
 
-                string[] dirs = Directory.GetDirectories(root);
-                await AttemptUploadOfDirectories(dirs);
-                break;
+        string[] dirs = Directory.GetDirectories(root);
+        await MainWindow.ShowModalAndWait<ProjectImport_Modal>(async m => await m.Show(dirs));
+    }
 
-            case NewProjectOptions.Add_Existing:
-                string[]? folders = await MainWindow.OpenFoldersDialog("Select Folder(s)");
+    private async Task AddExistingProject()
+    {
+        string[]? folders = await MainWindow.OpenFoldersDialog("Select Folder(s)");
 
-                if ((folders?.Length ?? 0) == 0)
-                    return;
+        if ((folders?.Length ?? 0) == 0)
+            return;
 
-                await AttemptUploadOfDirectories(folders!);
-                break;
-        }
-
-        async Task AttemptUploadOfDirectories(string[] toUpload)
-        {
-            await MainWindow.ShowModalAndWait<ProjectImport_Modal>(async m => await m.Show(toUpload));
-        }
+        await MainWindow.ShowModalAndWait<ProjectImport_Modal>(async m => await m.Show(folders!));
     }
 
     private async Task UpdatePage(int to)

@@ -15,4 +15,6 @@ public enum ConfigEntry
     InjectLinker,
     Windows_InstallSilent,
     AutoCheckUpdates,
+
+    IsSetup
 }

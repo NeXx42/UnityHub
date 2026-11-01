@@ -30,4 +30,6 @@ public interface ITaggingLogic
 
     public int GetTagCount();
     public int GetCollectionCount();
+
+    public void RegisterDefaultCollection(CollectionData dat);
 }

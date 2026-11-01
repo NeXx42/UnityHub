@@ -44,6 +44,16 @@ public partial class DropDownButton : UserControl
         btn.RegisterClick(() => onClick?.Invoke());
     }
 
+    public void RegisterOptions(IEnumerable<(string, Func<Task>)> callbacks)
+    {
+        buttonList.Draw(callbacks, DrawBtn);
+
+        void DrawBtn(ButtonWrapper btn, int pos, (string, Func<Task>) data)
+        {
+            btn.Label = data.Item1;
+            btn.RegisterClick(data.Item2);
+        }
+    }
 
     public void RegisterOptions(IEnumerable<string> options, Func<int, Task> callback)
     {

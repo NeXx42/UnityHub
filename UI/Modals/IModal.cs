@@ -9,3 +9,8 @@ public interface IModal
     public ModalContainer setContainer { set; }
     public bool canDismiss { get; }
 }
+
+public interface IModalAutoWait : IModal
+{
+    public Task Launch();
+}

@@ -20,6 +20,9 @@
     <sys:String x:Key="LANG_ProjectImport_Title">Import</sys:String>
     <sys:String x:Key="LANG_ProjectImport_Btn">Import</sys:String>
 
+    <!-- Startup modal-->
+    <sys:String x:Key="LANG_StartupModal_Title">Startup</sys:String>
+
     <!-- Settings page -->
     <sys:String x:Key="LANG_Settings_Sidebar_Editor">Editor</sys:String>
     <sys:String x:Key="LANG_Settings_Sidebar_General">General</sys:String>
@@ -42,5 +45,6 @@
     <sys:String x:Key="LANG_Literal_Save">Save</sys:String>
     <sys:String x:Key="LANG_Literal_Edit">Edit</sys:String>
     <sys:String x:Key="LANG_Literal_Delete">Delete</sys:String>
+    <sys:String x:Key="LANG_Literal_Browse">Browse</sys:String>
   </Styles.Resources>
 </Styles>

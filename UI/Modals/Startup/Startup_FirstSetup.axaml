@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:controls="using:UI.Controls"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UnityHub.UI.Modals.Startup.Startup_FirstSetup" x:Name="root">
+  <StackPanel Spacing="5">
+    <Label>Editors folder</Label>
+    <Grid ColumnDefinitions="* 100">
+      <TextBox Text="{Binding #root.selectedEditorFolder}" Margin="0 0 5 0" IsReadOnly="True" />
+      <controls:ButtonWrapper Grid.Column="1" Label="{DynamicResource LANG_Literal_Browse}"  HorizontalContentAlignment="Center" x:Name="btn_BrowseEditors"/>
+    </Grid>
+    <Border CornerRadius="{DynamicResource CornerRadius_Element}" Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}">
+      <Grid Margin="5">
+        <Label>Editors</Label>
+        <Label HorizontalAlignment="Right" x:Name="lbl_EditorCount" />
+      </Grid>
+    </Border>
+
+    <Label>Projects folder</Label>
+    <Grid ColumnDefinitions="* 100">
+      <TextBox Text="{Binding #root.selectedProjectFolder}" Margin="0 0 5 0"  IsReadOnly="True"/>
+      <controls:ButtonWrapper Grid.Column="1" Label="{DynamicResource LANG_Literal_Browse}"  HorizontalContentAlignment="Center" x:Name="btn_BrowseProjects"/>
+    </Grid>
+    <Border CornerRadius="{DynamicResource CornerRadius_Element}" Background="{DynamicResource ElementBackground}" BorderThickness="1" BorderBrush="{DynamicResource BackgroundBorder}">
+      <Grid Margin="5">
+        <Label>Projects</Label>
+        <Label HorizontalAlignment="Right" x:Name="lbl_ProjectCount" />
+      </Grid>
+    </Border>
+
+    <controls:ButtonWrapper Margin="0 10 0 0" Classes="Primary" HorizontalAlignment="Right" Label="{DynamicResource LANG_Literal_Save}" Width="150" HorizontalContentAlignment="Center" x:Name="btn_Save"/>
+  </StackPanel>
+</UserControl>

@@ -20,7 +20,7 @@ public static class ExtensionMethods
         {
             e = await req.Run(token);
 
-            if (e == null)
+            if (e != null)
                 return e;
         }
 

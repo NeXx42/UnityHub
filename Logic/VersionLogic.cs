@@ -62,4 +62,10 @@ public abstract class VersionLogic : IVersionLogic
 
         return false;
     }
+
+    public bool GetUpdateInfo(out string msg)
+    {
+        msg = string.Empty;
+        return hasUpdate;
+    }
 }

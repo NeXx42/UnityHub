@@ -25,6 +25,14 @@ public static class LoggingHelper
         WriteToLog([msg]);
     }
 
+    public static void LogTentativeError(Exception? e)
+    {
+        if (e == null)
+            return;
+
+        LogError(e);
+    }
+
     public static void LogError(Exception e)
     {
         string[] lines = [$"[ERROR {DateTime.UtcNow}] {e.Message}", .. (e.StackTrace ?? "").Split("\n")];

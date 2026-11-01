@@ -1,4 +1,6 @@
+using System.Data.Common;
 using System.Data.SQLite;
+using System.Reflection;
 using System.Text;
 using CSharpSqliteORM;
 using Data_Sqlite.Tables;
@@ -6,6 +8,7 @@ using Logic.db;
 using Models;
 using Models.Data;
 using Models.Enums;
+using Models.Helpers;
 using Models.Interfaces;
 
 namespace Data_Sqlite;
@@ -14,10 +17,26 @@ public class SqliteDataRepo : IDataRepository
 {
     private Database_Instance? database;
 
+    public Database_Instance? getDatabase => database;
+
     public async Task Setup()
     {
+#if DEBUG
+        string dataFolder = Path.Combine(GlobalConfig.getDataFolder, "data_debug.db");
+#else
+        string dataFolder = Path.Combine(GlobalConfig.getDataFolder, "data.db");
+#endif
+
         database = new Database_Instance();
-        await database.Init(Path.Combine(GlobalConfig.getDataFolder, "data.db"));
+        await database.Init(dataFolder, HandleSqlError, [
+            Assembly.GetAssembly(typeof(dbo_Config))!,
+            Assembly.GetAssembly(typeof(SqliteDataRepo))!
+        ]);
+    }
+
+    private void HandleSqlError(Exception e, string? sql)
+    {
+        LoggingHelper.LogError(e);
     }
 
     public async Task Setup_Test(string path)

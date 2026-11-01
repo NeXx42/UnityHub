@@ -296,7 +296,9 @@ public class ProjectLogic : IProjectLogic
 
         DirectoryInfo dirInfo = new DirectoryInfo(info.directory);
 
-        await DeriveProjectInfo(info, true).WhenAllProgressive(CancellationToken.None);
+        Exception? error = await DeriveProjectInfo(info, true).WhenAllProgressive(CancellationToken.None);
+        LoggingHelper.LogTentativeError(error);
+
         return info;
 
         bool ValidateFolder(string folderName)
