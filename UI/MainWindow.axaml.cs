@@ -63,15 +63,24 @@ public partial class MainWindow : Window, IUILinker
 
     private async Task CheckForStartup()
     {
-        bool isSetup = await DependencyManager.GetService<IConfigLogic>()!.Get(Models.Enums.ConfigEntry.IsSetup, false);
+        IConfigLogic configLogic = DependencyManager.GetService<IConfigLogic>()!;
+        bool isSetup = await configLogic.Get(Models.Enums.ConfigEntry.IsSetup, false);
 
         if (!isSetup)
         {
-            await ShowModalAndWait<Startup_Modal>(m => m.Launch(true));
+            await ShowModalAndWait<Startup_Modal>(m => m.FirstLaunchSetup());
         }
-        else if (DependencyManager.GetService<IVersionLogic>()!.GetUpdateInfo(out string updateMessage))
+        else
         {
+            IVersionLogic versionLogic = DependencyManager.GetService<IVersionLogic>()!;
 
+            if (versionLogic.GetUpdateInfo(out string versionName, out string updateMessage))
+            {
+                string? ignoredVersion = await configLogic.Get(Models.Enums.ConfigEntry.IgnoredUpdate, string.Empty);
+
+                if (ignoredVersion != versionName)
+                    await ShowModalAndWait<Startup_Modal>(m => m.UpdateLaunch(updateMessage));
+            }
         }
     }
 

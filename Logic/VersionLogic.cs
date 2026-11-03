@@ -12,10 +12,13 @@ public abstract class VersionLogic : IVersionLogic
 {
     private readonly string? currentVersion;
     private readonly string? gitSha;
-    private bool hasUpdate = false;
+
+    private string? latestVersion;
 
     public string? getCurrentVersion => currentVersion;
-    public bool hasUpdateAvailable => hasUpdate;
+    public string? getLatestVersion => latestVersion;
+
+    public bool hasUpdateAvailable => !string.IsNullOrEmpty(latestVersion) && currentVersion != latestVersion;
 
     public VersionLogic(IEnumerable<AssemblyMetadataAttribute> metadataAttributes)
     {
@@ -30,10 +33,10 @@ public abstract class VersionLogic : IVersionLogic
         var check = await DependencyManager.GetService<IConfigLogic>()!.Get<Config_EnabledStatus>(ConfigEntry.AutoCheckUpdates, Config_EnabledStatus.Enabled);
 
         if (check == Config_EnabledStatus.Enabled)
-            hasUpdate = await HasUpdate();
+            latestVersion = await GetLatestVersion();
     }
 
-    public async Task<bool> HasUpdate()
+    public async Task<string?> GetLatestVersion()
     {
         try
         {
@@ -52,7 +55,7 @@ public abstract class VersionLogic : IVersionLogic
                 JsonDocument json = await JsonDocument.ParseAsync(res.Content.ReadAsStream());
 
                 if (json.RootElement.TryGetProperty("tag_name", out JsonElement el))
-                    return !(el.GetString() ?? "").Equals(currentVersion ?? "UNIQUE", StringComparison.CurrentCultureIgnoreCase);
+                    return el.GetString();
             }
         }
         catch (Exception e)
@@ -60,12 +63,14 @@ public abstract class VersionLogic : IVersionLogic
             LoggingHelper.LogError(e);
         }
 
-        return false;
+        return string.Empty;
     }
 
-    public bool GetUpdateInfo(out string msg)
+    public bool GetUpdateInfo(out string versionName, out string updateMessage)
     {
-        msg = string.Empty;
-        return hasUpdate;
+        versionName = latestVersion ?? string.Empty;
+        updateMessage = latestVersion ?? "update exists";
+
+        return hasUpdateAvailable;
     }
 }

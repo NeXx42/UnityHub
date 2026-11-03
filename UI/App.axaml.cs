@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Logic;
 
 namespace UI;
 
@@ -16,6 +17,11 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow();
+
+            desktop.Exit += (sender, args) =>
+            {
+                DependencyManager.Dispose();
+            };
         }
 
         base.OnFrameworkInitializationCompleted();

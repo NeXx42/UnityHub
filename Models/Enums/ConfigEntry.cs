@@ -16,5 +16,6 @@ public enum ConfigEntry
     Windows_InstallSilent,
     AutoCheckUpdates,
 
-    IsSetup
+    IsSetup,
+    IgnoredUpdate
 }

@@ -44,7 +44,6 @@ class Program
             LoggingHelper.LogError(e);
         }
 
-
         AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
         {
             var exception = (Exception)args.ExceptionObject;

@@ -42,4 +42,14 @@ public static class DependencyManager
     {
         return activeServices.TryGetValue(typeof(T), out var service) ? (T)service : default;
     }
+
+    public static void Dispose()
+    {
+        foreach (object o in activeServices.Values)
+        {
+            if (o is IDisposable disposable)
+                disposable.Dispose();
+
+        }
+    }
 }

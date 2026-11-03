@@ -10,7 +10,6 @@ namespace UnityHub.UI.Modals;
 
 public partial class Startup_Modal : UserControl, IModal
 {
-    private TaskCompletionSource? task;
     private bool allowDismissal;
 
     public Startup_Modal()
@@ -21,24 +20,21 @@ public partial class Startup_Modal : UserControl, IModal
     public ModalContainer setContainer { set => _ = value; }
     public bool canDismiss => allowDismissal;
 
-    public Task Launch(bool isFirstLaunch)
+    public Task FirstLaunchSetup()
     {
-        task = new TaskCompletionSource();
+        allowDismissal = false;
+        Startup_FirstSetup menu = new Startup_FirstSetup();
 
-        if (isFirstLaunch)
-        {
-            allowDismissal = false;
-            Startup_FirstSetup menu = new Startup_FirstSetup();
+        cont_Item.Child = menu;
+        return menu.Handle();
+    }
 
-            cont_Item.Children.Add(menu);
+    public Task UpdateLaunch(string msg)
+    {
+        allowDismissal = true;
+        Startup_Update menu = new Startup_Update();
 
-            return menu.Handle();
-        }
-        else
-        {
-            allowDismissal = true;
-        }
-
-        return task.Task;
+        cont_Item.Child = menu;
+        return menu.Handle(msg);
     }
 }

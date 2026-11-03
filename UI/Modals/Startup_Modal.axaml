@@ -4,9 +4,5 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="UnityHub.UI.Modals.Startup_Modal">
-  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="{DynamicResource CornerRadius_Menu}" MinWidth="600">
-    <StackPanel Margin="10" Spacing="5" x:Name="cont_Item">
-      <Label HorizontalAlignment="Center" FontSize="20" Content="{DynamicResource LANG_StartupModal_Title}"/>
-    </StackPanel>
-  </Border>
+  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="{DynamicResource CornerRadius_Menu}" MinWidth="600" x:Name="cont_Item" />
 </UserControl>
