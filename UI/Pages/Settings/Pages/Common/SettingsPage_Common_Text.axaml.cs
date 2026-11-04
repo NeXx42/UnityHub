@@ -19,7 +19,7 @@ public partial class SettingsPage_Common_Text : UserControl, ISettingsPageSettin
     }
 
     private string? curVal;
-    private ConfigEntry? key;
+    private string? key;
     private bool isSupported = true;
 
     public SettingsPage_Common_Text()
@@ -35,6 +35,9 @@ public partial class SettingsPage_Common_Text : UserControl, ISettingsPageSettin
     }
 
     public ISettingsPageSetting Init(ConfigEntry key, bool supportWindows = true, bool supportLinux = true)
+        => Init(key.ToString(), supportWindows, supportLinux);
+
+    public ISettingsPageSetting Init(string key, bool supportWindows = true, bool supportLinux = true)
     {
         if (GlobalConfig.isOnLinux && !supportLinux)
         {
@@ -63,22 +66,22 @@ public partial class SettingsPage_Common_Text : UserControl, ISettingsPageSettin
 
         ToggleButtonAvability(false);
 
-        if (!key.HasValue)
+        if (string.IsNullOrEmpty(key))
             return;
 
-        curVal = await configProvider.Get(key.Value, "");
+        curVal = await configProvider.Get(key, "");
         inp_Val.Text = curVal;
     }
 
     private async Task Save()
     {
-        if (!key.HasValue)
+        if (string.IsNullOrEmpty(key))
             return;
 
         curVal = inp_Val.Text;
         ToggleButtonAvability(false);
 
-        await DependencyManager.GetService<IConfigLogic>()!.Set(key.Value, curVal, true);
+        await DependencyManager.GetService<IConfigLogic>()!.Set(key, curVal, true);
     }
 
     private void ToggleButtonAvability(bool to)

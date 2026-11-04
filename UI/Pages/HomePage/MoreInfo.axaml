@@ -6,7 +6,7 @@
              xmlns:controls="clr-namespace:UI.Controls"
              xmlns:popups="clr-namespace:UI.Popups">
   <ScrollViewer>
-    <Border BorderThickness="1 0 0 0" BorderBrush="{DynamicResource ButtonBorder}" Padding="10">
+    <Border BorderThickness="1 0 0 0" BorderBrush="{DynamicResource ButtonBorder}" Background="{DynamicResource BackgroundColourDark}" Padding="10">
       <Grid>
         <Grid x:Name="cont_Message">
           <Label HorizontalAlignment="Center" VerticalAlignment="Center" Content="{DynamicResource LANG_HomePage_MoreInfo_NothingSelected}"/>

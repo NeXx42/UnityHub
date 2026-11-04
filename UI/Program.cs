@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia;
 using Data_Sqlite;
@@ -18,8 +19,6 @@ namespace UI;
 
 class Program
 {
-    private static List<IPlugin> loadedPlugins = new List<IPlugin>();
-
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
@@ -73,44 +72,7 @@ class Program
             DependencyManager.RegisterService<ITaggingLogic, TaggingLogic>();
             await DependencyManager.RegisterService<IProjectLogic, ProjectLogic>(logic => logic.Migrate());
 
-            await LoadPlugins();
-        }
-    }
-
-    private static async Task LoadPlugins()
-    {
-        string root = Path.Combine(AppContext.BaseDirectory, "Plugins");
-
-        if (Directory.Exists(root))
-        {
-            foreach (string pluginFolder in Directory.GetDirectories(root))
-            {
-                foreach (string dll in Directory.GetFiles(pluginFolder, "*.dll"))
-                {
-                    try
-                    {
-                        PluginLoader loader = new PluginLoader(dll);
-                        Assembly assembly = loader.LoadFromAssemblyPath(Path.GetFullPath(dll));
-
-                        var entryPointType = assembly.GetTypes().FirstOrDefault(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
-
-                        if (entryPointType == null)
-                            continue;
-
-                        IPlugin plugin = (IPlugin)Activator.CreateInstance(entryPointType)!;
-
-                        await plugin.Register();
-                        loadedPlugins.Add(plugin);
-
-                        break; // only expect one plugin per folder
-                    }
-                    catch (Exception e)
-                    {
-                        LoggingHelper.LogError($"Failed to load plugin\n{e.Message}");
-                    }
-                }
-            }
-
+            await PluginHelper.LoadPlugins();
         }
     }
 

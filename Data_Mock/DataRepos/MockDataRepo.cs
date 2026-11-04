@@ -206,4 +206,9 @@ public class MockDataRepo : IDataRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task UpdateProjectMetadata(ProjectInfo info)
+    {
+        throw new NotImplementedException();
+    }
 }

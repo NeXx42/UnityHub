@@ -459,6 +459,45 @@ public class SqliteDataRepo : IDataRepository
         };
 
         await database!.Update(updates.Select(MapToDto), (u) => SQLFilter.Equal(nameof(dbo_Project.id), u.id), [.. properties.Select(p => columnMappings[p])]);
+
+        if (properties.Contains(nameof(ProjectInfo.metadata)))
+        {
+            foreach (ProjectInfo proj in updates)
+                await UpdateProjectMetadata(proj);
+        }
+    }
+
+    public async Task UpdateProjectMetadata(ProjectInfo info)
+    {
+        Dictionary<string, string> existingMetadata = (await database!.GetItems<dbo_ProjectMetadata>(SQLFilter.Equal(nameof(dbo_ProjectMetadata.ProjectId), info.id)))
+            .ToDictionary(p => p.Key, p => p.Value);
+
+        HashSet<string> toRemove = existingMetadata.Keys.ToHashSet();
+        List<dbo_ProjectMetadata> toAdd = new List<dbo_ProjectMetadata>();
+
+        // easier and prob faster to just remove and then reinsert changed values instead of a separate update call
+        foreach (KeyValuePair<string, string> newMetadata in info.metadata)
+        {
+            if (existingMetadata.TryGetValue(newMetadata.Key, out string? oldValue) && oldValue.Equals(newMetadata.Value))
+            {
+                toRemove.Remove(newMetadata.Key);
+                continue;
+            }
+
+            toAdd.Add(new dbo_ProjectMetadata()
+            {
+                ProjectId = info.id,
+
+                Key = newMetadata.Key,
+                Value = newMetadata.Value
+            });
+        }
+
+        if (toRemove.Count > 0)
+            await database!.Delete<dbo_ProjectMetadata>(SQLFilter.Equal(nameof(dbo_ProjectMetadata.ProjectId), info.id).In(nameof(dbo_ProjectMetadata.Key), toRemove));
+
+        if (toAdd.Count > 0)
+            await database!.InsertItem(toAdd);
     }
 
     public async Task DeleteTag(int id)

@@ -14,6 +14,7 @@ public interface IDataRepository
     public Task<ProjectInfo?> GetProjectInfo(int id);
     public Task<ProjectInfo[]> GetProjectInfo(IEnumerable<int> ids);
 
+    public Task UpdateProjectMetadata(ProjectInfo info);
     public Task UpdateProjectProperties(ProjectInfo info, IEnumerable<string> properties);
     public Task UpdateProjectProperties(IEnumerable<ProjectInfo> updates, IEnumerable<string> properties);
 

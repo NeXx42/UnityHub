@@ -1,0 +1,74 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Models.Data;
+using Models.Helpers;
+using Models.Interfaces;
+
+namespace UI.Helpers;
+
+public static class PluginHelper
+{
+    private static Dictionary<PluginManifest, IPlugin> loadedPlugins = new();
+
+    public static PluginManifest[] GetActivePlugins()
+        => loadedPlugins.Keys.ToArray();
+
+    public static IPlugin GetPlugin(PluginManifest manifest)
+        => loadedPlugins[manifest];
+
+
+    public static async Task LoadPlugins()
+    {
+        string root = Path.Combine(AppContext.BaseDirectory, "Plugins");
+
+        if (Directory.Exists(root))
+        {
+            foreach (string pluginFolder in Directory.GetDirectories(root))
+            {
+                string manifestLoc = Path.Combine(pluginFolder, "manifest.json");
+
+                if (!File.Exists(manifestLoc))
+                {
+                    LoggingHelper.LogWarning($"Plugin folder contained no manifest.json");
+                    continue;
+                }
+
+                PluginLoader? loader = null;
+
+                try
+                {
+                    string json = await File.ReadAllTextAsync(manifestLoc);
+                    PluginManifest manifest = JsonSerializer.Deserialize<PluginManifest>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    string entrypoint = Path.Combine(pluginFolder, manifest.Entrypoint);
+
+                    if (!File.Exists(entrypoint))
+                        throw new Exception($"[{manifest.Name}] Plugins entrypoint not found");
+
+                    loader = new PluginLoader(entrypoint);
+                    Assembly assembly = loader.LoadFromAssemblyPath(Path.GetFullPath(entrypoint));
+
+                    var entryPointType = assembly.GetTypes().FirstOrDefault(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
+
+                    if (entryPointType == null)
+                        throw new Exception($"[{manifest.Name}] Plugin entrypoint doesn't correctly inherit from IPlugin");
+
+                    IPlugin plugin = (IPlugin)Activator.CreateInstance(entryPointType)!;
+
+                    await plugin.Register();
+                    loadedPlugins.Add(manifest, plugin);
+                }
+                catch (Exception e)
+                {
+                    LoggingHelper.LogError(e.Message);
+                    loader?.Unload();
+                }
+            }
+        }
+    }
+}

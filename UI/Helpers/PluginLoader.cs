@@ -9,7 +9,7 @@ public class PluginLoader : AssemblyLoadContext
 {
     private readonly AssemblyDependencyResolver _resolver;
 
-    public PluginLoader(string pluginPath) : base(isCollectible: true)
+    public PluginLoader(string pluginPath) : base(isCollectible: false)
     {
         _resolver = new AssemblyDependencyResolver(pluginPath);
     }

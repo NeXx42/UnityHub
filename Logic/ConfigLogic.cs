@@ -7,9 +7,10 @@ namespace Logic;
 public class ConfigLogic : IConfigLogic
 {
     public IDataRepository data => DependencyManager.GetService<IDataRepository>()!;
-    private Dictionary<ConfigEntry, string?[]> cache = new();
+    private Dictionary<string, string?[]> cache = new();
 
-    public async Task<T> Get<T>(ConfigEntry key, T defaultVal)
+    public async Task<T> Get<T>(ConfigEntry key, T defaultVal) => await Get(key.ToString(), defaultVal);
+    public async Task<T> Get<T>(string key, T defaultVal)
     {
         string?[] values;
 
@@ -40,9 +41,10 @@ public class ConfigLogic : IConfigLogic
         return JsonSerializer.Deserialize<T>(firstValue) ?? defaultVal;
     }
 
-    public async Task Set<T>(ConfigEntry key, T? value, bool removeIfEmpty)
+    public async Task Set<T>(ConfigEntry key, T? value, bool removeIfEmpty) => await Set(key.ToString(), value, removeIfEmpty);
+    public async Task Set<T>(string key, T? value, bool removeIfNull)
     {
-        if (value == null && removeIfEmpty)
+        if (value == null && removeIfNull)
         {
             await data.DeleteConfigValue(key.ToString());
             return;
