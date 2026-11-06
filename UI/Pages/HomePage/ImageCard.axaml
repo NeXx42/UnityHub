@@ -90,8 +90,9 @@
 
         <StackPanel Orientation="Horizontal" x:Name="cont_Tags" Grid.Row="3" Margin="8 0 0 0" Spacing="5" />
 
-        <Grid Grid.Row="4" Margin="8 0 0 0" VerticalAlignment="Bottom" x:Name="cont_Bottom">
+        <Grid Grid.Row="4" Margin="8 0 0 0" VerticalAlignment="Bottom" >
           <Label x:Name="lbl_LastAccessed" Content="{Binding getLastOpenedTxt}" Foreground="{DynamicResource TextColourMuted}" FontSize="10"/>
+          <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5" x:Name="cont_Bottom" />
         </Grid>
       </Grid>
     </Grid>

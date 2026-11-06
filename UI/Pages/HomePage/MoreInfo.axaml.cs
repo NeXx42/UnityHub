@@ -28,6 +28,9 @@ public partial class MoreInfo : UserControl
 
     public static FrontendPluginHandler<MoreInfo_Plugin> plugins = new FrontendPluginHandler<MoreInfo_Plugin>();
 
+    public StackPanel getAllActions => cont_AllActions;
+    public Grid getAllActionsContainer => cont_AllActions_Container;
+
     public StackPanel getActionsContainer => cont_Actions;
     public StackPanel getContentContainer => cont_Main;
     public StackPanel getMetadataContentContainer => cont_MetaData;
@@ -108,6 +111,7 @@ public partial class MoreInfo : UserControl
             () => btn_AddCollection.IsOpen = false)
         );
 
+        inp_Version.IsEnabled = !string.IsNullOrEmpty(info.directory);
         plugins.Execute(p => p.UpdateSelected(info));
     }
 

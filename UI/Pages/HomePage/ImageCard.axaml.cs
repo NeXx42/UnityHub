@@ -31,7 +31,7 @@ public partial class ImageCard : UserControl
 
     private ReusableList<CollectionItem> tags;
 
-    public Grid get_cont_Bottom => cont_Bottom;
+    public StackPanel get_cont_Bottom => cont_Bottom;
 
     public ImageCard()
     {

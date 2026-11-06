@@ -268,34 +268,39 @@ public class SqliteDataRepo : IDataRepository
     }
 
 
-    public async Task<int> CreateCard(ProjectInfo info) => (await CreateCards([info])).Values.Single();
-    public async Task<Dictionary<string, int>> CreateCards(IEnumerable<ProjectInfo> cards)
+    public async Task CreateCard(ProjectInfo info)
+        => await CreateCards([info]);
+
+    public async Task CreateCards(IEnumerable<ProjectInfo> cards)
     {
-        dbo_Project[] dbObjs = cards.Select(MapToDto).ToArray();
-        dbo_Project[] dboItems = await database!.InsertItem(dbObjs);
+        if (cards.Count() == 0)
+            return;
 
-        Dictionary<string, int> newIds = new Dictionary<string, int>();
+        List<dbo_ProjectTag> tags = new List<dbo_ProjectTag>();
+        List<dbo_ProjectMetadata> metadata = new List<dbo_ProjectMetadata>();
 
-        foreach (dbo_Project newItem in dboItems)
+        foreach (ProjectInfo info in cards)
         {
-            if (!newIds.ContainsKey(newItem.directory)) // ordered so if some how there is a duplicate it should still select the newest
-                newIds[newItem.directory] = newItem.id;
-        }
+            // have to insert this sequentially because there is no real way to match up the cards param and the results form the db
+            dbo_Project newInsert = (await database!.InsertItem(MapToDto(info))).Single();
+            info.id = newInsert.id;
 
-        foreach (ProjectInfo newProj in cards)
-        {
-            if (newProj.tags.Count == 0)
-                continue;
-
-            int newId = newIds[newProj.directory];
-            await database!.InsertItem(newProj.tags.Select(t => new dbo_ProjectTag()
+            tags.AddRange(info.tags.Select(t => new dbo_ProjectTag()
             {
-                TagId = t,
-                ProjectId = newId
+                ProjectId = info.id,
+                TagId = t
+            }));
+
+            metadata.AddRange(info.metadata.Select(m => new dbo_ProjectMetadata()
+            {
+                ProjectId = info.id,
+                Key = m.Key,
+                Value = m.Value
             }));
         }
 
-        return newIds;
+        await database!.InsertItem(tags);
+        await database!.InsertItem(metadata);
     }
 
     public async Task<TagData[]> GetTags()

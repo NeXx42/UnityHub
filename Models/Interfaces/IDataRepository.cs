@@ -18,8 +18,8 @@ public interface IDataRepository
     public Task UpdateProjectProperties(ProjectInfo info, IEnumerable<string> properties);
     public Task UpdateProjectProperties(IEnumerable<ProjectInfo> updates, IEnumerable<string> properties);
 
-    public Task<int> CreateCard(ProjectInfo info);
-    public Task<Dictionary<string, int>> CreateCards(IEnumerable<ProjectInfo> cards);
+    public Task CreateCard(ProjectInfo info);
+    public Task CreateCards(IEnumerable<ProjectInfo> cards);
     public Task DeleteCard(IEnumerable<int> ids);
 
 

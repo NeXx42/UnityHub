@@ -31,7 +31,7 @@ class Program
         try
         {
             LoggingHelper.Log("Running setup");
-            Setup().Wait();
+            Setup().ConfigureAwait(false).GetAwaiter().GetResult();
             LoggingHelper.Log("Completed setup");
 
             LoggingHelper.Log("Starting avalonia");

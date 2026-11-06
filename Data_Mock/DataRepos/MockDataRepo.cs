@@ -182,12 +182,12 @@ public class MockDataRepo : IDataRepository
         throw new NotImplementedException();
     }
 
-    Task<int> IDataRepository.CreateCard(ProjectInfo info)
+    Task IDataRepository.CreateCard(ProjectInfo info)
     {
         throw new NotImplementedException();
     }
 
-    Task<Dictionary<string, int>> IDataRepository.CreateCards(IEnumerable<ProjectInfo> cards)
+    Task IDataRepository.CreateCards(IEnumerable<ProjectInfo> cards)
     {
         throw new NotImplementedException();
     }

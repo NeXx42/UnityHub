@@ -21,7 +21,6 @@ public static class PluginHelper
     public static IPlugin GetPlugin(PluginManifest manifest)
         => loadedPlugins[manifest];
 
-
     public static async Task LoadPlugins()
     {
         string root = Path.Combine(AppContext.BaseDirectory, "Plugins");
@@ -71,4 +70,7 @@ public static class PluginHelper
             }
         }
     }
+
+    public static LoadRequest[] GetPluginLoads()
+        => loadedPlugins.SelectMany(l => l.Value.OnLaunch()).ToArray();
 }

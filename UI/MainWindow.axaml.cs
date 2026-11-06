@@ -57,12 +57,15 @@ public partial class MainWindow : Window, IUILinker
 
         activeModals = new Stack<ModalContainer>();
 
-        CheckForStartup().Wrap();
         RequestPage(PageNames.Home).Wrap();
+        CheckForStartup().Wrap();
     }
 
     private async Task CheckForStartup()
     {
+        LoadRequest[] toLoad = PluginHelper.GetPluginLoads();
+        await DependencyManager.ui!.LoadProgressive("Loading plugins", toLoad);
+
         IConfigLogic configLogic = DependencyManager.GetService<IConfigLogic>()!;
         bool isSetup = await configLogic.Get(Models.Enums.ConfigEntry.IsSetup, false);
 

@@ -317,16 +317,7 @@ public class ProjectLogic : IProjectLogic
 
     public async Task UploadCardsPrimitive(IEnumerable<ProjectInfo> cards)
     {
-        Dictionary<string, int> res = await data.CreateCards(cards);
-
-        foreach (ProjectInfo card in cards)
-        {
-            if (res.TryGetValue(card.directory, out int databaseId))
-                card.id = databaseId;
-            else
-                LoggingHelper.LogError($"Failed to create project - {card.directory}");
-        }
-
+        await data.CreateCards(cards);
         callback?.Invoke(nameof(UploadCardsPrimitive));
     }
 
