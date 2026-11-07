@@ -22,7 +22,7 @@ public partial class SettingsPage_Common_Dropdown : UserControl, INotifyProperty
 
     private bool isSupported = true;
 
-    private ConfigEntry? key;
+    private string? key;
     private string? fallbackVal;
     private bool isActive = false;
 
@@ -35,6 +35,9 @@ public partial class SettingsPage_Common_Dropdown : UserControl, INotifyProperty
 
 
     public ISettingsPageSetting Init(ConfigEntry key, bool supportWindows = true, bool supportLinux = true)
+        => Init(key.ToString(), supportWindows, supportLinux);
+
+    public ISettingsPageSetting Init(string key, bool supportWindows = true, bool supportLinux = true)
     {
         if (GlobalConfig.isOnLinux && !supportLinux)
         {
@@ -83,7 +86,7 @@ public partial class SettingsPage_Common_Dropdown : UserControl, INotifyProperty
 
         isActive = false;
 
-        string res = await configProvider.Get(key!.Value, fallbackVal ?? "");
+        string res = await configProvider.Get(key!, fallbackVal ?? "");
         inp_Options.SelectedValue = res;
 
         if (inp_Options.SelectedIndex == -1)
@@ -97,6 +100,6 @@ public partial class SettingsPage_Common_Dropdown : UserControl, INotifyProperty
         if (!isActive)
             return;
 
-        await DependencyManager.GetService<IConfigLogic>()!.Set(key!.Value, inp_Options.SelectedValue, true);
+        await DependencyManager.GetService<IConfigLogic>()!.Set(key!, inp_Options.SelectedValue, true);
     }
 }

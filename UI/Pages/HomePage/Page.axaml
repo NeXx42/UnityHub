@@ -39,12 +39,11 @@
             <WrapPanel Grid.Column="2" x:Name="cont_Filters" ItemSpacing="5" LineSpacing="5" ItemHeight="30"/>
           </Grid>
 
-          <StackPanel Grid.Column="1"  Orientation="Horizontal" x:Name="cont_LayoutActions" Spacing="5">
+          <StackPanel Grid.Column="1"  Orientation="Horizontal" x:Name="cont_LayoutActions" x:FieldModifier="public"  Spacing="5">
             <Border Background="{DynamicResource ButtonBackground}" CornerRadius="{DynamicResource CornerRadius_Element}" BorderBrush="{DynamicResource ButtonBorder}" BorderThickness="1">
               <StackPanel Orientation="Horizontal" x:Name="cont_Layouts"/>
             </Border>
           </StackPanel>
-          <controls:ButtonWrapper Width="100" Label="Sync" />
         </Grid>
 
       </StackPanel>

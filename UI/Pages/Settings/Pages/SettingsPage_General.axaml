@@ -19,10 +19,7 @@
     </Grid>
 
     <Label FontSize="20" Content="{DynamicResource LANG_Literal_Projects}"/>
-    <Grid ColumnDefinitions="* 5 200">
-      <Label>Derive missing metadata</Label>
-      <controls:ButtonWrapper Label="Derive" x:Name="btn_Projects_DeriveMissingMetadata" Classes="Primary" Grid.Column="2" HorizontalContentAlignment="Center"/>
-    </Grid>
+    <common:SettingsPage_Common_Button x:Name="setting_DeriveMissingMetadata" Label="Derive missing metadata" ButtonText="Derive" />
 
     <Label FontSize="20">Behaviour</Label>
     <common:SettingsPage_Common_Dropdown x:Name="setting_LaunchBehaviour" Label="Launch Behaviour"/>

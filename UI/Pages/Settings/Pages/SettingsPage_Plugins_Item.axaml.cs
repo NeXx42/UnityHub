@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Models.Data;
+using Models.Interfaces;
 using UI.Helpers;
 
 namespace UnityHub.UI.Pages.Settings.Pages;
@@ -28,15 +29,28 @@ public partial class SettingsPage_Plugins_Item : UserControl
         this.DataContext = manifest;
         this.activeManifest = manifest;
 
-        if (PluginHelper.GetPlugin(activeManifest).RequiresAuthentication())
+        IPlugin? plugin = PluginHelper.GetPlugin(activeManifest);
+
+        if (plugin == null)
         {
-            btn_Settings.Label = "Authenticate";
+            btn_Settings.IsVisible = false;
+            lbl_FailedToLoad.IsVisible = true;
         }
         else
         {
-            btn_Settings.Label = "Settings";
+            btn_Settings.IsVisible = true;
+            lbl_FailedToLoad.IsVisible = false;
+
+            if (plugin.RequiresAuthentication())
+            {
+                btn_Settings.Label = "Authenticate";
+            }
+            else
+            {
+                btn_Settings.Label = "Settings";
+            }
         }
     }
 
-    private Task HandleAction() => PluginHelper.GetPlugin(activeManifest).RequestSettingsOrAuth();
+    private Task HandleAction() => PluginHelper.GetPlugin(activeManifest)!.RequestSettingsOrAuth();
 }

@@ -27,7 +27,7 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
     {
         InitializeComponent();
 
-        btn_Projects_DeriveMissingMetadata.RegisterClick(DeriveMissingMetadata);
+        setting_DeriveMissingMetadata.Setup(DeriveMissingMetadata);
         inp_LanguageDropdown.SelectionChanged += (_, __) => UpdateLanguage();
 
         settings = [

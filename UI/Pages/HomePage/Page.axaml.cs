@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Logic;
 using Models.Data;
 using Models.Enums;
-using Models.Helpers;
 using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
@@ -23,6 +21,8 @@ namespace UI.Pages.HomePage;
 
 public interface IPlugin_HomePage : IFrontendPlugin
 {
+    public void PostSetup(Page page);
+
     public void RegisterLayout(List<Type> displays);
     public void RegisterCreateButtons(List<(string title, Func<Task> callback)> options);
 }
@@ -113,6 +113,8 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         DependencyManager.GetService<IProjectLogic>()?.RegisterCallback(ProjectLogicCallback);
 
         contentDisplayers[0].ToggleVisibility(true);
+
+        plugins.Execute(p => p.PostSetup(this));
     }
 
 
