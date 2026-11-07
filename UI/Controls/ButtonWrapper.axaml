@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.ButtonWrapper" x:Name="root">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Controls.ButtonWrapper" x:Name="root">
   <UserControl.Styles>
     <Style Selector="Border#btn">
       <Setter Property="Background" Value="{DynamicResource ButtonBackground}"/>
@@ -43,11 +43,17 @@
     <Style Selector=".Primary Border#btn:pointerover">
       <Setter Property="Background" Value="{DynamicResource AccentColourDark}"/>
     </Style>
-
     <Style Selector=".Disabled Border#btn > Grid > TextBlock">
       <Setter Property="Foreground" Value="{DynamicResource TextColourMuted}"/>
     </Style>
 
+    <Style Selector=".Negative Border#btn">
+      <Setter Property="Background" Value="{DynamicResource ErrorBackground}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorder}"/>
+    </Style>
+    <Style Selector=".Negative Border#btn:pointerover">
+      <Setter Property="Background" Value="{DynamicResource ErrorBorder}"/>
+    </Style>
   </UserControl.Styles>
 
   <Panel x:Name="RootPanel" HorizontalAlignment="Stretch">

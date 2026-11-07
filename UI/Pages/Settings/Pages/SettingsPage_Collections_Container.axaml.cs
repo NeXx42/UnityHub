@@ -50,7 +50,7 @@ public partial class SettingsPage_Collections_Container : UserControl
         switch (optionIndex)
         {
             case 0: // edit
-                TagData? res = await MainWindow.ShowModalAndWait<CreateCollectionModal, TagData>(async d => await d.Init(activeData));
+                TagData? res = await MainWindow.ShowModalAndWait<CreateCollectionModal, TagData>(async (d, c) => await d.Init(activeData, c));
 
                 if (res == null || res.collectionId == -1)
                     return;

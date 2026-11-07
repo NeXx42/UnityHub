@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Logic;
@@ -13,13 +14,15 @@ using UI.Helpers;
 
 namespace UI.Modals;
 
-public partial class CreateProjectModal : UserControl, IModal
+public partial class CreateProjectModal : UserControl, IModalAutoWait
 {
     private TaskCompletionSource? task;
     private EditorInstallInfo[] installedVersions = [];
 
     private Dictionary<string, string> selectedPackages = new();
     private ReusableList<CreateProjectModal_Package> packageList;
+
+    public ModalContainer? container { get; set; }
 
     public CreateProjectModal()
     {
@@ -34,13 +37,10 @@ public partial class CreateProjectModal : UserControl, IModal
         packageList = new ReusableList<CreateProjectModal_Package>(cont_Packages);
     }
 
-    public bool canDismiss => true;
-    public ModalContainer setContainer { set => _ = value; }
-
-    public Task Show()
+    public Task Launch(CancellationToken token)
     {
         task?.SetCanceled();
-        task = new TaskCompletionSource();
+        task = new TaskCompletionSource().WithCancellationToken(token);
 
         Draw().Wrap();
         return task.Task;

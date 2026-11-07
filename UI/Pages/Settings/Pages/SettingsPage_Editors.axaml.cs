@@ -83,10 +83,7 @@ public partial class SettingsPage_Editors : UserControl, ISettingsPage
 
     private async Task InstallNewEditor()
     {
-        EditorInstallerModal modal = MainWindow.ShowModal<EditorInstallerModal>(out int pos);
-        await modal.Open();
-
-        await MainWindow.CloseModal(pos);
+        await MainWindow.ShowModalAndAutoWait<EditorInstallerModal>();
         await RedrawDownloaded();
     }
 

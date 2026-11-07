@@ -25,8 +25,7 @@ public partial class LoadingModal : UserControl, IModal, INotifyPropertyChanged
         InitializeComponent();
     }
 
-    public bool canDismiss => false;
-    public ModalContainer setContainer { set => _ = value; }
+    public ModalContainer? container { get; set; }
 
     public async Task<Exception?> LoadProgressive(string header, params IEnumerable<LoadRequest> reqs)
     {

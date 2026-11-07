@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -26,10 +27,9 @@ public partial class ConfirmationBox : UserControl, IModal, INotifyPropertyChang
         buttons = new ReusableList<ButtonWrapper>(cont_Btns);
     }
 
-    public bool canDismiss => false;
-    public ModalContainer setContainer { set => _ = value; }
+    public ModalContainer? container { get; set; }
 
-    public Task<int?> Show(string header, string msg, params IEnumerable<ConfirmationButton> btns)
+    public Task<int?> Show(string header, string msg, CancellationToken token, params IEnumerable<ConfirmationButton> btns)
     {
         this.Header = header;
         this.Body = msg;
@@ -37,7 +37,7 @@ public partial class ConfirmationBox : UserControl, IModal, INotifyPropertyChang
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
 
         completeTask?.SetCanceled();
-        completeTask = new TaskCompletionSource<int?>();
+        completeTask = new TaskCompletionSource<int?>().WithCancellationToken(token);
 
         buttons.Draw(btns, (btn, pos, dat) =>
         {

@@ -1,16 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Logic;
-using Microsoft.VisualBasic;
 using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
 using UI.Helpers;
-using UI.Modals;
 
 namespace UI.Modals;
 
@@ -32,12 +29,11 @@ public partial class EditorManagerModal : UserControl, IModal
         btn_Install.RegisterClick(Install);
     }
 
-    public ModalContainer setContainer { set => _ = value; }
-    public bool canDismiss => true;
+    public ModalContainer? container { get; set; }
 
-    public Task Open<T>(T info) where T : EditorInfo
+    public Task Open<T>(T info, CancellationToken token) where T : EditorInfo
     {
-        openTask = new TaskCompletionSource();
+        openTask = new TaskCompletionSource(token).WithCancellationToken(token);
 
         this.DataContext = info;
         this.editorInfo = info;

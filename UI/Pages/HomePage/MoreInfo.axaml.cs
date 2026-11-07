@@ -219,7 +219,7 @@ public partial class MoreInfo : UserControl
         if (info == null)
             return;
 
-        await MainWindow.ShowModalAndWait<MoveProject_Modal>(async m => await m.Open(info));
+        await MainWindow.ShowModalAndWait<MoveProject_Modal>(async (m, c) => await m.Open(info, c));
     }
 
     private async Task CloneProject()
@@ -227,6 +227,6 @@ public partial class MoreInfo : UserControl
         if (info == null)
             return;
 
-        await MainWindow.ShowModalAndWait<DuplicateProject_Modal>(async m => await m.Open(info));
+        await MainWindow.ShowModalAndWait<DuplicateProject_Modal>(async (m, c) => await m.Open(info, c));
     }
 }

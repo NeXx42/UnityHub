@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:controls="clr-namespace:UI.Controls">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:UI.Controls">
 
   <Color x:Key="Colour_BackgroundColour">#0f151a</Color>
   <SolidColorBrush x:Key="BackgroundColour" Color="{DynamicResource Colour_BackgroundColour}" />
@@ -58,6 +58,15 @@
   <ControlTheme x:Key="{x:Type controls:ButtonWrapper}" TargetType="controls:ButtonWrapper">
     <Setter Property="CornerRadius" Value="{DynamicResource CornerRadius_Element}" />
   </ControlTheme>
+
+  <Color x:Key="Colour_ErrorBorder">#5a2226</Color>
+  <SolidColorBrush x:Key="ErrorBorder" Color="{DynamicResource Colour_ErrorBorder}" />
+
+  <Color x:Key="Colour_ErrorBackground">#2b1416</Color>
+  <SolidColorBrush x:Key="ErrorBackground" Color="{DynamicResource Colour_ErrorBackground}" />
+
+  <Color x:Key="Colour_ErrorText">#ff7a7a</Color>
+  <SolidColorBrush x:Key="ErrorText" Color="{DynamicResource Colour_ErrorText}" />
 
   <!-- Overrides -->
   <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{DynamicResource Colour_AccentColour}" />

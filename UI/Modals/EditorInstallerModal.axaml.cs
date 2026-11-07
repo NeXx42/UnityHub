@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -14,7 +15,7 @@ using UI.Helpers;
 
 namespace UI.Modals;
 
-public partial class EditorInstallerModal : UserControl, IModal
+public partial class EditorInstallerModal : UserControl, IModalAutoWait
 {
     private TaskCompletionSource? modalTask;
 
@@ -28,6 +29,8 @@ public partial class EditorInstallerModal : UserControl, IModal
     private int maxPages;
 
     private const int pageTake = 10;
+
+    public ModalContainer? container { get; set; }
 
     public EditorInstallerModal()
     {
@@ -45,16 +48,14 @@ public partial class EditorInstallerModal : UserControl, IModal
         btn_Search.RegisterClick(() => UpdateSelectedEditorType(EditorFilterType.Archive, true));
     }
 
-    public bool canDismiss => true;
-    public ModalContainer setContainer { set => _ = value; }
-
-    public Task Open()
+    public Task Launch(CancellationToken token)
     {
         modalTask = new TaskCompletionSource();
         UpdateSelectedEditorType(EditorFilterType.LTS, true).Wrap();
 
         return modalTask.Task;
     }
+
     private async Task UpdateSelectedEditorType(EditorFilterType type, bool resetPage)
     {
         if (resetPage)
@@ -84,9 +85,9 @@ public partial class EditorInstallerModal : UserControl, IModal
 
         async Task OpenInstallModal(EditorInfo info)
         {
-            await MainWindow.ShowModalAndWait<EditorManagerModal>(async m =>
+            await MainWindow.ShowModalAndWait<EditorManagerModal>(async (m, c) =>
             {
-                await m.Open(info);
+                await m.Open(info, c);
             });
         }
     }

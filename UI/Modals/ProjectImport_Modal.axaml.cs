@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -29,12 +30,11 @@ public partial class ProjectImport_Modal : UserControl, IModal
         btn_Cancel.RegisterClick(() => task?.SetCanceled());
     }
 
-    public ModalContainer setContainer { set => _ = value; }
-    public bool canDismiss => true;
+    public ModalContainer? container { get; set; }
 
-    public Task Show(IEnumerable<string> projects)
+    public Task Show(CancellationToken token, IEnumerable<string> projects)
     {
-        task = new TaskCompletionSource();
+        task = new TaskCompletionSource().WithCancellationToken(token);
 
         importList.DrawAsync(
             () => DependencyManager.GetService<IProjectLogic>()!.VerifyProjectPrimative(projects),

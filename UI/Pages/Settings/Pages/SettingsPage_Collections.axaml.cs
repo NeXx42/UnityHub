@@ -43,9 +43,9 @@ public partial class SettingsPage_Collections : UserControl, ISettingsPage
 
     private async Task TryToCreateTag()
     {
-        TagData? newTag = await MainWindow.ShowModalAndWait<CreateCollectionModal, TagData>(async m =>
+        TagData? newTag = await MainWindow.ShowModalAndWait<CreateCollectionModal, TagData>(async (m, c) =>
         {
-            return await m.Init<TagData>(null);
+            return await m.Init<TagData>(null, c);
         });
 
         if (newTag == null)
@@ -57,9 +57,9 @@ public partial class SettingsPage_Collections : UserControl, ISettingsPage
 
     private async Task TryToCreateCollection()
     {
-        CollectionData? newCol = (CollectionData?)await MainWindow.ShowModalAndWait<CreateCollectionModal, TagData>(async m =>
+        CollectionData? newCol = (CollectionData?)await MainWindow.ShowModalAndWait<CreateCollectionModal, TagData>(async (m, c) =>
         {
-            return await m.Init<CollectionData>(null);
+            return await m.Init<CollectionData>(null, c);
         });
 
         if (newCol == null)

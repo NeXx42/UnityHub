@@ -4,7 +4,7 @@ namespace Models.Interfaces;
 
 public interface IUILinker
 {
-    public Task ShowMessageBox(string msg, string paragraph);
+    public Task ShowMessageBox(string msg, string paragraph, bool isException = false);
     public Task ShowMessageBox(Exception e);
 
     public Task RequestVersionInstall(string? version);

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -30,6 +31,8 @@ public partial class CreateCollectionModal : UserControl, IModal, INotifyPropert
 
     private TaskCompletionSource<TagData>? saveTask;
 
+    public ModalContainer? container { get; set; }
+
     public CreateCollectionModal()
     {
         InitializeComponent();
@@ -40,12 +43,9 @@ public partial class CreateCollectionModal : UserControl, IModal, INotifyPropert
         inp_CollectionHandling.ItemsSource = Enum.GetValues<CollectionHandlingTypes>();
     }
 
-    public bool canDismiss => true;
-    public ModalContainer setContainer { set => _ = value; }
-
-    public Task<TagData> Init<T>(T? existingData) where T : TagData
+    public Task<TagData> Init<T>(T? existingData, CancellationToken token) where T : TagData
     {
-        saveTask = new TaskCompletionSource<TagData>();
+        saveTask = new TaskCompletionSource<TagData>().WithCancellationToken(token);
         representingId = existingData?.collectionId;
 
         int collectionSize;

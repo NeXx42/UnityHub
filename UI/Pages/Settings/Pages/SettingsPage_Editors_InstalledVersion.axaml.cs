@@ -112,9 +112,9 @@ public partial class SettingsPage_Editors_InstalledVersion : UserControl, INotif
                 if (info == null)
                     return;
 
-                await MainWindow.ShowModalAndWait<EditorManagerModal>(async m =>
+                await MainWindow.ShowModalAndWait<EditorManagerModal>(async (m, c) =>
                 {
-                    await m.Open(info);
+                    await m.Open(info, c);
                 });
                 break;
 

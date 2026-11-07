@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -71,7 +72,7 @@ public partial class MainWindow : Window, IUILinker
 
         if (!isSetup)
         {
-            await ShowModalAndWait<Startup_Modal>(m => m.FirstLaunchSetup());
+            await ShowModalAndWait<Startup_Modal>((m, _) => m.FirstLaunchSetup());
         }
         else
         {
@@ -82,13 +83,13 @@ public partial class MainWindow : Window, IUILinker
                 string? ignoredVersion = await configLogic.Get(Models.Enums.ConfigEntry.IgnoredUpdate, string.Empty);
 
                 if (ignoredVersion != versionName)
-                    await ShowModalAndWait<Startup_Modal>(m => m.UpdateLaunch(updateMessage));
+                    await ShowModalAndWait<Startup_Modal>((m, c) => m.UpdateLaunch(updateMessage, c));
             }
         }
     }
 
 
-    public static T ShowModal<T>(out int pos) where T : UserControl, IModal
+    public static T ShowModal<T>(out CancellationToken token, out int pos) where T : UserControl, IModal
     {
         pos = instance!.activeModals.Count;
 
@@ -97,43 +98,43 @@ public partial class MainWindow : Window, IUILinker
         instance.activeModals.Push(container);
         instance.cont_Modals.Children.Add(container);
 
-        return container.ShowModal<T>(pos, CloseModal);
+        return container.ShowModal<T>(out token);
     }
 
     public static async Task ShowModalAndAutoWait<T>() where T : UserControl, IModalAutoWait
     {
-        T modal = ShowModal<T>(out int pos);
+        T modal = ShowModal<T>(out CancellationToken token, out int pos);
 
         try
         {
-            await modal.Launch();
+            await modal.Launch(token);
         }
         catch (TaskCanceledException) { }
 
         await CloseModal(pos);
     }
 
-    public static async Task ShowModalAndWait<T>(Func<T, Task> handler) where T : UserControl, IModal
+    public static async Task ShowModalAndWait<T>(Func<T, CancellationToken, Task> handler) where T : UserControl, IModal
     {
-        T modal = ShowModal<T>(out int pos);
+        T modal = ShowModal<T>(out CancellationToken token, out int pos);
 
         try
         {
-            await handler(modal);
+            await handler(modal, token);
         }
         catch (TaskCanceledException) { }
 
         await CloseModal(pos);
     }
 
-    public static async Task<RES?> ShowModalAndWait<T, RES>(Func<T, Task<RES>> handler) where T : UserControl, IModal
+    public static async Task<RES?> ShowModalAndWait<T, RES>(Func<T, CancellationToken, Task<RES>> handler) where T : UserControl, IModal
     {
-        T modal = ShowModal<T>(out int pos);
+        T modal = ShowModal<T>(out CancellationToken token, out int pos);
         RES? res = default;
 
         try
         {
-            res = await handler(modal);
+            res = await handler(modal, token);
         }
         catch (TaskCanceledException) { }
 
@@ -172,19 +173,19 @@ public partial class MainWindow : Window, IUILinker
         return res != null ? res[0] : null;
     }
 
-    public async Task ShowMessageBox(string header, string paragraph)
+    public async Task ShowMessageBox(string header, string paragraph, bool isException = false)
     {
-        await ShowModalAndWait<MessageBox>(async m =>
+        await ShowModalAndWait<MessageBox>(async (m, c) =>
         {
-            await m.Show(header, paragraph);
+            await m.Show(header, paragraph, c, isException);
         });
     }
 
     public async Task ShowMessageBox(Exception e)
     {
-        await ShowModalAndWait<MessageBox>(async m =>
+        await ShowModalAndWait<MessageBox>(async (m, c) =>
         {
-            await m.Show(e);
+            await m.Show(e, c);
         });
     }
 
@@ -210,11 +211,10 @@ public partial class MainWindow : Window, IUILinker
 
     public async Task<int?> ShowConfirmationBox(string header, string paragraph, params IEnumerable<ConfirmationButton> btns)
     {
-        ConfirmationBox box = ShowModal<ConfirmationBox>(out int pos);
-        int? res = await box.Show(header, paragraph, btns);
-
-        await CloseModal(pos);
-        return res;
+        return await ShowModalAndWait<ConfirmationBox, int?>(async (m, c) =>
+        {
+            return await m.Show(header, paragraph, c, btns);
+        });
     }
 
     public async Task<Exception?> LoadProgressive(string header, params IEnumerable<LoadRequest> tasks)
@@ -223,7 +223,7 @@ public partial class MainWindow : Window, IUILinker
 
         await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(async () =>
         {
-            await ShowModalAndWait<LoadingModal>(async msg =>
+            await ShowModalAndWait<LoadingModal>(async (msg, _) =>
             {
                 e = await msg.LoadProgressive(header, tasks);
             });
@@ -254,7 +254,7 @@ public partial class MainWindow : Window, IUILinker
             return;
         }
 
-        await ShowModalAndWait<EditorManagerModal>(async m => await m.Open(metadata));
+        await ShowModalAndWait<EditorManagerModal>(async (m, c) => await m.Open(metadata, c));
     }
 
     public void Quit()

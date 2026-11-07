@@ -3,9 +3,26 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Modals.MessageBox" x:Name="root"
              xmlns:controls="clr-namespace:UI.Controls">
-  <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="{DynamicResource CornerRadius_Menu}" MinWidth="250" MinHeight="150">
+  <Border BorderThickness="1" CornerRadius="{DynamicResource CornerRadius_Menu}" MinWidth="250" MinHeight="150">
+    <Border.Styles>
+      <Style Selector="Border">
+        <Setter Property="Background" Value="{DynamicResource BackgroundColourDark}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorder}" />
+      </Style>
+      <Style Selector="#root.Error Border">
+        <Setter Property="Background" Value="{DynamicResource ErrorBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorder}" />
+      </Style>
+    </Border.Styles>
+
     <Grid RowDefinitions="Auto * Auto" Margin="10">
-      <Label Content="{Binding #root.Header}" Grid.Row="0" HorizontalAlignment="Center" FontSize="20"/>
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+        <Viewbox x:Name="img_Error">
+          <Path Fill="{DynamicResource ErrorText}" Data="M8.982 1.566A1.13 1.13 0 0 0 7.022 1.566L0.165 13.233C-0.292 14.011 0.256 15 1.145 15H14.858C15.747 15 16.296 14.011 15.838 13.233ZM8 5C8.535 5 8.954 5.462 8.9 5.995L8.55 9.502A0.552 0.552 0 0 1 7.45 9.502L7.1 5.995A0.905 0.905 0 0 1 8 5ZM8.002 11A1 1 0 1 1 8.002 13A1 1 0 0 1 8.002 11Z"/>
+        </Viewbox>
+        <Label Content="{Binding #root.Header}" Grid.Row="0" FontSize="20"/>
+      </StackPanel>
+
       <TextBlock Text="{Binding #root.Paragraph}" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 5"/>
 
       <StackPanel HorizontalAlignment="Right" Grid.Row="2">

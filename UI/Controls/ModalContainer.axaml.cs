@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -13,22 +14,26 @@ public partial class ModalContainer : UserControl
     public Action? requestCloserEvent { private set; get; }
 
     private IModal? activeModal;
+    private CancellationTokenSource cancelToken;
+
     private UserControl? activeControl;
 
     public ModalContainer()
     {
         InitializeComponent();
 
+        cancelToken = new CancellationTokenSource();
         Container.PointerPressed += (_, __) => requestCloserEvent?.Invoke();
     }
 
-    public T ShowModal<T>(int pos, Func<int, Task> requestClosure) where T : UserControl, IModal
+    public T ShowModal<T>(out CancellationToken token) where T : UserControl, IModal
     {
-        T control = Activator.CreateInstance<T>();
-        control.setContainer = this;
+        token = cancelToken.Token;
 
-        if (control.canDismiss)
-            requestCloserEvent = () => requestClosure(pos).Wrap();
+        T control = Activator.CreateInstance<T>();
+        control.container = this;
+
+        requestCloserEvent = () => cancelToken.Cancel();
 
         activeModal = control;
         activeControl = control;

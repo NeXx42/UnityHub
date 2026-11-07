@@ -157,10 +157,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
 
     private async Task CreateNewProject()
     {
-        CreateProjectModal proj = MainWindow.ShowModal<CreateProjectModal>(out int id);
-        await proj.Show();
-
-        await MainWindow.CloseModal(id);
+        await MainWindow.ShowModalAndAutoWait<CreateProjectModal>();
     }
 
     private async Task AddFolderOfProjects()
@@ -171,7 +168,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
             return;
 
         string[] dirs = Directory.GetDirectories(root);
-        await MainWindow.ShowModalAndWait<ProjectImport_Modal>(async m => await m.Show(dirs));
+        await MainWindow.ShowModalAndWait<ProjectImport_Modal>(async (m, c) => await m.Show(c, dirs));
     }
 
     private async Task AddExistingProject()
@@ -181,7 +178,7 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         if ((folders?.Length ?? 0) == 0)
             return;
 
-        await MainWindow.ShowModalAndWait<ProjectImport_Modal>(async m => await m.Show(folders!));
+        await MainWindow.ShowModalAndWait<ProjectImport_Modal>(async (m, c) => await m.Show(c, folders!));
     }
 
     private async Task UpdatePage(int to)

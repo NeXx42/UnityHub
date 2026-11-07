@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.IO.IsolatedStorage;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -9,6 +10,7 @@ using Logic;
 using Models.Data;
 using Models.Interfaces;
 using UI.Controls;
+using UI.Helpers;
 
 namespace UI.Modals;
 
@@ -25,12 +27,11 @@ public partial class DuplicateProject_Modal : UserControl, IModal
         btn_Clone.RegisterClick(Clone);
     }
 
-    public ModalContainer setContainer { set => _ = value; }
-    public bool canDismiss => true;
+    public ModalContainer? container { get; set; }
 
-    public Task Open(ProjectInfo info)
+    public Task Open(ProjectInfo info, CancellationToken token)
     {
-        modalTask = new TaskCompletionSource();
+        modalTask = new TaskCompletionSource().WithCancellationToken(token);
 
         this.info = info;
         inp_Name.Text = $"{info.name} (Copy)";
