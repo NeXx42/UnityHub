@@ -23,6 +23,7 @@ public class SqliteDataRepo : IDataRepository
     {
 #if DEBUG
         string dataFolder = Path.Combine(GlobalConfig.getDataFolder, "data_debug.db");
+        //dataFolder = Path.Combine(GlobalConfig.getDataFolder, "data.db");
 #else
         string dataFolder = Path.Combine(GlobalConfig.getDataFolder, "data.db");
 #endif
@@ -463,7 +464,11 @@ public class SqliteDataRepo : IDataRepository
             { nameof(ProjectInfo.collectionId), nameof(dbo_Project.collectionId) },
         };
 
-        await database!.Update(updates.Select(MapToDto), (u) => SQLFilter.Equal(nameof(dbo_Project.id), u.id), [.. properties.Select(p => columnMappings[p])]);
+        string[] propertiesToUpdate = properties.Where(columnMappings.ContainsKey)
+            .Select(p => columnMappings[p]).
+            ToArray();
+
+        await database!.Update(updates.Select(MapToDto), (u) => SQLFilter.Equal(nameof(dbo_Project.id), u.id), propertiesToUpdate);
 
         if (properties.Contains(nameof(ProjectInfo.metadata)))
         {

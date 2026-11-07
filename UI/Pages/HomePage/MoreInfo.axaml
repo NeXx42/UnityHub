@@ -35,7 +35,7 @@
 
             <!-- Controls -->
             <Grid x:Name="cont_AllActions_Container">
-              <StackPanel IsVisible="False" Spacing="5" Name="cont_AllActions">
+              <StackPanel Spacing="5" Name="cont_AllActions">
                 <StackPanel.Styles>
                   <Style Selector="#cont_Actions Border">
                     <Setter Property="Height" Value="45"/>
@@ -92,7 +92,6 @@
                   </controls:ButtonWrapper>
                 </Grid>
               </StackPanel>
-              <controls:ButtonWrapper Classes="Primary" Label="Fetch"/>
             </Grid>
           </StackPanel>
 

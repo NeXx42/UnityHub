@@ -18,10 +18,9 @@ public class ProjectLogic : IProjectLogic
     private IDataRepository data => DependencyManager.GetService<IDataRepository>()!;
     private Dictionary<int, ProjectInfo?> cache = new Dictionary<int, ProjectInfo?>();
 
-    public void RegisterCallback(Action<string> callback)
-    {
-        this.callback += callback;
-    }
+
+    public void RequestCallbackInvoke(string callbackName) => callback?.Invoke(callbackName);
+    public void RegisterCallback(Action<string> callback) => this.callback += callback;
 
     public async Task Migrate()
     {

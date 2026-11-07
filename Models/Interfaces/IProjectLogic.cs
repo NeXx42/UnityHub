@@ -4,6 +4,7 @@ namespace Models.Interfaces;
 
 public interface IProjectLogic
 {
+    public void RequestCallbackInvoke(string callbackName);
     public void RegisterCallback(Action<string> callback);
 
     public Task<(ProjectInfo[], int total)> Search(ProjectSearch search);
