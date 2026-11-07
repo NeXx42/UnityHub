@@ -20,6 +20,8 @@ public partial class LoadingModal : UserControl, IModal, INotifyPropertyChanged
     public string header { get; set; } = "";
     public string msg { get; set; } = "";
 
+    public string percentage { get; set; } = "";
+
     public LoadingModal()
     {
         InitializeComponent();
@@ -33,8 +35,11 @@ public partial class LoadingModal : UserControl, IModal, INotifyPropertyChanged
         this.msg = string.Empty;
 
         inp_Progress.Minimum = 0;
-        inp_Progress.Maximum = reqs.Count() - 1;
+        inp_Progress.Maximum = (reqs.Count() - 1) * 100;
         inp_Progress.Value = 0;
+
+        int reqProgress = 0;
+        float subProgress = 0;
 
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         CancellationTokenSource token = new CancellationTokenSource();
@@ -44,14 +49,29 @@ public partial class LoadingModal : UserControl, IModal, INotifyPropertyChanged
             msg = task.msg;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(msg)));
 
-            Exception? e = await task.Run(token.Token);
+            Progress<float> secondaryProgress = new Progress<float>(v =>
+            {
+                subProgress = v;
+                RedrawProgress();
+            });
+            Exception? e = await task.Run(token.Token, secondaryProgress);
 
             if (e != null)
                 return e;
 
-            inp_Progress.Value++;
+            reqProgress++;
+            subProgress = 0;
+
+            RedrawProgress();
         }
 
         return null;
+
+        void RedrawProgress()
+        {
+            inp_Progress.Value = (100 * reqProgress) + subProgress;
+            percentage = $"{Math.Round((inp_Progress.Value / inp_Progress.Maximum) * 100)}%";
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(percentage)));
+        }
     }
 }

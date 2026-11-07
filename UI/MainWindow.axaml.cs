@@ -219,6 +219,9 @@ public partial class MainWindow : Window, IUILinker
 
     public async Task<Exception?> LoadProgressive(string header, params IEnumerable<LoadRequest> tasks)
     {
+        if (tasks.Count() == 0)
+            return new ArgumentException("Expected at least one load request");
+
         Exception? e = null;
 
         await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(async () =>

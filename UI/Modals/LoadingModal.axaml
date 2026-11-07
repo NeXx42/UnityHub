@@ -5,8 +5,11 @@
              xmlns:controls="clr-namespace:UI.Controls" x:Name="root">
   <Border Background="{DynamicResource BackgroundColourDark}" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorder}" CornerRadius="{DynamicResource CornerRadius_Menu}" MinWidth="250">
     <Grid RowDefinitions="Auto * Auto" Margin="10">
-      <Label Content="{Binding #root.header}" Grid.Row="0" HorizontalAlignment="Center"/>
-      <TextBlock Text="{Binding #root.msg}" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 5"/>
+      <Label Content="{Binding #root.header}" FontSize="16" Grid.Row="0" HorizontalAlignment="Center"/>
+      <Grid Grid.Row="1" Margin="0 10">
+        <TextBlock Text="{Binding #root.msg}" FontSize="12" HorizontalAlignment="Left" />
+        <TextBlock Text="{Binding #root.percentage}" FontSize="12" HorizontalAlignment="Right" />
+      </Grid>
       <ProgressBar x:Name="inp_Progress" Grid.Row="2"/>
     </Grid>
   </Border>
