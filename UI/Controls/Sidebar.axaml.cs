@@ -17,6 +17,9 @@ public partial class Sidebar : UserControl
     {
         InitializeComponent();
 
+        if (Design.IsDesignMode)
+            return;
+
         btn_Home.RegisterClick(() => MainWindow.RequestPage(PageNames.Home));
         btn_Settings.RegisterClick(() => MainWindow.RequestPage(PageNames.Settings));
         btn_Downloads.RegisterPopup<Popup_ActiveDownloads>();
@@ -33,11 +36,27 @@ public partial class Sidebar : UserControl
         });
 
         inp_DownloadProgress.IsVisible = false;
+
+        btn_Icon.PointerPressed += (_, __) => ToggleCollapsedState();
     }
 
     public async Task Init()
     {
 
+    }
+
+    private void ToggleCollapsedState()
+    {
+        bool isCollapsed = root.Classes.Contains("Collapsed");
+
+        if (isCollapsed)
+        {
+            root.Classes.Remove("Collapsed");
+        }
+        else
+        {
+            root.Classes.Add("Collapsed");
+        }
     }
 
     public void Draw(PageNames page, Control sidebar)

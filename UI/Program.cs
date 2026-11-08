@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Data_Sqlite;
 using Logic;
 using Logic.Editor;
@@ -72,7 +73,10 @@ class Program
             DependencyManager.RegisterService<ITaggingLogic, TaggingLogic>();
             await DependencyManager.RegisterService<IProjectLogic, ProjectLogic>(logic => logic.Migrate());
 
-            await PluginHelper.LoadPlugins();
+            if (!Design.IsDesignMode)
+            {
+                await PluginHelper.LoadPlugins();
+            }
         }
     }
 

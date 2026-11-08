@@ -1,16 +1,12 @@
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Logic;
 using Models.Data;
 using Models.Enums;
 using Models.Interfaces;
-using Tmds.DBus.Protocol;
 using UI.Controls;
 using UI.Helpers;
 

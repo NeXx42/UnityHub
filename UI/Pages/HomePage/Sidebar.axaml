@@ -1,9 +1,18 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="UI.Pages.HomePage.Sidebar"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="225" d:DesignHeight="450" x:Class="UI.Pages.HomePage.Sidebar"
              xmlns:local="clr-namespace:UI.Controls">
-  <Grid Margin="15" RowDefinitions="Auto * Auto">
+  <Grid x:Name="cont_Items" RowDefinitions="Auto * Auto">
+    <Grid.Styles>
+      <Style Selector="Grid#cont_Items">
+        <Setter Property="Margin" Value="15" />
+      </Style>
+      <Style Selector=".Collapsed Grid#cont_Items">
+        <Setter Property="Margin" Value="10" />
+      </Style>
+    </Grid.Styles>
+
     <StackPanel x:Name="cont_Entries" >
       <local:SidebarEntry x:Name="entry_All" Label="{DynamicResource LANG_HomePage_SideBar_AllProjects}">
         <local:SidebarEntry.Icon>
@@ -43,7 +52,13 @@
       </local:SidebarCollectionEntry>
     </StackPanel>
 
-    <StackPanel x:Name="cont_Storage" Spacing="5" Grid.Row="2"/>
+    <StackPanel x:Name="cont_Storage" Orientation="Vertical" Spacing="5" Grid.Row="2">
+      <StackPanel.Styles>
+        <Style Selector=".Collapsed StackPanel#cont_Storage">
+          <Setter Property="IsVisible" Value="False" />
+        </Style>
+      </StackPanel.Styles>
+    </StackPanel>
   </Grid>
 
 </UserControl>
