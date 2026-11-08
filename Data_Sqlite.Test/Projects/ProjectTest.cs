@@ -38,11 +38,11 @@ public class ProjectTest
             name = Guid.NewGuid().ToString(),
         };
 
-        int newId = await data.CreateCard(info);
-        ProjectInfo? dbItem = await data.GetProjectInfo(newId);
+        await data.CreateCard(info);
+        ProjectInfo? dbItem = await data.GetProjectInfo(info.id);
 
         Assert.That(dbItem, Is.Not.Null);
-        Assert.That(newId == dbItem.id);
+        Assert.That(info.id == dbItem.id);
         Assert.That(info.directory == dbItem.directory);
         Assert.That(info.name == dbItem.name);
     }
