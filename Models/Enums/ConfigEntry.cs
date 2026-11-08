@@ -17,5 +17,7 @@ public enum ConfigEntry
     AutoCheckUpdates,
 
     IsSetup,
-    IgnoredUpdate
+    IgnoredUpdate,
+
+    PluginCache
 }

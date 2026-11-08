@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Logic;
+using Models;
 using Models.Data;
 using Models.Helpers;
 using Models.Interfaces;
@@ -23,12 +27,18 @@ public static class PluginHelper
 
     public static async Task LoadPlugins()
     {
+        IConfigLogic config = DependencyManager.GetService<IConfigLogic>()!;
+        Dictionary<Guid, string> cachedPlugins = await config.Get<Dictionary<Guid, string>>(Models.Enums.ConfigEntry.PluginCache, []);
+
         string root = Path.Combine(AppContext.BaseDirectory, "Plugins");
 
         if (Directory.Exists(root))
         {
-            foreach (string pluginFolder in Directory.GetDirectories(root))
+            string[] acceptablePlugins = Directory.GetFiles(root, "*.plugin");
+
+            foreach (string pluginArchive in acceptablePlugins)
             {
+                string pluginFolder = await ExtractPlugin(pluginArchive);
                 string manifestLoc = Path.Combine(pluginFolder, "manifest.json");
 
                 if (!File.Exists(manifestLoc))
@@ -51,6 +61,11 @@ public static class PluginHelper
                     LoggingHelper.LogError($"Failed deserialize plugin - {pluginFolder}");
                     continue;
                 }
+
+                if (cachedPlugins.TryGetValue(manifest.Value.Id, out string? oldPath) && Directory.Exists(oldPath) && !pluginFolder.Equals(oldPath))
+                    Directory.Delete(oldPath, true);
+
+                cachedPlugins[manifest.Value.Id] = pluginFolder;
 
                 try
                 {
@@ -88,6 +103,26 @@ public static class PluginHelper
                 loadedPlugins.Add(manifest.Value, plugin);
             }
         }
+
+        await config.Set(Models.Enums.ConfigEntry.PluginCache, cachedPlugins, true);
+    }
+
+    private static async Task<string> ExtractPlugin(string archivePath)
+    {
+        string cacheFolder = Path.Combine(GlobalConfig.getDataFolder, "plugins");
+        Directory.CreateDirectory(cacheFolder);
+
+        using var stream = File.OpenRead(archivePath);
+        byte[] hashBytes = SHA256.HashData(stream);
+        string hash = Convert.ToHexString(hashBytes).ToLowerInvariant();
+
+        string pluginCacheFolder = Path.Combine(cacheFolder, hash);
+
+        if (Directory.Exists(pluginCacheFolder))
+            return pluginCacheFolder;
+
+        ZipFile.ExtractToDirectory(archivePath, pluginCacheFolder, overwriteFiles: true);
+        return pluginCacheFolder;
     }
 
     public static LoadRequest[] GetPluginLoads()

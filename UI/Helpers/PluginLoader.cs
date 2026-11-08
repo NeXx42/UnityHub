@@ -28,4 +28,14 @@ public class PluginLoader : AssemblyLoadContext
 
         return null;
     }
+
+    protected override nint LoadUnmanagedDll(string unmanagedDllName)
+    {
+        string? path = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
+
+        if (path != null)
+            return LoadUnmanagedDllFromPath(path);
+
+        return IntPtr.Zero;
+    }
 }
