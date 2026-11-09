@@ -54,6 +54,10 @@
     <Style Selector=".Negative Border#btn:pointerover">
       <Setter Property="Background" Value="{DynamicResource ErrorBorder}"/>
     </Style>
+
+    <Style Selector=":disabled Border#btn">
+      <Setter Property="Opacity" Value=".5" />
+    </Style>
   </UserControl.Styles>
 
   <Panel x:Name="RootPanel" HorizontalAlignment="Stretch">
