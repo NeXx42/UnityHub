@@ -1,6 +1,8 @@
 [Desktop Entry]
-Name=NexxUnityHub
-Exec=NexxUnityHub
-Icon=NexxUnityHub
+Name=Nexx Unity Hub
+Exec=UI
+Icon=com.nexx.UnityHub
 Type=Application
 Categories=Game;
+Terminal=false
+StartupNotify=true
