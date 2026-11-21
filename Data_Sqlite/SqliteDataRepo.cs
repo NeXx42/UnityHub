@@ -128,6 +128,11 @@ public class SqliteDataRepo : IDataRepository
 
         // build filters
 
+        if ((search.ids?.Count() ?? 0) > 0)
+        {
+            whereClauses.Add($"{projectLocalName}.{nameof(dbo_Project.id)} in ({string.Join(",", search.ids!)})");
+        }
+
         if ((search.collections?.Count() ?? 0) > 0)
         {
             whereClauses.Add($"{projectLocalName}.{nameof(dbo_Project.collectionId)} in ({string.Join(",", search.collections!)})");

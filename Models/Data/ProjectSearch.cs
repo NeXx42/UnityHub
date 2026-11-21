@@ -6,6 +6,7 @@ public class ProjectSearch
 {
     public string? text;
 
+    public IEnumerable<int> ids = [];
     public IEnumerable<int> tags = [];
     public IEnumerable<string> drives = [];
     public IEnumerable<int> collections = [];
