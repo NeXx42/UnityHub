@@ -36,7 +36,7 @@
   <Color x:Key="Colour_AccentColour">#5735b8</Color>
   <SolidColorBrush x:Key="AccentColour" Color="{DynamicResource Colour_AccentColour}" />
 
-  <Color x:Key="Colour_AccentColourDark">#2a2842</Color>
+  <Color x:Key="Colour_AccentColourDark">#15132b</Color>
   <SolidColorBrush x:Key="AccentColourDark" Color="{DynamicResource Colour_AccentColourDark}"/>
 
   <Color x:Key="Colour_AccentColourLight">#6554d1</Color>
