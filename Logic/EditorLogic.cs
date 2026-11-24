@@ -523,13 +523,19 @@ public abstract class EditorLogic : IEditorLogic
     {
         if (info == null)
         {
-            await DependencyManager.ui!.ShowMessageBox("Project is invalid", "Failed to launch the project because the id didn't correspond with a known entry.");
+            await DependencyManager.ui!.ShowMessageBox("Project is invalid", "Failed to launch the project because the id didn't correspond with a known entry.", true);
+            return;
+        }
+
+        if (!Directory.Exists(info.directory))
+        {
+            await DependencyManager.ui!.ShowMessageBox("Directory not found", $"Failed to launch the project because the project directory doesnt exist.\n{info.directory}", true);
             return;
         }
 
         if (IsProjectRunning(info.id))
         {
-            await DependencyManager.ui!.ShowMessageBox("Already running", "Failed to launch the project because the project is already open.");
+            await DependencyManager.ui!.ShowMessageBox("Already running", "Failed to launch the project because the project is already open.", true);
             return;
         }
 

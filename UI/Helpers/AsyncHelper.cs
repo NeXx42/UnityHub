@@ -9,7 +9,7 @@ public static class AsyncHelper
 {
     public static void Wrap(this Task task)
     {
-        HandleException(() => _ = task);
+        HandleException(async () => await task);
     }
 
     public static void Wrap(this Func<Task>? task)
@@ -17,7 +17,7 @@ public static class AsyncHelper
         if (task == null)
             return;
 
-        HandleException(() => _ = task());
+        HandleException(task);
     }
 
     public static void WrapTask(Func<Task>? task)
@@ -25,7 +25,7 @@ public static class AsyncHelper
         if (task == null)
             return;
 
-        HandleException(() => _ = task());
+        HandleException(task);
     }
 
     public static void WrapTask<T>(T inp, Func<T, Task>? task)
@@ -33,7 +33,7 @@ public static class AsyncHelper
         if (task == null)
             return;
 
-        HandleException(() => _ = task(inp));
+        HandleException(async () => await task(inp));
     }
 
     public static void WrapTask<T>(this Func<T, Task>? task, T inp)
@@ -41,14 +41,14 @@ public static class AsyncHelper
         if (task == null)
             return;
 
-        HandleException(() => _ = task(inp));
+        HandleException(async () => await task(inp));
     }
 
-    private static void HandleException(Action callback)
+    private static async void HandleException(Func<Task> callback)
     {
         try
         {
-            callback();
+            await callback();
         }
         catch (Exception e)
         {

@@ -110,8 +110,11 @@ public class ProjectLogic : IProjectLogic
         return info;
     }
 
-    public async void BrowseTo(ProjectInfo info)
+    public void BrowseTo(ProjectInfo info)
     {
+        if (!Directory.Exists(info.directory))
+            throw new Exception($"{info.directory} was not found");
+
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
             FileName = GlobalConfig.isOnLinux ? "xdg-open" : "explorer.exe",
@@ -124,6 +127,9 @@ public class ProjectLogic : IProjectLogic
 
     public async Task OpenIDE(ProjectInfo info)
     {
+        if (!Directory.Exists(info.directory))
+            throw new Exception($"{info.directory} was not found");
+
         string? command = await DependencyManager.GetService<IConfigLogic>()!.Get<string?>(ConfigEntry.IDECommand, null);
 
         if (string.IsNullOrEmpty(command))
@@ -154,6 +160,9 @@ public class ProjectLogic : IProjectLogic
 
     public async Task BrowseTerminal(ProjectInfo info)
     {
+        if (!Directory.Exists(info.directory))
+            throw new Exception($"{info.directory} was not found");
+
         string? command = await DependencyManager.GetService<IConfigLogic>()!.Get<string?>(ConfigEntry.TerminalCommand, null);
 
         if (GlobalConfig.isOnLinux && string.IsNullOrEmpty(command))

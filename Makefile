@@ -93,7 +93,6 @@ install-flatpak:
 	flatpak-builder \
 		--force-clean \
 		--user \
-		--install-deps-from=flathub \
 		--install \
 		flatpak-build \
 		./Build/Flatpak/com.nexx.UnityHub.yml	

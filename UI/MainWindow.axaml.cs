@@ -93,6 +93,7 @@ public partial class MainWindow : Window, IUILinker
     {
         pos = instance!.activeModals.Count;
 
+        ClearFocus();
         ModalContainer container = new ModalContainer();
 
         instance.activeModals.Push(container);
