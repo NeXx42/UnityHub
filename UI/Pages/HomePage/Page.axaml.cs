@@ -108,6 +108,8 @@ public partial class Page : UserControl, IPage, INotifyPropertyChanged
         sort.Draw(activeSearch, UpdateSort);
         btn_Sort.RegisterPopup(sort);
 
+        btn_Reload.RegisterClick(() => SearchCards(false));
+
         inp_Text.TextChanged += (_, __) => UpdateTextFilter().Wrap();
 
         DependencyManager.GetService<IProjectLogic>()?.RegisterCallback(ProjectLogicCallback);

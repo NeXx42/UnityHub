@@ -560,9 +560,17 @@ public abstract class EditorLogic : IEditorLogic
         info.lastOpened = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         await database!.UpdateProjectProperties(info, [nameof(ProjectInfo.lastOpened)]);
 
+        string? editorLocation = await GetEditorInstall(info.version!);
+
+        if (string.IsNullOrEmpty(editorLocation))
+        {
+            await DependencyManager.ui!.ShowMessageBox("Failed to start editor", $"Could not find a location for the editor version {info.version}.", true);
+            return;
+        }
+
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
-            FileName = await GetEditorInstall(info.version!),
+            FileName = editorLocation,
             UseShellExecute = false,
             RedirectStandardError = true,
             RedirectStandardOutput = true,
@@ -571,11 +579,19 @@ public abstract class EditorLogic : IEditorLogic
         startInfo.ArgumentList.Add("-projectPath");
         startInfo.ArgumentList.Add(info.directory);
 
+        //startInfo.ArgumentList.Add("-logFile");
+        //startInfo.ArgumentList.Add("-");
+
         ActiveInstances instance = new ActiveInstances(info.id, startInfo.UpdateProcessStartInfoForEnv(), OnQuitEditor);
         activeInstances.Add(info.id, instance);
 
+        LoggingHelper.Log($"Starting unity instance {editorLocation} for project {info.directory}");
+
         if (!instance.Start())
-            await DependencyManager.ui!.ShowMessageBox("Failed to start editor", "The editor failed to start, check the logs within the settings to determine why.");
+        {
+            await DependencyManager.ui!.ShowMessageBox("Failed to start editor", "The editor failed to start, check the logs within the settings to determine why.", true);
+            return;
+        }
 
         switch (await config.Get(ConfigEntry.LaunchBehaviour, Config_LaunchBehaviour.Minimise))
         {
@@ -883,16 +899,7 @@ public abstract class EditorLogic : IEditorLogic
             return;
 
         if (info is EditorInstallInfo installInfo)
-        {
-            ProcessStartInfo startInfo = new ProcessStartInfo()
-            {
-                FileName = GlobalConfig.isOnLinux ? "xdg-open" : "explorer.exe",
-                UseShellExecute = GlobalConfig.isOnLinux ? false : true,
-            };
-
-            startInfo.ArgumentList.Add(Path.Combine(installInfo.installLocation, installInfo.versionName));
-            ProcessHelper.Run(startInfo).Start();
-        }
+            ProcessHelper.BrowseToLocation(installInfo.installLocation, installInfo.versionName);
     }
 
     public struct ActiveInstances
@@ -912,25 +919,39 @@ public abstract class EditorLogic : IEditorLogic
 
         public bool Start()
         {
-            if (activeProcess.Start())
-            {
-                _ = Monitor();
-                return true;
-            }
+            if (!activeProcess.Start())
+                return false;
 
-            return false;
+            _ = Monitor();
+            return true;
         }
 
         private async Task Monitor()
         {
-            var stderrTask = activeProcess.StandardError.ReadToEndAsync();
+            Task stdoutTask = MonitorStream(activeProcess.StandardOutput, false);
+            Task stderrTask = MonitorStream(activeProcess.StandardError, true);
+
             await activeProcess.WaitForExitAsync();
-            var stderr = await stderrTask;
+
+            await Task.WhenAll(stdoutTask, stderrTask);
 
             if (activeProcess.ExitCode != 0)
             {
                 LoggingHelper.LogError($"Unity exited with code {activeProcess.ExitCode}");
-                LoggingHelper.LogError(stderr);
+            }
+        }
+
+        private static async Task MonitorStream(StreamReader reader, bool isError)
+        {
+            while (await reader.ReadLineAsync() is { } line)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+
+                if (isError)
+                    LoggingHelper.LogError(line);
+                else
+                    LoggingHelper.Log(line);
             }
         }
     }

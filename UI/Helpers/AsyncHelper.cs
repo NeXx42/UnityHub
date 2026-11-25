@@ -50,6 +50,7 @@ public static class AsyncHelper
         {
             await callback();
         }
+        catch (TaskCanceledException) { }
         catch (Exception e)
         {
             DependencyManager.ui?.ShowMessageBox(e);

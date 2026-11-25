@@ -29,6 +29,9 @@
     <common:SettingsPage_Common_Dropdown x:Name="setting_WindowsSilentInstaller" Label="Silent Editor installs"/>
     <common:SettingsPage_Common_Dropdown x:Name="settings_IncludeCollecionInTags" Label="Include Collection in Tag list"/>
 
+    <Label FontSize="20">Data</Label>
+    <common:SettingsPage_Common_Button x:Name="setting_Data_Browse" Label="Browse to data" ButtonText="Browse" />
+
     <Label FontSize="20">Version</Label>
     <Grid>
       <Label>Current Version</Label>

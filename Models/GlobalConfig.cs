@@ -9,7 +9,12 @@ public static class GlobalConfig
     {
         get
         {
-            string path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), APPLICATION_NAME));
+            string path;
+
+            if (isOnFlatpak)
+                path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share", APPLICATION_NAME);
+            else
+                path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), APPLICATION_NAME);
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -32,4 +37,15 @@ public static class GlobalConfig
     }
     private static bool? m_isOnLinux;
 
+    public static bool isOnFlatpak
+    {
+        get
+        {
+            if (m_isOnFlatpak.HasValue)
+                return m_isOnFlatpak.Value;
+
+            return (m_isOnFlatpak = isOnLinux && File.Exists("/.flatpak-info")).Value;
+        }
+    }
+    private static bool? m_isOnFlatpak;
 }

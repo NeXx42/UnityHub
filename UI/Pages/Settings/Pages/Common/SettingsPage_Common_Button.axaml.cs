@@ -27,8 +27,7 @@ public partial class SettingsPage_Common_Button : UserControl
         InitializeComponent();
     }
 
-    public void Setup(Func<Task> callback)
-    {
-        btn.RegisterClick(callback);
-    }
+    public void Setup(Func<Task> callback) => btn.RegisterClick(callback);
+    public void Setup(Action callback) => btn.RegisterClick(callback);
+
 }

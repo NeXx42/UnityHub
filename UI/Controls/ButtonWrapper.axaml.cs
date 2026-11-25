@@ -137,6 +137,7 @@ public partial class ButtonWrapper : UserControl
         {
             callback?.Invoke();
         }
+        catch (TaskCanceledException) { }
         catch (Exception e)
         {
             DependencyManager.ui!.ShowMessageBox(e).Wrap();

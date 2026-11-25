@@ -1,15 +1,11 @@
 using System.Diagnostics;
 using System.Reflection.Metadata;
+using Models;
 
 namespace Logic.Helpers;
 
 public static class ProcessHelper
 {
-    public static void Run(string command, params string[] args)
-    {
-
-    }
-
     public static Process Run(ProcessStartInfo info)
     {
         return new Process()
@@ -18,14 +14,26 @@ public static class ProcessHelper
         };
     }
 
-    public static void Run(Process info)
+    public static void BrowseToLocation(params string[] path)
     {
+        string dir = Path.Combine(path);
 
+        if (!Directory.Exists(dir))
+            throw new Exception($"{dir} was not found");
+
+        ProcessStartInfo startInfo = new ProcessStartInfo()
+        {
+            FileName = GlobalConfig.isOnLinux ? "xdg-open" : "explorer.exe",
+            UseShellExecute = GlobalConfig.isOnLinux ? false : true,
+        };
+
+        startInfo.ArgumentList.Add(dir);
+        Run(startInfo).Start();
     }
 
     public static ProcessStartInfo UpdateProcessStartInfoForEnv(this ProcessStartInfo info)
     {
-        if (File.Exists("/.flatpak-info"))
+        if (GlobalConfig.isOnFlatpak)
         {
             string[] args = [info.FileName, .. info.ArgumentList];
 

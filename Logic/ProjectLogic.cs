@@ -110,20 +110,7 @@ public class ProjectLogic : IProjectLogic
         return info;
     }
 
-    public void BrowseTo(ProjectInfo info)
-    {
-        if (!Directory.Exists(info.directory))
-            throw new Exception($"{info.directory} was not found");
-
-        ProcessStartInfo startInfo = new ProcessStartInfo()
-        {
-            FileName = GlobalConfig.isOnLinux ? "xdg-open" : "explorer.exe",
-            UseShellExecute = GlobalConfig.isOnLinux ? false : true,
-        };
-
-        startInfo.ArgumentList.Add(info.directory);
-        ProcessHelper.Run(startInfo).Start();
-    }
+    public void BrowseTo(ProjectInfo info) => ProcessHelper.BrowseToLocation(info.directory);
 
     public async Task OpenIDE(ProjectInfo info)
     {
@@ -222,7 +209,7 @@ public class ProjectLogic : IProjectLogic
             throw new Exception($"Source project doesnt exist at the directory '{info.directory}'.");
 
         return [
-            new LoadRequest("Moving", Move),
+            new LoadRequest("Moving", Move, true),
             new LoadRequest("Saving", UpdateEntry)
         ];
 
@@ -248,25 +235,41 @@ public class ProjectLogic : IProjectLogic
 
     private LoadRequest CopyFolderAndDescendants(string from, string to, bool copyOnly)
     {
-        return new LoadRequest("Copying", Work);
+        return new LoadRequest("Copying", Work, true);
 
         async Task Work(IProgress<float> progress, CancellationToken token)
         {
-            await Task.Run(() => CopyFiles(from, to));
+            string[] files = Directory.GetFiles(from, "*", SearchOption.AllDirectories);
+
+            float totalFiles = files.Length;
+            int copiedFiles = 0;
+
+            if (totalFiles == 0)
+                progress?.Report(1f);
+
+            CopyFiles(from, to);
 
             void CopyFiles(string existing, string destination)
             {
+                token.ThrowIfCancellationRequested();
+
                 Directory.CreateDirectory(destination);
 
                 foreach (var file in Directory.GetFiles(existing))
                 {
-                    var destFile = Path.Combine(destination, Path.GetFileName(file));
+                    token.ThrowIfCancellationRequested();
+                    string destFile = Path.Combine(destination, Path.GetFileName(file));
+
                     File.Copy(file, destFile, overwrite: true);
+
+                    copiedFiles++;
+                    Console.WriteLine(copiedFiles / totalFiles);
+                    progress?.Report(copiedFiles / totalFiles);
                 }
 
-                foreach (var directory in Directory.GetDirectories(existing))
+                foreach (string directory in Directory.GetDirectories(existing))
                 {
-                    var destSubDir = Path.Combine(destination, Path.GetFileName(directory));
+                    string destSubDir = Path.Combine(destination, Path.GetFileName(directory));
                     CopyFiles(directory, destSubDir);
                 }
 

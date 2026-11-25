@@ -7,6 +7,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Logic;
+using Logic.Helpers;
+using Models;
 using Models.Data;
 using Models.Enums;
 using Models.Helpers;
@@ -26,6 +28,8 @@ public partial class SettingsPage_General : UserControl, ISettingsPage
     public SettingsPage_General()
     {
         InitializeComponent();
+
+        setting_Data_Browse.Setup(() => ProcessHelper.BrowseToLocation(GlobalConfig.getDataFolder));
 
         setting_DeriveMissingMetadata.Setup(DeriveMissingMetadata);
         inp_LanguageDropdown.SelectionChanged += (_, __) => UpdateLanguage();

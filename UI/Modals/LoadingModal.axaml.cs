@@ -51,7 +51,7 @@ public partial class LoadingModal : UserControl, IModal, INotifyPropertyChanged
 
             Progress<float> secondaryProgress = new Progress<float>(v =>
             {
-                subProgress = v;
+                subProgress = v * 100;
                 RedrawProgress();
             });
             Exception? e = await task.Run(token.Token, secondaryProgress);
